@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 boardheader_t allbrd[MAX_BOARD];
 

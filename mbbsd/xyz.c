@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "common.h"
 #include "modes.h"
 #include "proto.h"

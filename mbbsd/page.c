@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "modes.h"
 #include "common.h"
 #include "proto.h"

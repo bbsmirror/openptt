@@ -4,7 +4,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "perm.h"
 #include "common.h"
 #include "proto.h"

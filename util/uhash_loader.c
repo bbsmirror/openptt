@@ -16,7 +16,7 @@
 #endif
 
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "common.h"
 
 unsigned string_hash(unsigned char *s);

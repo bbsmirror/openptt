@@ -15,7 +15,7 @@
 #endif
 
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 char *myfile[] =
 {"day", "week", "month", "year"};

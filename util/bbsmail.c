@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 #include "common.h"
 

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "proto.h"
 
 extern struct utmpfile_t *utmpshm;

@@ -5,7 +5,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 struct utmpfile_t *u;
 

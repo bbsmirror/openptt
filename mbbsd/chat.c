@@ -10,7 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "perm.h"
 #include "common.h"
 #include "modes.h"

@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 extern rc_t chc_from, chc_to;
 

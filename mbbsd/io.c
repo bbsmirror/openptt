@@ -11,7 +11,7 @@
 #include <sys/ioctl.h>
 #include <signal.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "perm.h"
 #include "modes.h"
 #include "common.h"

@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 
 void keeplog(FILE *fin, char *fpath, char *board, char *title, char *owner) {

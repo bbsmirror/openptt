@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 
 #define NEWSDIRECT  BBSHOME "/boards/newspaper"

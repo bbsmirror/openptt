@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "gomo.h"
 #include "common.h"
 #include "modes.h"

@@ -9,7 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "modes.h"
 
 extern char *fn_passwd;

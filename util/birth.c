@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 #include "common.h"
 

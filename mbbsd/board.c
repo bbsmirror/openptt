@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "perm.h"
 #include "modes.h"
 #include "common.h"

@@ -10,7 +10,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 int dirselect(struct dirent *dir) {
     return strchr("MDSGH", dir->d_name[0]) && dir->d_name[1] == '.';

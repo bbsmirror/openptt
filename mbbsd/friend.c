@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/file.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "common.h"
 #include "perm.h"
 #include "proto.h"

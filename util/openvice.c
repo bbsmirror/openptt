@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 
 #define VICE_COUNT BBSHOME "/etc/vice.count"

@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 
 unsigned StringHash(unsigned char *s) {
     unsigned int v=0;

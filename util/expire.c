@@ -13,7 +13,7 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include "config.h"
-#include "struct.h"
+#include "pttstruct.h"
 #include "util.h"
 
 #define QCAST int (*)(const void *, const void *)

@@ -23,5 +23,7 @@ if [ $UPGRADE_STAMP -lt 10001 ]; then
 	mkdir %BBSHOME%/man/boards/$i
 	mv %BBSHOME%/man/boards/$i?* %BBSHOME%/man/boards/$i/
     done
+    ln -sf %BBSHOME%/man/boards/N/Note/SONGBOOK %BBSHOME%/etc/SONGBOOK
+    ln -sf %BBSHOME%/man/boards/N/Note/SONGO %BBSHOME%/etc/SONGO
     echo "10001" > $UPGRADE_INFO
 fi

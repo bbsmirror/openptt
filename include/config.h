@@ -2,14 +2,8 @@
 #ifndef INCLUDE_CONFIG_H
 #define INCLUDE_CONFIG_H
 
-/* 定義 BBS 站名位址 */
-#define BBSNAME         "新批踢踢"                   /* 中文站名 */
-#define MYHOSTNAME      "ptt2.twbbs.org.tw"          /* 網路位址 */
-#define MYIP            "140.112.8.192"              /* IP位址 */
-#define BBSHOME         "/home/bbs"                  /* BBS 的家 */
-#define BBSUSER         "bbs"
-#define BBSUID          9999
-#define BBSGID          99
+#include "/usr/local/etc/pttbbs.conf"
+
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 主程式 */
 #define BAN_FILE        "BAN"                        /* 關站通告 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */

@@ -212,7 +212,10 @@ static void abort_bbs_debug(int sig) {
     if(currmode)
 	u_exit("AXXED");
     // printpt("debug me!(%d)",sig);
-    // sleep(3600);	/* wait 60 mins for debug */
+
+#ifdef DEBUG
+    sleep(3600 * 6);
+#endif
     exit(0);
 }
 

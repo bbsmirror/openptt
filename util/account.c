@@ -252,20 +252,19 @@ int main() {
 
     if (ptime->tm_hour)
     {
-	printf("多個節日處理\n");
-	/* Ptt 多個節日處理 */
-
-	fp1 = fopen("etc/today_is", "r");
-	{
-	    char tod[20][100];
-	    for (i = 0; fgets(tod[i], 20, fp1) && i < 100; i++) ;
+	/* rotate one line in today_is */
+	puts("多個節日處理");
+	if((fp1 = fopen("etc/today_is", "r"))) {
+	    char tod[100][20];
+	    
+	    i = 0;
+	    while(i < 100 && fgets(tod[i], sizeof(tod[0]), fp1))
+		i++;
 	    fclose(fp1);
-
+	    
 	    fp1 = fopen("etc/today_is", "w");
-	    for (j = 1; j <= i; j++)
-	    {
-		fputs(tod[j % i], fp1);
-	    }
+	    for(j = 0; j < i; j++)
+		fputs(tod[j + 1 < i ? j + 1 : 0], fp1);
 	    fclose(fp1);
 	}
     }
@@ -327,50 +326,36 @@ int main() {
 	now += ADJUST_M * 60;	/* back to future */
 	ptime = localtime(&now);
 
-/* Ptt 節日處理 */
+	/* Ptt 節日處理 */
 	printf("節日處理\n");
-	i = 0;
-	if((fp1 = fopen("etc/today_is", "w")))
-	{
-	    if((fp = fopen("etc/feast", "r")))
-	    {
-		while (fgets(buf1, 100, fp))
-		{
-		    if (buf[1] != '#' && sscanf(buf1, "%d %d ", &mo, &da) == 2)
-		    {
-/*           printf("%d %d [%s]",mo,da,&buf1[6]); */
-			if (ptime->tm_mday == da && ptime->tm_mon + 1 == mo)
-			{
+	if((fp1 = fopen("etc/today_is", "w"))) {
+	    i = 0;
+	    if((fp = fopen("etc/feast", "r"))) {
+		while(fgets(buf1, sizeof(buf1), fp)) {
+		    if(buf[0] != '#' &&
+		       sscanf(buf1, "%d %d ", &mo, &da) == 2) {
+			if(ptime->tm_mday == da && ptime->tm_mon + 1 == mo) {
 			    i = 1;
-			    fprintf(fp1, "%-14s", &buf1[6]);
+			    fprintf(fp1, "%-14.14s", &buf1[6]);
 			}
 		    }
 		}
 		fclose(fp);
 	    }
 	    printf("節日處理1\n");
-	    if (i == 0)
-	    {
-		if((fp = fopen("etc/today_boring", "r")))
-		{
-		    while (fgets(buf1, 250, fp))
-		    {
-			if (strlen(buf) > 3)
-			{
+	    if(i == 0) {
+		if((fp = fopen("etc/today_boring", "r"))) {
+		    while(fgets(buf1, sizeof(buf1), fp))
+			if(strlen(buf) > 3)
 			    fprintf(fp1, "%s", buf1);
-			}
-		    }
 		    fclose(fp);
-		}
-		else
-		{
+		} else
 		    fprintf(fp1, "本日節日徵求中");
-		}
 	    }
 	    fclose(fp1);
 	}
-
-/* Ptt 歡迎畫面處理 */
+	
+	/* Ptt 歡迎畫面處理 */
 	printf("歡迎畫面處理\n");
 
 	if((fp = fopen("etc/Welcome.date", "r")))

@@ -16,6 +16,8 @@ FILES=	buymedicine buyoo clean deadth eat food hit kiss\
 	l0 l1 l2 l3 l4 l5 l6 l7 l8 l9 l10 l11 l12 l13 l14 l15 l16\
 	m0 m1 m2 m3 m4 m5 m6 m7 m8 m9 m10 m11 m12 m13 m14 m15 m16
 
+all:
+
 install:
 	install -d $(TARGET)
 	install -c -m 644 $(FILES) $(TARGET)

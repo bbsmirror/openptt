@@ -2,7 +2,9 @@ SUBDIR=chickens
 BBSHOME?=$(HOME)
 TARGET=$(BBSHOME)/etc/
 FILES=	Welcome Welcome_login goodbye register registered ve.hlp Logout\
-	Welcome_birth domain_name_query feast
+	Welcome_birth domain_name_query feast today_boring
+
+all:
 
 install_sub:
 	@for i in $(SUBDIR); do\

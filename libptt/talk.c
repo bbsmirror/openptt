@@ -83,7 +83,6 @@ typedef struct pickup_t {
     unsigned int friend;
 } pickup_t;
 
-extern int bind( /* int,struct sockaddr *, int */ );
 extern char *getuserid();
 extern struct utmpfile_t *utmpshm;
 extern char watermode, no_oldmsg, oldmsg_count;
@@ -1325,8 +1324,7 @@ static char *friend_descript(char *uident) {
 	return space_buf;
 }
 
-static char *descript(int show_mode, userinfo_t * uentp, time_t diff,
-		      fromcache_t * fcache) {
+static char *descript(int show_mode, userinfo_t * uentp, time_t diff) {
     switch (show_mode)
     {
     case 1:
@@ -1334,12 +1332,7 @@ static char *descript(int show_mode, userinfo_t * uentp, time_t diff,
     case 0:
 	return (((uentp->pager != 2 && uentp->pager != 3 && diff) ||
 		 HAS_PERM(PERM_SYSOP)) ?
-#ifdef WHERE
-		uentp->from_alias ? fcache->replace[uentp->from_alias] :
 		uentp->from
-#else
-		uentp->from
-#endif
 		: "*");
     case 2:
 	sprintf(description, "%3d/%3d/%3d", uentp->five_win,
@@ -1364,10 +1357,6 @@ static void pickup_user() {
     static int show_mind = 0;
 #endif
     char genbuf[200];
-
-#ifdef WHERE
-    extern struct fromcache_t *fcache;
-#endif
 
     register userinfo_t *uentp;
     register pid_t pid0 = 0;	/* Ptt ©w¦ì */
@@ -1581,7 +1570,7 @@ static void pickup_user() {
 #endif
 		   uentp->username,
 		   /* %-17.16s ¬G¶m */
-		   descript(show_mode, uentp, diff, fcache),
+		   descript(show_mode, uentp, diff),
 
 		   /* %-17.16s ¬ÝªO */
 #ifdef SHOWBOARD

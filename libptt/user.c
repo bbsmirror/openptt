@@ -209,7 +209,6 @@ static void violate_law(userec_t *u, int unum){
 	sprintf(dst, "tmp/%s", u->userid);
 	Rename(src, dst);
 	log_usies("KILL", u->userid);
-	post_violatelaw(u->userid, cuser.userid, reason, "砍除 ID");       
 	u->userid[0] = '\0';
 	setuserid(unum, u->userid);
 	passwd_update(unum, u);
@@ -218,7 +217,6 @@ static void violate_law(userec_t *u, int unum){
         u->userlevel |= PERM_VIOLATELAW;
         u->vl_count ++;
 	passwd_update(unum, u);
-        post_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
         mail_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
     }                 
     pressanykey();
@@ -463,8 +461,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
     
     getdata(b_lines - 1, 0, msg_sure_ny, ans, 3, LCECHO);
     if(*ans == 'y') {
-	if(flag)
-	    post_change_perm(temp,i,cuser.userid,x.userid);
 	if(strcmp(u->userid, x.userid)) {
 	    char src[STRLEN], dst[STRLEN];
 	    

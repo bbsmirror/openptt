@@ -19,8 +19,7 @@ LIBS=	$(LIBS_$(OSTYPE))
 CC=	gcc
 LIB=	libptt
 OBJS=	announce.o board.o cache.o descrypt.o friend.o mail.o name.o\
-	passwd.o record.o register.o stuff.o syspost.o talk.o user.o\
-	var.o
+	passwd.o record.o register.o stuff.o talk.o user.o var.o
 
 .SUFFIXES: .c .o
 .c.o:
@@ -29,6 +28,7 @@ OBJS=	announce.o board.o cache.o descrypt.o friend.o mail.o name.o\
 all: $(LIB)
 
 $(LIB): $(OBJS)
+	rm -f $(LIB).a
 	ar cr $(LIB).a $(OBJS)
 	ranlib $(LIB).a
 

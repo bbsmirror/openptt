@@ -758,29 +758,6 @@ void write_header(FILE *fp) {
 	
 	strcpy(postlog.author, cuser.userid);
 	ifuseanony=0;
-#ifdef HAVE_ANONYMOUS
-	if(currbrdattr& BRD_ANONYMOUS) {   
-	    int defanony = (currbrdattr & BRD_DEFAULTANONYMOUS);
-	    if(defanony) 
-		getdata(3, 0, "請輸入你想用的ID，也可直接按[Enter]，"
-			"或是按[r]用真名：", real_name, 12, DOECHO);
-	    else
-		getdata(3, 0, "請輸入你想用的ID，也可直接按[Enter]使用原ID：",
-			real_name, 12, DOECHO);
-	    if(!real_name[0] && defanony) {
-		strcpy(real_name, "Anonymous");
-		strcpy(postlog.author, real_name);
-		ifuseanony = 1;
-	    } else {
-		if(!strcmp("r",real_name) || (!defanony && !real_name[0]))
-		    sprintf(postlog.author,"%s",cuser.userid);
-		else {
-		    sprintf(postlog.author,"%s.",real_name);
-		    ifuseanony=1;
-		}
-	    }
-	}
-#endif
 	strcpy(postlog.board, currboard);
 	ptr = save_title;
 	if(!strncmp(ptr, str_reply, 4))
@@ -789,25 +766,6 @@ void write_header(FILE *fp) {
 	postlog.date = now;
 	postlog.number = 1;
 	append_record(".post", (fileheader_t *)&postlog, sizeof(postlog));
-#ifdef HAVE_ANONYMOUS
-	if(currbrdattr & BRD_ANONYMOUS) {
-	    int defanony = (currbrdattr & BRD_DEFAULTANONYMOUS);
-	    
-	    fprintf(fp, "%s %s (%s) %s %s\n", str_author1, postlog.author ,
-		    (((!strcmp(real_name,"r") && defanony) ||
-		      (!real_name[0] && (!defanony))) ? cuser.username :
-		     "猜猜我是誰 ? ^o^"), 
-		    local_article ? str_post2 : str_post1, currboard);
-	} else {
-	    fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
-#if defined(REALINFO) && defined(POSTS_REALNAMES)
-		    cuser.realname,
-#else
-		    cuser.username,
-#endif
-		    local_article ? str_post2 : str_post1, currboard);
-	}
-#else   /* HAVE_ANONYMOUS */
 	fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
 #if defined(REALINFO) && defined(POSTS_REALNAMES)
 		cuser.realname,
@@ -815,8 +773,6 @@ void write_header(FILE *fp) {
 		cuser.username,
 #endif
 		local_article ? str_post2 : str_post1, currboard);
-#endif  /* HAVE_ANONYMOUS */
-
     }
     save_title[72] = '\0';
     fprintf(fp, "標題: %s\n時間: %s\n", save_title, ctime(&now));
@@ -858,23 +814,14 @@ void addsignature(FILE *fp, int ifuseanony) {
 	}
     }
 #ifdef HAVE_ORIGIN
-#ifdef HAVE_ANONYMOUS
-    if(ifuseanony)
-	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
-		") \n◆ From: %s\n", "暱名天使的家");
-    else {
+    {
 	char temp[32];
 	
-	strncpy(temp, fromhost, 31);
-	temp[32] = '\0';
+	strncpy (temp,fromhost,15);
+	temp[15] = '\0';
 	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
 		") \n◆ From: %s\n", temp);
     }
-#else
-    strncpy (temp,fromhost,15);
-    fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
-	    ") \n◆ From: %s\n", temp);
-#endif
 #endif
 }
 

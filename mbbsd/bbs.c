@@ -292,7 +292,7 @@ char real_name[20];
 static int do_general() {
     fileheader_t postfile;
     char fpath[80], buf[80];
-    int aborted, defanony, ifuseanony;
+    int aborted, ifuseanony;
     char genbuf[200],*owner;
     boardheader_t *bp;
     int islocal;
@@ -365,21 +365,7 @@ static int do_general() {
 
     /* set owner to Anonymous , for Anonymous board */
 
-#ifdef HAVE_ANONYMOUS
-    /* Ptt and Jaky */
-    defanony=currbrdattr & BRD_DEFAULTANONYMOUS;
-    if((currbrdattr & BRD_ANONYMOUS) && 
-       ((strcmp(real_name,"r") && defanony) || (real_name[0] && !defanony)) 
-	) {
-	strcat(real_name,".");
-	owner = real_name;
-	ifuseanony=1;
-    } else
-	owner = cuser.userid;
-#else
     owner = cuser.userid;
-#endif
-    /* ¿ú */
     strcpy(postfile.owner, owner);
     strcpy(postfile.title, save_title);
     if(islocal) {            /* local save */

@@ -1441,27 +1441,6 @@ int a_menu(char *maintitle, char *path, int lastlevel) {
 		    int more_result;
 
 		    while((more_result = more(fname, YEA))) {
-			/* Ptt 範本精靈 plugin */
-			if(currstat == EDITEXP || currstat == OSONG) {
-			    char ans[4];
-
-			    move(22, 0);
-			    clrtoeol();
-			    getdata(22, 1, 
-				    currstat == EDITEXP ? 
-				    "要把範例 Plugin 到文章嗎?[y/N]":
-				    "確定要點這首歌嗎?[y/N]",
-				    ans, 3, LCECHO);
-			    if(ans[0]=='y') {
-				strcpy(trans_buffer,fname);
-				Fexit = 1;
-				free(me.header);
-				if(currstat == OSONG){				
-				    log_file(FN_USSONG,fhdr->title);
-				}
-				return FULLUPDATE;
-			    }
-			}
 			if(more_result == 1) {
 			    if(--me.now < 0) {
 				me.now = 0;

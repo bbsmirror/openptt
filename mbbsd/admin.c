@@ -632,7 +632,6 @@ int m_newbrd() {
     setup_man(&newboard);
     touch_boards();
     outs("\n·sªO¦¨¥ß");
-    post_newboard(newboard.title, newboard.brdname, newboard.BM);
     log_usies("NewBoard", newboard.title);
     pressanykey();
     return 0;

@@ -22,20 +22,15 @@ LDFLAGS=$(LDFLAGS_$(OSTYPE))
 LIBMAIL=$(LIBMAIL_$(OSTYPE))
 LIBCHAT=$(LIBCHAT_$(OSTYPE))
 
-CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
-	horoscope parse_news topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam countalldice webgrep bbsrf\
-	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep
-PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh\
-	stock.sh topsong.sh weather.sh stock.perl weather.perl\
-	cvslog.sh
+CPROGS=	bbsmail post account birth deluserfile expire mandex\
+	parse_news topusr yearsold uhash_loader\
+	poststat showboard inndBM antispam webgrep bbsrf\
+	initbbs outmail userlist tunepasswd buildir reaper shmsweep
+PROGS=	$(CPROGS) backpasswd.sh mailog.sh cvslog.sh
 
 all: $(PROGS)
 
 bbsmail: bbsmail.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
-
-BM_money: BM_money.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 post: post.c util_cache.c util_record.c util_passwd.c
@@ -56,9 +51,6 @@ expire: expire.c util_cache.c util_record.c util_passwd.c
 mandex: mandex.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
-horoscope: horoscope.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
-
 parse_news: parse_news.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
@@ -67,9 +59,6 @@ topusr: topusr.c util_cache.c util_record.c util_passwd.c
 
 yearsold: yearsold.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
-
-xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c $(LIBCHAT)
 
 reaper: reaper.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_passwd.c util_cache.c
@@ -84,9 +73,6 @@ inndBM: inndBM.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 antispam: antispam.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-countalldice: countalldice.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 webgrep: webgrep.c

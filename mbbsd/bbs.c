@@ -221,6 +221,12 @@ static int do_select(int ent, fileheader_t *fhdr, char *direct) {
     make_blist();
     namecomplete(MSG_SELECT_BOARD, bname);
 
+    currbid = getbnum(bname);
+    if(currbid)
+	strcpy(bname, getbcache(currbid)->brdname);
+    else
+	return FULLUPDATE;
+    
     setbpath(bpath, bname);
     if((*bname == '\0') || (stat(bpath, &st) == -1)) {
 	move(2, 0);
@@ -229,8 +235,6 @@ static int do_select(int ent, fileheader_t *fhdr, char *direct) {
 	return FULLUPDATE;
     }
     
-    /* MH */
-    currbid = getbnum(bname);
     currutmp->brc_id = currbid;
     /*    */
 

@@ -1032,18 +1032,26 @@ static void my_talk(userinfo_t * uin) {
 	{
 	case 'y':
 	case 't':
+	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_TALK;
+	    MPROTECT_UTMP_R;
 	    break;
 	case 'f':
 	    lockreturn(M_FIVE, LOCK_THIS);
+	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_GOMO;
+	    MPROTECT_UTMP_R;
 	    break;
 	case 'c':
 	    lockreturn(CHC, LOCK_THIS);
+	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_CHC;
+	    MPROTECT_UTMP_R;
 	    break;
 	case 'd':
+	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_DARK;
+	    MPROTECT_UTMP_R;
 	    break;
 	case 'p':
 	    reload_chicken();

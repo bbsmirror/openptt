@@ -691,6 +691,30 @@ int u_editplan() {
     return 0;
 }
 
+int u_editcalendar() {
+    char genbuf[200];
+    
+    getdata(b_lines - 1, 0, "行事曆 (D)刪除 (E)編輯 [Q]取消？[Q] ",
+	    genbuf, 3, LCECHO);
+    
+    if(genbuf[0] == 'e') {
+	int aborted;
+	
+	setutmpmode(EDITPLAN);
+	setcalfile(genbuf, fn_plans);
+	aborted = vedit(genbuf, NA);
+	if(aborted != -1)
+	    outs("行事曆更新完畢");
+	pressanykey();
+	return 0;
+    } else if(genbuf[0] == 'd') {
+	setcalfile(genbuf, fn_plans);
+	unlink(genbuf);
+	outmsg("行事曆刪除完畢");
+    }
+    return 0;
+}
+
 /* 使用者填寫註冊表格 */
 static void getfield(int line, char *info, char *desc, char *buf, int len) {
     char prompt[STRLEN];

@@ -8,34 +8,82 @@ LIBS=
 #CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
 #LIBS=	-lresolv
 
-DEPPROGS=	bbsmail BM_money post account birth deluserfile expire\
-		mandex horoscope openvice parse_news openticket topusr\
-		yearsold
-NORPROGS=	uhash_loader poststat showboard inndBM\
-		antispam countalldice webgrep bbsrf
-STDPROGS=	bmda
-SHLPROGS=	BM_money.sh backpasswd.sh mailog.sh opendice.sh openticket.sh\
-		stock.sh topsong.sh weather.sh
-PERLPROGS=	stock.perl weather.perl
-PROGS=	$(DEPPROGS) $(NORPROGS) $(STDPROGS) $(SHLPROGS) $(PERLPROGS)
+CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
+	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
+	poststat showboard inndBM antispam countalldice webgrep bbsrf bmda
+PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
+	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl
 
 all: $(PROGS)
 
 bmda: bmda.c util_cache.c util_record.c util_passwd.c
-	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -I../include -o $* $*.c util_cache.c util_record.c util_passwd.c $(LIBS)
+	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -I../include -o $@ $@.c util_cache.c util_record.c util_passwd.c $(LIBS)
 
-$(DEPPROGS): $*.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $* $*.c util_cache.c util_record.c util_passwd.c
+bbsmail: bbsmail.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
-$(NORPROGS): $*.c
-	$(CC) $(CFLAGS) -o $* $*.c
+BM_money: BM_money.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
-$(SHLPROGS):
+post: post.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
-$(PERLPROGS):
+account: account.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+birth: birth.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+deluserfile: deluserfile.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+expire: expire.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+mandex: mandex.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+horoscope: horoscope.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+openvice: openvice.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+parse_news: parse_news.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+openticket: openticket.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+topusr: topusr.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+yearsold: yearsold.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+uhash_loader: uhash_loader.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+showboard: showboard.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+inndBM: inndBM.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+antispam: antispam.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+countalldice: countalldice.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+webgrep: webgrep.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+bbsrf: bbsrf.c
+	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)
 	install -c -o bbs -g bbs -m 755 $(PROGS) $(HOME)/bin
 
 clean:
-	rm -f $(DEPPROGS) $(NORPROGS) $(STDPROGS)
+	rm -f $(CPROGS)

@@ -49,10 +49,6 @@
 #define HAVE_SEARCH_ALL    0
 #endif
 
-#ifndef HAVE_JCEE                           /* 大學聯考查榜系統 */
-#define HAVE_JCEE          0
-#endif
-
 #ifndef HAVE_FREECLOAK
 #define HAVE_FREECLOAK    0
 #endif
@@ -116,9 +112,6 @@
 #undef  HAVE_REPORT             /* 系統追蹤報告 */
 #undef  HAVE_INFO               /* 顯示程式版本說明 */
 #undef  HAVE_LICENSE            /* 顯示 GNU 版權畫面 */
-#undef  HAVE_TIN                /* 提供 news reader */
-#undef  HAVE_GOPHER             /* 提供 gopher */
-#undef  HAVE_WWW                /* 提供 www browser */
 #define HAVE_CAL                /* 提功計算機 */
 #undef  HAVE_ARCHIE             /* have arche */
 #undef  POSTBUG                 /* board/mail post 沒有 bug 了 */

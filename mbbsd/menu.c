@@ -342,9 +342,6 @@ static commands_t talklist[] = {
     {t_qchicken, 0,         "WWatch Pet     查詢寵物"},
     {t_talk, PERM_PAGE,     "TTalk          找人聊聊"},
     {t_chat, PERM_CHAT,     "CChat          找家茶坊喫茶去"},
-#ifdef HAVE_MUD
-    {x_mud, 0,              "VVrChat        \033[1;32m虛擬實業聊天廣場\033[m"},
-#endif
     {t_display, 0,          "DDisplay       顯示上幾次熱訊"},
     {NULL, 0, NULL}
 };
@@ -435,52 +432,14 @@ static int p_money() {
     return 0;
 }
 
-static commands_t jceelist[] = {
-    {x_88,PERM_LOGINOK,      "0088 JCEE     【88學年度大學聯招查榜系統】"},
-    {x_87,PERM_LOGINOK,      "1187 JCEE     【87學年度大學聯招查榜系統】"},
-    {x_86,PERM_LOGINOK,      "2286 JCEE     【86學年度大學聯招查榜系統】"},
-    {NULL, 0, NULL}
-};
-
-static int m_jcee() {
-    domenu(JCEE, "Ｐtt查榜系統", '0', jceelist);
-    return 0;
-}
-
-static int forsearch();
 static int playground();
 
 /* Ptt Play menu */
 static commands_t playlist[] = {
-#if HAVE_JCEE
-    {m_jcee, PERM_LOGINOK,   "JJCEE        【 大學聯考查榜系統 】"},
-#endif
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
     {x_history, 0,           "HHistory     【 我們的成長 】"},
     {x_weather,0 ,           "WWeather     【 氣象預報 】"},
     {x_stock,0 ,             "SStock       【 股市行情 】"},
-#ifdef HAVE_BIG2
-    {x_big2, 0,              "BBig2        【 網路大老二 】"},
-#endif
-#ifdef HAVE_MJ
-    {x_mj, PERM_LOGINOK,     "QQkmj        【 網路打麻將 】"},
-#endif
-#ifdef  HAVE_BRIDGE
-    {x_bridge, PERM_LOGINOK, "OOkBridge    【 橋牌競技 】"},
-#endif
-#ifdef HAVE_GOPHER
-    {x_gopher, PERM_LOGINOK, "GGopher      【 地鼠資料庫 】"},
-#endif
-#ifdef HAVE_TIN
-    {x_tin, PERM_LOGINOK,    "NNEWS        【 網際新聞 】"},
-#endif
-#ifdef BBSDOORS
-    {x_bbsnet, PERM_LOGINOK, "BBBSNet      【 其他 BBS站 】"},
-#endif
-#ifdef HAVE_WWW
-    {x_www, PERM_LOGINOK,    "WWWW Browser 【 汪汪汪 】"},
-#endif
-    {forsearch,PERM_LOGINOK, "SSearchEngine【\033[1;35m Ｐtt搜尋器 \033[m】"},
     {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
     {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
     {chicken_main,PERM_LOGINOK, "CChicken     "
@@ -490,36 +449,14 @@ static commands_t playlist[] = {
 };
 
 static commands_t plist[] = {
-
-/*    {p_ticket_main, PERM_LOGINOK,"00Pre         【 總統機 】"},
-      {alive, PERM_LOGINOK,        "00Alive       【  訂票雞  】"},
-*/
     {ticket_main, PERM_LOGINOK,  "11Gamble      【 Ｐtt賭場 】"},
     {guess_main, PERM_LOGINOK,   "22Guess number【 猜數字   】"},
     {othello_main, PERM_LOGINOK, "33Othello     【 黑白棋   】"},
-//    {dice_main, PERM_LOGINOK,    "44Dice        【 玩骰子   】"},
-    {g_card_jack, PERM_LOGINOK,  "55Jack        【 黑傑克 】"},
-    {g_ten_helf, PERM_LOGINOK,   "66Tenhalf     【 十點半 】"},
-    {card_99, PERM_LOGINOK,      "77Nine        【 九十九 】"},
-    {reg_barbq, PERM_SYSOP,      "88BarBQ       【 烤肉報名 】"},
     {NULL, 0, NULL}
 };
 
 static int playground() {
     domenu(AMUSE, "Ｐtt遊樂場",'1',plist);
-    return 0;
-}
-
-static commands_t slist[] = {
-    {x_dict,0,                   "11Dictionary  "
-     "【\033[1;33m 趣味大字典 \033[m】"},
-    {main_railway, PERM_LOGINOK,  "33Railway     "
-     "【\033[1;32m 火車表查詢 \033[m】"},
-    {NULL, 0, NULL}
-};
-
-static int forsearch() {
-    domenu(SREG, "Ｐtt搜尋器", '1', slist);
     return 0;
 }
 
@@ -569,7 +506,7 @@ commands_t cmdlist[] = {
     {Talk, 0,                         "TTalk         【 休閒聊天區 】"},
     {User, 0,                         "UUser         【 個人設定區 】"},
     {Xyz, 0,                          "XXyz          【 系統工具區 】"},
-    {Play_Play,0,                     "PPlay         【 遊樂場/大學查榜】"},
+    {Play_Play,0,                     "PPlay         【 網路遊樂場 】"},
     {Name_Menu,PERM_LOGINOK,          "NNamelist     【 編特別名單 】"},
     {Goodbye, 0,                      "GGoodbye       離開，再見……"},
     {NULL, 0, NULL}

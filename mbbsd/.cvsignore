@@ -7,7 +7,6 @@ board.o
 cache.o
 cal.o
 calendar.o
-card.o
 chat.o
 chc_draw.o
 chc_net.o
@@ -16,14 +15,12 @@ chc_rule.o
 chicken.o
 dark.o
 descrypt.o
-dice.o
 edit.o
 friend.o
 gamble.o
 gomo.o
 gomo1.o
 guess.o
-indict.o
 io.o
 kaede.o
 lovepaper.o
@@ -34,7 +31,6 @@ more.o
 name.o
 osdep.o
 othello.o
-page.o
 passwd.o
 read.o
 record.o

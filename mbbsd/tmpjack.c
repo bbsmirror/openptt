@@ -140,31 +140,6 @@ void j_show_ticket_data() {
            "\033[m:", cuser.money);
 }
 
-static void p_append_ticket_record(int ch, int n) {
-    FILE *fp;
-    int ticket[p_MAX] = {0,0,0,0,0};
-
-    if((fp = fopen(PD_USER,"a"))) {
-        fprintf(fp, "%s %d %d\n", cuser.userid, ch, n);
-        fclose(fp);
-    }
-
-    if((fp = fopen(PD_RECORD,"r+"))) {
-        fscanf(fp,"%9d %9d %9d %9d %9d\n",
-	       &ticket[0], &ticket[1], &ticket[2], &ticket[3], &ticket[4]);
-        ticket[ch] += n;
-        rewind(fp);
-        fprintf(fp, "%9d %9d %9d %9d %9d\n",
-		ticket[0], ticket[1], ticket[2], ticket[3], ticket[4]);
-        fclose(fp);
-    } else if((fp = fopen(PD_RECORD,"w"))) {
-        ticket[ch] += n;
-        fprintf(fp,"%9d %9d %9d %9d %9d\n",
-		ticket[0], ticket[1], ticket[2], ticket[3], ticket[4]);
-        fclose(fp);
-    }
-}
-
 static void j_append_ticket_record(int ch, int n) {
     FILE *fp;
     int ticket[j_MAX] = {0,0,0,0};
@@ -191,50 +166,6 @@ static void j_append_ticket_record(int ch, int n) {
 }
 
 #define lockreturn0(unmode, state) if(lockutmpmode(unmode, state)) return 0
-
-int p_ticket_main() {
-    int ch, n;
-    char buf[16];
-
-    lockreturn0(TMPJACK, LOCK_MULTI);
-
-    //more("etc/nba.doc",YEA);
-    while(1) {
-	p_show_ticket_data();
-	ch = igetch();
-	if(ch =='q' || ch == 'Q')
-	    break;
-	reload_money();
-	if(cuser.money < 100)
-	{
-	    move(22,0);
-	    prints("錢不夠唷 至少要100歐");
-	    unlockutmpmode();
-	    pressanykey();
-	    return 0;
-	}
-	ch -= '1';
-
-	if(ch > p_MAX-1 || ch < 0)
-	    continue;
-	n = 0;
-	bzero(buf,sizeof(buf));
-	do{
-	    getdata(19, 0, "多少錢咧?(100以上 q:落跑)?",
-		    buf, 8, LCECHO);
-	    if(buf[0] == 'q')
-	    {
-		unlockutmpmode();
-		return 0;
-	    }
-	}while(!j_Is_Num(buf,strlen(buf)) || (n=atoi(buf)) < 100 ||
-	       n > cuser.money);
-	demoney(n);
-	p_append_ticket_record(ch,n);
-    }
-    unlockutmpmode();
-    return 0;
-}
 
 int j_ticket_main() {
     int ch, n;
@@ -307,74 +238,4 @@ static void b_showfile(FILE *fd) {
 	prints("%s",buf);
 }
 
-int reg_barbq() {
-    char ch[2],sex[2],trf[2],nick[16];
-    FILE *fp,*fd;
-
-    if( !(fp = fopen(BARBQ,"r+")) || !(fd = fopen(BARBQ_PICTURE,"r")) )
-    {
-	move(22,0);prints("硬碟太燙了 發生錯誤!!");
-	pressanykey();
-	return 0;
-    }
-
-
-    while(1)
-    {
-	clear();
-	b_showfile(fd);
-	getdata(13, 0, "要參加烤肉嗎(y:加入 n:誰鳥你 s:列出目前去的人)?",
-		ch, 2, LCECHO);
-	if( ch[0] != 'y' && ch[0]!='s' )
-	{
-	    fclose(fp);
-	    fclose(fd);
-	    return 0;
-	}
-
-	if( ch[0] == 's' )
-	{
-	    b_list_file();
-	    continue;
-	}
-
-	if( b_is_in(fp) )
-	{
-	    move(22,0);prints("你之前就加入了 再次提醒 不來扣錢唷 :)");
-	    fclose(fp);
-	    fclose(fd);
-	    pressanykey();
-	    return 0;
-	}
-
-	move(13,0);clrtoeol();prints("開始填寫資料.........");
-	getdata(14, 0, "性別:[1:男 2:女]",
-		sex, 2, LCECHO);
-	getdata(14, 0, "前往方式:[1:自行  2:先集合給工作人員帶]",
-		trf, 2, LCECHO);
-	getdata(14, 0, "為自己取各暱稱吧:",
-		nick, 9, LCECHO);
-
-	if(
-	    sex[0]<'1'||sex[0]>'2'||trf[0]<'1'||trf[0]>'2'||
-	    strlen(nick)<=0
-	    )
-	{
-	    move(15,0);prints("輸入格式不對 重來一次吧!!");
-	    pressanykey();
-	    continue;
-	}
-
-	fseek(fp,0,SEEK_END);
-
-	fprintf(fp, "帳號:%-16s暱稱:%-12s性別:%-6s交通:%-6s\n",
-		cuser.userid, nick, (sex[0]=='1')?"男":"女", (trf[0]=='1')?"自行":"集合");
-
-	move(22,0);prints("完成加入手續 記得來歐 不然扣錢唷 ^_^ ");
-	pressanykey();
-	fclose(fp);
-	fclose(fd);
-	return 0;
-    }
-}
 #endif

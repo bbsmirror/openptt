@@ -23,36 +23,6 @@ extern userinfo_t *currutmp;
 extern int curr_idle_timeout;
 extern userec_t cuser;
 
-/* 各種統計及相關資訊列表 */
-/* Ptt88年度大學聯招查榜系統  */
-int x_88() {
-    extern char dict[21], database[41];
-
-    strcpy(dict, "(88)准考證號/姓名/學校/科系/類組");
-    strcpy(database, "etc/88");
-    use_dict();
-    return 0;
-}    
-/* Ptt87年度大學聯招查榜系統  */
-int x_87() {
-    extern char dict[21], database[41];
-
-    strcpy(dict, "(87)准考證號/姓名/學校/科系");
-    strcpy(database, "etc/87");
-    use_dict();
-    return 0;
-}    
-
-/* Ptt86年度大學聯招查榜系統  */
-int x_86() {
-    extern char dict[21], database[41];
-
-    strcpy(dict, "(86)准考證號/姓名/學校/科系");
-    strcpy(database, "etc/86");
-    use_dict();
-    return 0;
-}
-
 int x_boardman() {
     more("etc/topboardman", YEA);
     return 0;

@@ -4,6 +4,7 @@
 * 調整 Makefile 架構, 改用 Makefile.inc 取代 pttbbs.conf
 * 修正 util/post 漏掉 header 的問題
 * 修正 util/buildir 空標題會變成 \n 的 bug
+* 修正 util/buildir 的 s1g 時間排序 bug
 --------------------------------------------------
 Version 1.0.0	2000/09/16
 

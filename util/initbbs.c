@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "config.h"
 #include "struct.h"
+#include "perm.h"
 
 static void initHome() {
     int i;
@@ -34,11 +35,105 @@ static void initPasswds() {
     }
 }
 
+static void newboard(FILE *fp, boardheader_t *b) {
+    char buf[256];
+    
+    fwrite(b, sizeof(boardheader_t), 1, fp);
+    sprintf(buf, "boards/%s", b->brdname);
+    mkdir(buf, 0755);
+    sprintf(buf, "man/boards/%s", b->brdname);
+    mkdir(buf, 0755);
+}
+
 static void initBoards() {
     FILE *fp = fopen(".BOARDS", "w");
+    boardheader_t b;
     
-    if(fp)
+    if(fp) {
+	memset(&b, 0, sizeof(b));
+	
+	strcpy(b.brdname, "1...........");
+	strcpy(b.title, ".... Σ中央政府  《高壓危險,非人可敵》");
+	b.brdattr = BRD_GROUPBOARD;
+	b.level = PERM_SYSOP;
+	b.uid = 1;
+	b.gid = 0;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "junk");
+	strcpy(b.title, "發電 ◎雜七雜八的垃圾");
+	b.brdattr = BRD_NOTRAN;
+	b.level = PERM_SYSOP;
+	b.uid = 2;
+	b.gid = 1;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "Security");
+	strcpy(b.title, "發電 ◎站內系統安全");
+	b.brdattr = BRD_NOTRAN;
+	b.level = PERM_SYSOP;
+	b.uid = 3;
+	b.gid = 1;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "2...........");
+	strcpy(b.title, ".... Σ市民廣場     報告  站長  ㄜ！");
+	b.brdattr = BRD_GROUPBOARD;
+	b.level = 0;
+	b.uid = 4;
+	b.gid = 0;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "ALLPOST");
+	strcpy(b.title, "嘰哩 ◎跨板式LOCAL新文章");
+	b.brdattr = BRD_POSTMASK | BRD_NOTRAN;
+	b.level = PERM_SYSOP;
+	b.uid = 5;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "deleted");
+	strcpy(b.title, "嘰哩 ◎資源回收筒");
+	b.brdattr = BRD_NOTRAN;
+	b.level = PERM_BM;
+	b.uid = 6;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "Note");
+	strcpy(b.title, "嘰哩 ◎動態看板及歌曲投稿");
+	b.brdattr = BRD_NOTRAN;
+	b.level = 0;
+	b.uid = 7;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "Record");
+	strcpy(b.title, "嘰哩 ◎我們的成果");
+	b.brdattr = BRD_NOTRAN | BRD_POSTMASK;
+	b.level = PERM_SYSOP;
+	b.uid = 8;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "SYSOP");
+	strcpy(b.title, "嘰哩 ◎站長好!");
+	b.brdattr = BRD_POSTMASK | BRD_NOTRAN | BRD_NOZAP;
+	b.level = 0;
+	b.uid = 9;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	strcpy(b.brdname, "WhoAmI");
+	strcpy(b.title, "嘰哩 ◎呵呵，猜猜我是誰！");
+	b.brdattr = BRD_NOTRAN;
+	b.level = 0;
+	b.uid = 10;
+	b.gid = 4;
+	newboard(fp, &b);
+	
 	fclose(fp);
+    }
 }
 
 int main() {

@@ -486,7 +486,12 @@ static void login_query() {
 	    } else {
 		logattempt(cuser.userid, ' ');
 		if(strcasecmp("SYSOP", cuser.userid) == 0)
-		    cuser.userlevel |= PERM_ACCOUNTS | PERM_SYSOP;
+		    cuser.userlevel = PERM_BASIC | PERM_CHAT | PERM_PAGE |
+			PERM_POST | PERM_LOGINOK | PERM_MAILLIMIT |
+			PERM_CLOAK | PERM_SEECLOAK | PERM_XEMPT |
+			PERM_DENYPOST | PERM_BM | PERM_ACCOUNTS |
+			PERM_CHATROOM | PERM_BOARD | PERM_SYSOP |
+			PERM_BBSADM;
 		break;
 	    }
 	} else {	/* guest */

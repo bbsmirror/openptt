@@ -62,7 +62,6 @@ int u_loginview() {
     }
     
     if(pbits != cuser.loginview) {
-	reload_money();
 	cuser.loginview = pbits ;
 	passwd_update(usernum, &cuser);
     }
@@ -86,20 +85,17 @@ void user_display(userec_t *u, int real) {
 	   "                真實姓名: %s\n"
 	   "                居住住址: %s\n"
 	   "                電子信箱: %s\n"
-	   "                性    別: %s\n"
-	   "                銀行帳戶: %ld 銀兩\n",
+	   "                性    別: %s\n",
 	   u->userid, u->username, u->realname, u->address, u->email,
-	   sex[u->sex % 8], u->money);
+	   sex[u->sex % 8]);
     
     sethomedir(genbuf, u->userid);
-    prints("                私人信箱: %d 封  (購買信箱: %d 封)\n"
-	   "                生    日: %02i/%02i/%02i\n"
-	   "                小雞名字: %s\n",
+    prints("                私人信箱: %d 封\n"
+	   "                生    日: %02i/%02i/%02i\n",
 	   get_num_records(genbuf, sizeof(fileheader_t)),
-	   u->exmailbox, u->month, u->day, u->year % 100, u->mychicken.name);
+	   u->month, u->day, u->year % 100);
     prints("                註冊日期: %s", ctime(&u->firstlogin));
     prints("                前次光臨: %s", ctime(&u->lastlogin));
-    prints("                前次點歌: %s", ctime(&u->lastsong));
     prints("                上站文章: %d 次 / %d 篇\n",
 	   u->numlogins, u->numposts);
 
@@ -209,19 +205,10 @@ static void violate_law(userec_t *u, int unum){
 	sprintf(dst, "tmp/%s", u->userid);
 	Rename(src, dst);
 	log_usies("KILL", u->userid);
-	post_violatelaw(u->userid, cuser.userid, reason, "砍除 ID");       
 	u->userid[0] = '\0';
 	setuserid(unum, u->userid);
 	passwd_update(unum, u);
     }
-    else{
-        u->userlevel |= PERM_VIOLATELAW;
-        u->vl_count ++;
-        reload_money();
-	passwd_update(unum, u);
-        post_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
-        mail_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
-    }                 
     pressanykey();
 }
 
@@ -231,13 +218,9 @@ void uinfo_query(userec_t *u, int real, int unum) {
     userec_t x;
     register int i = 0, fail, mail_changed;
     char ans[4], buf[STRLEN];
-    char genbuf[200], reason[50];
-    unsigned long int money = 0;
-    fileheader_t fhdr;
-    int flag = 0, temp = 0, money_change = 0;
+    char genbuf[200];
+    int flag = 0, temp = 0;
     time_t now;
-    
-    FILE *fp;
     
     fail = mail_changed = 0;
     
@@ -314,23 +297,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    break;
 	}
 	if(real) {
-	    unsigned long int l;
-	    if(HAS_PERM(PERM_BBSADM)) {
-		sprintf(genbuf, "%ld", x.money);
-		if(getdata_str(i++, 0,"銀行帳戶：", buf, 10, DOECHO,genbuf))
-		    if((l = atol(buf)) >= 0) {
-			if(l != x.money) {
-			    money_change = 1;
-			    money = x.money;
-			    x.money = l;
-			}
-		    }
-	    }
-	    sprintf(genbuf, "%d", x.exmailbox);
-	    if(getdata_str(i++, 0,"購買信箱數：", buf, 4, DOECHO,genbuf))
-		if((l = atol(buf)) >= 0)
-		    x.exmailbox = (int)l;
-	    
 	    getdata_buf(i++, 0, "認證資料：", x.justify, 44, DOECHO);
 	    getdata_buf(i++, 0, "最近光臨機器：", x.lasthost, 16, DOECHO);
 	    
@@ -343,11 +309,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    if(getdata_str(i++, 0, "文章數目：", buf, 10, DOECHO,genbuf))
 		if((fail = atoi(buf)) >= 0)
 		    x.numposts = fail;
-	    sprintf(genbuf, "%d", u->vl_count);
-	    if (getdata_str(i++, 0, "違法記錄：", buf, 10, DOECHO, genbuf))
-		if ((fail = atoi(buf)) >= 0)
-		    x.vl_count = fail;
-	    
 	    fail = 0;
 	}
 	break;
@@ -431,12 +392,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 		strcpy(x.userid, genbuf);
 	}
 	break;
-    case '6':
-	if(x.mychicken.name[0])
-	    x.mychicken.name[0] = 0;
-	else
-	    strcpy(x.mychicken.name,"[死]");
-	break;
     default:
 	return;
     }
@@ -448,8 +403,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
     
     getdata(b_lines - 1, 0, msg_sure_ny, ans, 3, LCECHO);
     if(*ans == 'y') {
-	if(flag)
-	    post_change_perm(temp,i,cuser.userid,x.userid);
 	if(strcmp(u->userid, x.userid)) {
 	    char src[STRLEN], dst[STRLEN];
 	    
@@ -482,38 +435,8 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    setuserid(unum, x.userid);
 	} else
 	    log_usies("SetUser", x.userid);
-	if(!HAS_PERM(PERM_SYSOP)) {
-	    reload_money(); /* Ptt:防洗錢 */
-	    x.money = cuser.money;
-	}
 	passwd_update(unum, &x);
 	now = time(0);
-	if(money_change) {
-	    strcpy(genbuf, "boards/S/Security");
-	    stampfile(genbuf, &fhdr);	
-	    if(!(fp = fopen(genbuf,"w")))
-		return;
-	    
-	    now = time(NULL);
-	    fprintf(fp, "作者: [系統安全局] 看板: Security\n"
-		    "標題: [公安報告] 站長修改金錢報告\n"
-		    "時間: %s\n"
-		    "   站長\033[1;32m%s\033[m把\033[1;32m%s\033[m"
-		    "的錢從\033[1;35m%ld\033[m改成\033[1;35m%ld\033[m",
-		    ctime(&now), cuser.userid, x.userid, money, x.money);
-	    
-	    clrtobot ();
-	    clear();
-	    while(!getdata(5, 0, "請輸入理由以示負責：", reason, 60, DOECHO));
-	    
-	    fprintf(fp, "\n   \033[1;37m站長%s修改錢理由是：%s\033[m",
-		    cuser.userid, reason);
-	    fclose(fp);
-	    sprintf(fhdr.title, "[公安報告] 站長%s修改%s錢報告", cuser.userid,
-		    x.userid);
-	    strcpy(fhdr.owner, "[系統安全局]");
-	    append_record("boards/S/Security/.DIR", &fhdr, sizeof(fhdr));
-	}
     }
 }
 
@@ -550,7 +473,6 @@ int u_switchproverb() {
 	fprintf(fp,"座右銘狀態為[自定型]要記得設座右銘的內容唷!!");
 	fclose(fp);
     }
-    reload_money();
     passwd_update(usernum, &cuser);
     return 0;
 }

@@ -15,10 +15,13 @@
 
 然後切換成 bbsadm
 
-7. 修改 pttsrc/include/config.h
-8. 修改 pttsrc/mbbsd/Makefile
-9. 修改 pttsrc/util/Makefile
-10. cd pttsrc; make install
+7. 取得解開 pttbbs-VERSION.tar.gz (任何目錄下皆可), 並進到 pttsrc 的目錄下
+8. 如果之前沒有設定過 pttbbs.conf 的話,
+   請 cp pttbbs.conf.sample include/pttbbs.conf
+9. 修改 include/pttbbs.conf
+10. 如果使用 Linux 的話, 請修改 mbbsd/Makefile, util/Makefile
+11. make BBSHOME=/home/bbs install
+12. cd /home/bbs; bin/initbbs
 
 假如一切都很順利的話,這樣子大概就安裝完了
 接下來是啟動 bbs 的部份
@@ -29,7 +32,7 @@
 然後 telnet localhost 23 看看
 new一個帳號叫SYSOP,然後logout再login, 這樣子就會擁有站長權限囉~
 再new一個帳號叫 guest, 這樣子別人就可以用 guest 參觀你的站了
-開板,開群組,以及搬動群組的方法會再另外介紹 :)
+開板,開群組,以及搬動群組的方法請看 PttSrc 板的文摘
 
 註:
 1. 這個程式是在 initial shared memory 用的, 只有開機後第一次執行, 或是

@@ -163,8 +163,7 @@ int chkmailbox() {
 	    mailsumlimit = 150;
 	else
 	    mailsumlimit = 100;
-	mailsumlimit += cuser.exmailbox * 10;
-	mailmaxkeep = MAX_KEEPMAIL + cuser.exmailbox;
+	mailmaxkeep = MAX_KEEPMAIL;
 	m_init();
 	if((mailkeep = get_num_records(currmaildir, sizeof(fileheader_t))) >
 	   mailmaxkeep) {
@@ -1174,7 +1173,6 @@ static int mail_cross_post(int ent, fileheader_t *fhdr, char *direct) {
 	if(!xfile.filemode)
 	    outgo_post(&xfile, xboard);
 	cuser.numposts++;
-	reload_money();
 	passwd_update(usernum, &cuser);
 	outs("文章轉錄完成");
 	pressanykey();

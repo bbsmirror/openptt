@@ -1,21 +1,12 @@
 # $Id$
-@SET_MAKE@
 BBSHOME=@prefix@
 
-SUBDIR=	chickens
 TARGET=	$(BBSHOME)/etc/
 FILES=	Welcome Welcome_login goodbye register registered ve.hlp Logout\
-	Welcome_birth domain_name_query feast today_boring
+	Welcome_birth domain_name_query
 
 all:
 
-install_sub:
-	@for i in $(SUBDIR); do\
-		cd $$i;\
-		$(MAKE) install;\
-		cd ..;\
-	done
-
-install: install_sub
+install:
 	install -d $(TARGET)
 	install -c -m 644 $(FILES) $(TARGET)

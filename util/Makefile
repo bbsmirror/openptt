@@ -39,8 +39,10 @@ PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\
 	cvslog.sh
 
+.SUFFIXES: .c
+
 .c:
-	$(CC) $(CFLAGS) -o $@ $@.c
+	$(CC) $(CFLAGS) -o $@ $?
 
 all: $(PROGS)
 
@@ -48,55 +50,40 @@ depend:
 	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 bbsmail: bbsmail.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 BM_money: BM_money.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 post: post.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 account: account.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 birth: birth.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 deluserfile: deluserfile.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 expire: expire.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 mandex: mandex.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 horoscope: horoscope.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 openvice: openvice.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 parse_news: parse_news.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 openticket: openticket.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 topusr: topusr.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 yearsold: yearsold.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+reaper: reaper.c util_passwd.c util_cache.c
 
 xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c $(LIBCHAT)
-
-reaper: reaper.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_passwd.c util_cache.c
+	$(CC) $(CFLAGS) -o $@ $? $(LIBCHAT)
 
 outmail: outmail.c
-	$(CC) $(CFLAGS) -o $@ $@.c $(LIBMAIL)
+	$(CC) $(CFLAGS) -o $@ $? $(LIBMAIL)
 
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/

@@ -663,7 +663,7 @@ static int vote_maintain(char *bname) {
     prints("按任何鍵開始編輯此次 [投票宗旨]");
     pressanykey();
     setbfile(buf, bname, STR_new_desc);
-    aborted = vedit(buf, NA);
+    aborted = vedit(buf, NA, NULL);
     if(aborted== -1) {
 	clear();
 	outs("取消此次投票");

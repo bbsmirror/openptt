@@ -858,7 +858,7 @@ static void a_newitem(menu_t *pm, int mode) {
 
     switch(mode) {
     case ADDITEM:
-	if(vedit(fpath, 0) == -1) {
+	if(vedit(fpath, 0, NULL) == -1) {
 	    unlink(fpath);
 	    pressanykey();
 	    return;
@@ -1397,7 +1397,7 @@ int a_menu(char *maintitle, char *path, int lastlevel) {
 	    sprintf(fname, "%s/%s", path, me.header[me.now-me.page].filename);
 	    if(dashf(fname) && me.level >= MANAGER) {
 		*quote_file = 0;
-		if(vedit(fname, NA) != -1) {
+		if(vedit(fname, NA, NULL) != -1) {
 		    char fpath[200];
 		    fileheader_t fhdr;
 

@@ -597,7 +597,7 @@ int u_editproverb() {
 	 " 儲存後記得把狀態設為 [自定型] 才有作用\n"
 	 " 座右銘最多100條");
     pressanykey();
-    vedit(buf,NA);
+    vedit(buf,NA, NULL);
     return 0;
 }
 
@@ -657,7 +657,7 @@ int u_editsig() {
 		outs(msg_del_ok);
 	    } else {
 		setutmpmode(EDITSIG);
-		aborted = vedit(genbuf, NA);
+		aborted = vedit(genbuf, NA, NULL);
 		if(aborted != -1)
 		    outs("簽名檔更新完畢");
 	    }
@@ -678,7 +678,7 @@ int u_editplan() {
 	
 	setutmpmode(EDITPLAN);
 	setuserfile(genbuf, fn_plans);
-	aborted = vedit(genbuf, NA);
+	aborted = vedit(genbuf, NA, NULL);
 	if(aborted != -1)
 	    outs("名片更新完畢");
 	pressanykey();
@@ -702,7 +702,7 @@ int u_editcalendar() {
 	
 	setutmpmode(EDITPLAN);
 	setcalfile(genbuf, cuser.userid);
-	aborted = vedit(genbuf, NA);
+	aborted = vedit(genbuf, NA, NULL);
 	if(aborted != -1)
 	    outs("行事曆更新完畢");
 	pressanykey();

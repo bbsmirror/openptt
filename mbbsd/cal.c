@@ -436,7 +436,7 @@ void mail_redenvelop(char* from, char* to, int money, char mode){
     strcpy(fhdr.owner, from);
 
     if (mode == 'y')
-       vedit(genbuf, NA);
+       vedit(genbuf, NA, NULL);
     sprintf(genbuf, "home/%c/%s/.DIR", to[0], to);       
     append_record(genbuf, &fhdr, sizeof(fhdr));
 }

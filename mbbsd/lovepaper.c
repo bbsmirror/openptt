@@ -97,7 +97,7 @@ int x_love() {
 	
 	fclose(fp);
 	fclose(fpo);
-	if(vedit(path, YEA) == -1) {
+	if(vedit(path, YEA, NULL) == -1) {
 	    unlink(path);
 	    clear();
 	    outs("\n\n ©ñ±ó±H±¡®Ñ\n");

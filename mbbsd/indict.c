@@ -125,7 +125,7 @@ int use_dict() {
 		clear();
 		continue;
 	    } else if(word[0]=='e') {
-		vedit(database,NA);
+		vedit(database,NA, NULL);
 		clear();
 		continue;
 	    } else {

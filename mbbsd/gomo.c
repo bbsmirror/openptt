@@ -5,6 +5,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "gomo.h"
@@ -12,6 +13,7 @@
 #include "modes.h"
 #include "proto.h"
 
+extern struct utmpfile_t *utmpshm;
 extern int usernum;
 extern userinfo_t *currutmp;
 
@@ -232,7 +234,9 @@ int gomoku(int fd) {
 	    if(lastcount <= 0 && my->turn) {
 		move(19, 40);
 		outs("時間已到, 你輸了");
+		MPROTECT_UTMP_RW;
 		my->five_lose++;
+		MPROTECT_UTMP_R;
 		send(fd, '\0', 1, 0);
 		break;
 	    }
@@ -242,7 +246,9 @@ int gomoku(int fd) {
 		win = 1;
 		cuser.five_lose--;
 		cuser.five_win++;
+		MPROTECT_UTMP_RW;
 		my->five_win++;
+		MPROTECT_UTMP_R;
 		reload_money();
 		passwd_update(usernum, &cuser);
 		mv.x = mv.y = -2;
@@ -275,7 +281,9 @@ int gomoku(int fd) {
 	    if(ch == sizeof(Horder_t)) {
       		HO_undo(&mv);
 		tick = mylasttick;
+		MPROTECT_UTMP_RW;
 		my->turn = 1;
+		MPROTECT_UTMP_R;
 		continue;
 	    } else 
 		break;
@@ -293,7 +301,9 @@ int gomoku(int fd) {
 		win = 0;
 		cuser.five_lose--;
 		cuser.five_tie++;
+		MPROTECT_UTMP_RW;
 		my->five_tie++;
+		MPROTECT_UTMP_R;
 		reload_money();
 		passwd_update(usernum, &cuser);
 		mv.x=mv.y=-2;
@@ -312,7 +322,9 @@ int gomoku(int fd) {
 		    cuser.five_lose--;
 		    if(countgomo() >=10) {
 			cuser.five_win++;
+			MPROTECT_UTMP_RW;
 			my->five_win++;
+			MPROTECT_UTMP_R;
 		    }
 		    reload_money();
 		    passwd_update(usernum, &cuser);
@@ -321,7 +333,9 @@ int gomoku(int fd) {
 		} else {
 		    win = 0;
 		    outmsg("你超過時間未下子, 輸了!");
+		    MPROTECT_UTMP_RW;
 		    my->five_lose++;
+		    MPROTECT_UTMP_R;
 		    break;
 		}
 	    } else if(mv.x == -2 && mv.y == -2) {
@@ -329,7 +343,9 @@ int gomoku(int fd) {
 		    win = 0;
 		    cuser.five_lose--;
 		    cuser.five_tie++;
+		    MPROTECT_UTMP_RW;
 		    my->five_tie++;
+		    MPROTECT_UTMP_R;
 		    reload_money();
 		    passwd_update(usernum, &cuser);
 		    break;
@@ -343,7 +359,9 @@ int gomoku(int fd) {
 		outmsg("對方悔棋");
 		tick = hislasttick;
 		HO_undo(&mv);
+		MPROTECT_UTMP_RW;
 		my->turn = 0;
+		MPROTECT_UTMP_R;
 		continue;
 	    }
 	    
@@ -362,23 +380,32 @@ int gomoku(int fd) {
 		    if(win != 1) {
 			cuser.five_lose--;
 			cuser.five_win++;
+			MPROTECT_UTMP_RW;
 			my->five_win++;
+			MPROTECT_UTMP_R;
 			reload_money();
 			passwd_update(usernum, &cuser);
-		    } else
+		    } else {
+			MPROTECT_UTMP_RW;
 		    	my->five_lose++;
+			MPROTECT_UTMP_R;
+		    }
 		    win = -win;
 		    break;
 		}
+		MPROTECT_UTMP_RW;
 		my->turn = 1;
+		MPROTECT_UTMP_R;
 	    }
 	    continue;
 	}
 	
 	if(my->turn) {
-	    if(gomo_key(fd, ch, &mv))
+	    if(gomo_key(fd, ch, &mv)) {
+		MPROTECT_UTMP_RW;
 		my->turn = 0;
-	    else
+		MPROTECT_UTMP_R;
+	    } else
 		continue;
 	    
 	    if(!my->turn) {
@@ -397,11 +424,16 @@ int gomoku(int fd) {
 		    if(win == 1) {
 			cuser.five_lose--;
 			cuser.five_win++;
+			MPROTECT_UTMP_RW;
 			my->five_win++;
+			MPROTECT_UTMP_R;
 			reload_money();
 			passwd_update(usernum, &cuser);
-		    } else 
+		    } else {
+			MPROTECT_UTMP_RW;
 		    	my->five_lose++;
+			MPROTECT_UTMP_R;
+		    }
 		    break;
 		}
 		move(15, 40);

@@ -5,11 +5,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/file.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
 #include "perm.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 extern char currboard[];	/* name of currently selected board */
 extern int friendcount;
@@ -285,7 +288,9 @@ void friend_load() {
 		    myfriends[friendcount++] = unum;
 	fclose(fp);
     }
+    MPROTECT_UTMP_RW;
     memcpy(currutmp->friend, myfriends, sizeof(myfriends));
+    MPROTECT_UTMP_R;
 
     memset(myrejects, 0, sizeof(myrejects));
     rejected_number = 0;
@@ -300,7 +305,9 @@ void friend_load() {
 		    myrejects[rejected_number++] = unum;
 	fclose(fp);
     }
+    MPROTECT_UTMP_RW;
     memcpy(currutmp->reject, myrejects, sizeof(myrejects));
+    MPROTECT_UTMP_R;
 }
 
 extern userec_t cuser;
@@ -317,7 +324,7 @@ static void friend_water(char *message, int type) { /* ¸sÅé¤ô²y added by Ptt */
 	    
 	    sscanf(line, "%s", userid);
 	    if((tuid = searchuser(userid)) && tuid != usernum &&
-	       (uentp = (userinfo_t *) search_ulistn(cmpuids, tuid, 1)) &&
+	       (uentp = search_ulistn(cmpuids, tuid, 1)) &&
 	       !(((is_rejected(uentp) & 2) && !HAS_PERM(PERM_SYSOP)) ||
 		 (uentp->invisible && !HAS_PERM(PERM_SEECLOAK) && !HAS_PERM(PERM_SYSOP)) ||
 		 (!PERM_HIDE(currutmp) && PERM_HIDE(uentp)) ||

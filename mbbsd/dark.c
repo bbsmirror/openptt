@@ -6,10 +6,13 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 #define RED   1
 #define BLACK 0
@@ -242,10 +245,13 @@ static sint playing(sint fd, sint color,sint ch,sint *b, userinfo_t *uin) {
 	if(mly >=0 ){ *b=-1; break;}   /*¥»¨Ó´N¬OÂ½¶}ªº*/
 	/* ¨M©w¤@¶}©lªºÃC¦â */
 	if(currutmp->color=='.'){
+	    MPROTECT_UTMP_RW;
 	    if(uin->color!='1' && uin->color!='0')
 		currutmp->color=(brd[my][mx].color)?'1':'0';
 	    else
-		currutmp->color=(uin->color=='0')?'1':'0';}
+		currutmp->color=(uin->color=='0')?'1':'0';
+	    MPROTECT_UTMP_R;
+	}
 	brd[my][mx].out=1;
 	draw_line(my,-1);
 	move(cury[my],curx[mx]);
@@ -308,7 +314,9 @@ int main_dark(int fd,userinfo_t *uin) {
     sint end=0,ch=1,go_on,i=0,cont=0;
     char buf[16];
     *buf=0;fix=0;
+    MPROTECT_UTMP_RW;
     currutmp->color='.';   // '.' ªí¥ÜÁÙ¨S¨M©wÃC¦â
+    MPROTECT_UTMP_R;
     rcount=16;bcount=16;   // initialize
     cur_eaty=18,cur_eatx=5;
     brd_prints();
@@ -348,7 +356,13 @@ int main_dark(int fd,userinfo_t *uin) {
 	    if(ch!=sizeof(curr))
 	    {
 		if(uin->turn=='e') { end=-3;break; }
-		else if(uin->turn!='w') { end=-1; currutmp->turn='w'; break; }
+		else if(uin->turn!='w') {
+		    end = -1;
+		    MPROTECT_UTMP_RW;
+		    currutmp->turn = 'w';
+		    MPROTECT_UTMP_R;
+		    break;
+		}
 		end=-1; break;
 	    }
 
@@ -367,47 +381,88 @@ int main_dark(int fd,userinfo_t *uin) {
 	{
 	    if(currutmp->turn=='p')
 	    {
-		if(ch=='y') { end=-3; currutmp->turn='e'; break; }
-		else { pprints(23,30,""); *buf=0; currutmp->turn=(uin->turn)?0:1; }
+		if(ch=='y') {
+		    end = -3;
+		    MPROTECT_UTMP_RW;
+		    currutmp->turn = 'e';
+		    MPROTECT_UTMP_R;
+		    break;
+		} else {
+		    pprints(23,30,"");
+		    *buf = 0;
+		    MPROTECT_UTMP_RW;
+		    currutmp->turn = (uin->turn) ? 0 : 1;
+		    MPROTECT_UTMP_R;
+		}
 	    }else if(currutmp->turn=='c')
 	    {
-		if(ch=='y') { currutmp->color=(currutmp->color=='1')?'0':'1';
-		uin->color=(uin->color=='1')?'0':'1';
+		if(ch=='y') {
+		    MPROTECT_UTMP_RW;
+		    currutmp->color = (currutmp->color == '1') ? '0' : '1';
+		    uin->color=(uin->color=='1')?'0':'1';
+		    MPROTECT_UTMP_R;
 		pprints(21,0,(currutmp->color=='1')?"   \033[1;33m¡»[1;31m§A«ù¬õ¦â´Ñ\033[m":"   \033[1;33m¡»[1;36m§A«ù¶Â¦â´Ñ\033[m");
+		} else {
+		    pprints(23,30,"");
+		    MPROTECT_UTMP_RW;
+		    currutmp->turn = (uin->turn) ? 0 : 1;
+		    MPROTECT_UTMP_R;
 		}
-		else { pprints(23,30,""); currutmp->turn=(uin->turn)?0:1; }
-	    }else if(currutmp->turn=='g')
-	    {
+	    } else if(currutmp->turn=='g') {
 		if(ch=='y') {
 		    cont=1;
 		    pprints(21,0,"   \033[1;33m¡»[1;31m§A«ù¬õ¦â´Ñ\033[m ¥i³s¦Y");
 		}
-		else { pprints(23,30,""); currutmp->turn=(uin->turn)?0:1; }
+		else {
+		    pprints(23,30,"");
+		    MPROTECT_UTMP_RW;
+		    currutmp->turn = (uin->turn) ? 0 : 1;
+		    MPROTECT_UTMP_R;
+		}
 	    }
 
 	    if(currutmp->turn==1)
 	    {
-		if(uin->turn=='g') { cont=1;uin->turn=(currutmp->turn)?0:1; pprints(21,10,"¥i³s¦Y"); }
+		if(uin->turn=='g') {
+		    cont = 1;	
+		    MPROTECT_UTMP_RW;
+		    uin->turn = (currutmp->turn) ? 0 : 1;
+		    MPROTECT_UTMP_R;
+		    pprints(21,10,"¥i³s¦Y");
+		}
 		end=playing(fd,currutmp->color-'0',ch,&go_on,uin);
 
-		if(end == -1) { currutmp->turn='w';break; }
-		else if(end == -2) { uin->turn='w';break; }
-		else if(end == -3) {
-		    uin->turn='p';curr.end=-3;
-		    send(fd,&curr,sizeof(curr),0);
-		    send(fd,&brd,sizeof(buf),0);
+		if(end == -1) {
+		    currutmp->turn = 'w';
+		    break;
+		} else if(end == -2) {
+		    MPROTECT_UTMP_RW;
+		    uin->turn = 'w';
+		    MPROTECT_UTMP_R;
+		    break;
+		} else if(end == -3) {
+		    uin->turn = 'p';
+		    curr.end = -3;
+		    send(fd, &curr, sizeof(curr), 0);
+		    send(fd, &brd, sizeof(buf), 0);
 		    continue;
-		}
-		else if(end == -4) {
-		    if(currutmp->color!='1'&&currutmp->color!='0')
+		} else if(end == -4) {
+		    if(currutmp->color != '1' && currutmp->color != '0')
 			continue;
-		    uin->turn='c';i=0;curr.end=-4;
+		    MPROTECT_UTMP_RW;
+		    uin->turn = 'c';
+		    MPROTECT_UTMP_R;
+		    i = 0;
+		    curr.end= - 4;
 		    send(fd,&curr,sizeof(curr),0);
 		    send(fd,&brd,sizeof(buf),0);
 		    continue;
 		}
 		else if(end == -5) {
-		    uin->turn='g';curr.end=-5;
+		    MPROTECT_UTMP_RW;
+		    uin->turn = 'g';
+		    MPROTECT_UTMP_R;
+		    curr.end = -5;
 		    send(fd,&curr,sizeof(curr),0);
 		    send(fd,&brd,sizeof(buf),0);
 		    continue;
@@ -423,10 +478,17 @@ int main_dark(int fd,userinfo_t *uin) {
 		move(22,0);clrtoeol();
 		prints("   [1;33m¡»[1;37m½ü¨ì%s¤U §O©È§O©È ¥LºâÔ£¦Ì[m",currutmp->mateid);
 		currutmp->turn = 0;
+		MPROTECT_UTMP_RW;
 		uin->turn = 1;
+		MPROTECT_UTMP_R;
 	    }else
 	    {
-		if(ch == 'q'){uin->turn='w';break;}
+		if(ch == 'q') {
+		    MPROTECT_UTMP_RW;
+		    uin->turn = 'w';
+		    MPROTECT_UTMP_R;
+		    break;
+		}
 		move(22,0);clrtoeol();
 		prints("   [1;33m¡»[1;37m½ü¨ì%s¤U §O©È§O©È ¥LºâÔ£¦Ì[m",currutmp->mateid);
 	    }

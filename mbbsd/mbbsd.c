@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/time.h>
+#include <sys/mman.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/telnet.h>
@@ -28,6 +29,8 @@
 #define SOCKET_QLEN 4
 #define TH_LOW 100
 #define TH_HIGH 120
+
+extern struct utmpfile_t *utmpshm;
 
 extern int t_lines, t_columns;  /* Screen size / width */
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
@@ -215,7 +218,6 @@ static void abort_bbs_debug(int sig) {
 
 /* 登錄 BBS 程式 */
 static void mysrand() {
-    extern struct utmpfile_t *utmpshm;
     register int i = utmpshm->number;	/* 站上的人數當洗牌次數 */
     
     srand(time(NULL) + currutmp->pid);	/* 時間跟 pid 當 rand 的 seed */
@@ -255,12 +257,16 @@ static void talk_request() {
 	screenline_t *screen0 = calloc(t_lines, sizeof(screenline_t));
 	extern screenline_t *big_picture;
 	
+	MPROTECT_UTMP_RW;
 	currutmp->mode = 0;
 	currutmp->chatid[0] = 1;
+	MPROTECT_UTMP_R;
 	memcpy(screen0, big_picture, t_lines * sizeof(screenline_t));
  	talkreply();
+	MPROTECT_UTMP_RW;
 	currutmp->mode = mode0;
 	currutmp->chatid[0] = c0;
+	MPROTECT_UTMP_R;
 	memcpy(big_picture, screen0, t_lines * sizeof(screenline_t));
 	free(screen0);
 	redoscr();
@@ -325,15 +331,19 @@ static void write_request(int sig) {
 	int currstat0 = currstat;
 	unsigned char mode0 = currutmp->mode;
 	
+	MPROTECT_UTMP_RW;
 	currutmp->mode = 0;
 	currutmp->chatid[0] = 2;
+	MPROTECT_UTMP_R;
 	currstat = XMODE;
 	
 	do {
 	    bell();
 	    show_last_call_in(1);
 	    igetch();
+	    MPROTECT_UTMP_RW;
 	    currutmp->msgcount--;
+	    MPROTECT_UTMP_R;
 	    if(currutmp->msgcount>=MAX_MSGS)
 	    {
 		/* this causes chaos... jochang */
@@ -346,11 +356,15 @@ static void write_request(int sig) {
 	    if(oldmsg_count < MAX_REVIEW)
 		oldmsg_count++;
 	    
-	    for(i = 0; i < currutmp->msgcount; i++)
+	    MPROTECT_UTMP_RW;
+	    for(i = 0; i < currutmp->msgcount && i < MAX_MSGS; i++)
 		currutmp->msgs[i] = currutmp->msgs[i + 1];
+	    MPROTECT_UTMP_R;
 	} while(currutmp->msgcount);
+	MPROTECT_UTMP_RW;
 	currutmp->chatid[0] = c0;
 	currutmp->mode = mode0;
+	MPROTECT_UTMP_R;
 	currstat = currstat0;
     } else {
 	bell();
@@ -366,7 +380,9 @@ static void write_request(int sig) {
 	    t_display_new();
 	}
 	refresh();
+	MPROTECT_UTMP_RW;
 	currutmp->msgcount = 0;
+	MPROTECT_UTMP_R;
     }
 }
 
@@ -379,7 +395,7 @@ static void multi_user_check() {
 	return;		/* don't check sysops */
     
     if(cuser.userlevel) {
-	if(!(ui = (userinfo_t *)search_ulist(cmpuids, usernum)))
+	if(!(ui = search_ulist(cmpuids, usernum)))
 	    return;	/* user isn't logged in */
 	
 	pid = ui->pid;
@@ -440,7 +456,6 @@ static void login_query() {
     char uid[IDLEN + 1], passbuf[PASSLEN];
     int attempts;
     char genbuf[200];
-    extern struct utmpfile_t *utmpshm;
     resolve_utmp();
     attach_uhash();
     attempts = utmpshm->number;
@@ -754,12 +769,16 @@ static void user_login() {
 	do_aloha("<<上站通知>> -- 我來啦！");
     if(ptime->tm_mday == cuser.day && ptime->tm_mon + 1 == cuser.month) {
 	more("etc/Welcome_birth", NA);
+	MPROTECT_UTMP_RW;
 	currutmp->birth = 1;
+	MPROTECT_UTMP_R;
     } else {
 	more("etc/Welcome_login", NA);
 //	pressanykey();
 //    more("etc/CSIE_Week", NA);
+	MPROTECT_UTMP_RW;
 	currutmp->birth = 0;
+	MPROTECT_UTMP_R;
     }
     
     if(cuser.userlevel) {	/* not guest */
@@ -768,7 +787,9 @@ static void user_login() {
 	       "上次您是從 \033[1;33m%s\033[0;37m 連往本站，\n"
 	       "     我記得那天是 \033[1;33m%s\033[0;37m。\n",
 	       ++cuser.numlogins, cuser.lasthost, Cdate(&cuser.lastlogin));
+	MPROTECT_UTMP_RW;
 	currutmp->mind=rand()%8;  /* 初始心情 */
+	MPROTECT_UTMP_R;
 	pressanykey();
  	
 	if(currutmp->birth && tmp->tm_mday != ptime->tm_mday) {
@@ -803,12 +824,14 @@ static void user_login() {
 	    "愛之味", "天上", "藍色珊瑚礁"};
 	i = login_start_time % 13;
 	sprintf(cuser.username, "海邊漂來的%s", nick[(int)i]);
-	sprintf(currutmp->username, cuser.username);
 	sprintf(cuser.realname, name[(int)i]);
+	MPROTECT_UTMP_RW;
+	sprintf(currutmp->username, cuser.username);
 	sprintf(currutmp->realname, cuser.realname);
+	currutmp->pager = 2;
+	MPROTECT_UTMP_R;
 	sprintf(cuser.address, addr[(int)i]);
 	cuser.sex = i % 8;
-	currutmp->pager = 2;
 	pressanykey();
     } else
 	pressanykey();
@@ -839,7 +862,7 @@ static void do_aloha(char *hello) {
 	    int tuid;
 	    
 	    if((tuid = searchuser(userid)) && tuid != usernum &&
-	       (uentp = (userinfo_t *)search_ulistn(cmpuids, tuid, 1)) &&
+	       (uentp = search_ulistn(cmpuids, tuid, 1)) &&
 	       ((uentp->userlevel & PERM_SYSOP) ||
 		((!currutmp->invisible ||
 		  uentp->userlevel & PERM_SEECLOAK) &&

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "config.h"
@@ -13,6 +14,8 @@
 #include "modes.h"
 #include "perm.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 #define WRAPMARGIN (511)
 
@@ -1550,8 +1553,10 @@ int vedit(char *fpath, int saveheader, int *islocal) {
     int edit_margin0 = edit_margin;
     int blockln0 = blockln, count=0, tin=0;
     
+    MPROTECT_UTMP_RW;
     currutmp->mode = EDITING;
     currutmp->destuid = currstat;
+    MPROTECT_UTMP_R;
     insert_character = redraw_everything = 1;
     prevln = blockln = -1;
     
@@ -1667,8 +1672,10 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	    case Ctrl('X'):           /* Save and exit */
 		foo = write_file(fpath, saveheader, islocal);
 		if(foo != KEEP_EDITING) {
+		    MPROTECT_UTMP_RW;
 		    currutmp->mode = mode0;
 		    currutmp->destuid = destuid0;
+		    MPROTECT_UTMP_R;
 		    firstline = firstline0;
 		    lastline = lastline0;
 		    currline = currline0;
@@ -1699,8 +1706,10 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	    case Ctrl('Q'):           /* Quit without saving */
 		ch = ask("結束但不儲存 (Y/N)? [N]: ");
 		if(ch == 'y' || ch == 'Y') {
+		    MPROTECT_UTMP_RW;
 		    currutmp->mode = mode0;
-		    currutmp->destuid = destuid0;
+		    currutmp->destuid = destuid0;	
+		    MPROTECT_UTMP_R;
 		    firstline = firstline0;
 		    lastline = lastline0;
 		    currline = currline0;

@@ -10,6 +10,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/mman.h>
 #include <netinet/in.h>
 #include "config.h"
 #include "pttstruct.h"
@@ -443,7 +444,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     userinfo_t *uin;
     extern msgque_t oldmsg[MAX_REVIEW];
     
-    uin = (userinfo_t *)search_ulist(cmppids, pid);
+    uin = search_ulist(cmppids, pid);
     strcpy(destid, id);
     
     if(!uin && !(flag == 0 && oldmsg_count > 0)) {
@@ -454,8 +455,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	return 0;
     }
     
+    MPROTECT_UTMP_RW;
     currutmp->mode = 0;
     currutmp->chatid[0] = 3;
+    MPROTECT_UTMP_R;
     currstat = XMODE;
     
     time(&now);
@@ -468,8 +471,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	    outmsg("\033[1;33;42m算了! 放你一馬...\033[m");
 	    clrtoeol();
 	    refresh();
+	    MPROTECT_UTMP_RW;
 	    currutmp->chatid[0] = c0;
 	    currutmp->mode = mode0;
+	    MPROTECT_UTMP_R;
 	    currstat = currstat0;
 	    watermode = -1;
 	    return 0;
@@ -479,7 +484,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	    int i;
 	    
 	    i = (no_oldmsg - watermode + MAX_REVIEW) % MAX_REVIEW;
-	    uin = (userinfo_t *)search_ulist(cmppids, oldmsg[i].last_pid);
+	    uin = search_ulist(cmppids, oldmsg[i].last_pid);
 	    strcpy(destid, oldmsg[i].last_userid);
 	}
     } else {
@@ -497,8 +502,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	    outmsg("\033[1;33;42m算了! 放你一馬...\033[m");
 	    clrtoeol();
 	    refresh();
+	    MPROTECT_UTMP_RW;
 	    currutmp->chatid[0] = c0;
 	    currutmp->mode = mode0;
+	    MPROTECT_UTMP_R;
 	    currstat = currstat0;
 	    watermode = -1;
 	    return 0;
@@ -509,8 +516,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	outmsg("\033[1;33;41m糟糕! 對方已落跑了(不在站上)! \033[37m~>_<~\033[m");
 	clrtoeol();
 	refresh();
+	MPROTECT_UTMP_RW;
 	currutmp->chatid[0] = c0;
 	currutmp->mode = mode0;
+	MPROTECT_UTMP_R;
 	currstat = currstat0;
 	return 0;
     }
@@ -531,8 +540,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     
     if(flag == 3 && uin->msgcount) {
 	/* 不懂 */
+	MPROTECT_UTMP_RW;
 	uin->destuip = currutmp - &utmpshm->uinfo[0];
 	uin->sig = 2;
+	MPROTECT_UTMP_R;
 	kill(uin->pid, SIGUSR1);
     } else if(flag != 2 &&
 	      !HAS_PERM(PERM_SYSOP) &&
@@ -542,14 +553,21 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 		!(is_friend(uin) & 4))))
 	outmsg("\033[1;33;41m糟糕! 對方防水了! \033[37m~>_<~\033[m");
     else {
-	if(uin->msgcount < MAX_MSGS) {
+	int i;
+	
+	/* race condition may occur here */
+	i = uin->msgcount;
+	if(i < MAX_MSGS) {
 	    unsigned char pager0 = uin->pager;
 	    
+	    MPROTECT_UTMP_RW;
 	    uin->pager = 2;
 	    uin->msgs[uin->msgcount].last_pid = currpid;
-	    strcpy(uin->msgs[uin->msgcount].last_userid, cuser.userid);
-	    strcpy(uin->msgs[uin->msgcount++].last_call_in, msg);
+	    strcpy(uin->msgs[i].last_userid, cuser.userid);
+	    strcpy(uin->msgs[i].last_call_in, msg);
+	    uin->msgcount++;
 	    uin->pager = pager0;
+	    MPROTECT_UTMP_R;
 	} else if (flag != 2)
 	    outmsg("\033[1;33;41m糟糕! 對方不行了! (收到太多水球) \033[37m@_@\033[m");
 	
@@ -564,8 +582,10 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     clrtoeol();
     refresh();
     
+    MPROTECT_UTMP_RW;
     currutmp->chatid[0] = c0;
     currutmp->mode = mode0;
+    MPROTECT_UTMP_R;
     currstat = currstat0;
     return 1;
 }
@@ -583,9 +603,8 @@ void t_display_new() {
     if (oldmsg_count && watermode > 0)
     {
 	move(1, 0);
-	outs(
-	    "───────水─球─回─顧─────────"
-	    "用[Ctrl-R Ctrl-T]鍵切換─────");
+	outs("───────水─球─回─顧─────────"
+	     "用[Ctrl-R Ctrl-T]鍵切換─────");
 	for (i = 0; i < oldmsg_count; i++)
 	{
 	    int a = (no_oldmsg - i - 1 + MAX_REVIEW) % MAX_REVIEW;
@@ -1042,16 +1061,20 @@ static void my_talk(userinfo_t * uin) {
 		sleep(1);
 		return;
 	    }
+	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_PK;
+	    MPROTECT_UTMP_R;
 	    break;
 	default:
 	    return;
 	}
 
+	MPROTECT_UTMP_RW;
 	uin->turn = 1;
 	currutmp->turn = 0;
 	strcpy(uin->mateid, currutmp->userid);
 	strcpy(currutmp->mateid, uin->userid);
+	MPROTECT_UTMP_R;
 
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock < 0)
@@ -1078,11 +1101,13 @@ static void my_talk(userinfo_t * uin) {
 	    unlockutmpmode();
 	    return;
 	}
+	MPROTECT_UTMP_RW;
 	currutmp->sockactive = YEA;
 	currutmp->sockaddr = server.sin_port;
 	currutmp->destuid = uin->uid;
-	setutmpmode(PAGE);
 	uin->destuip = currutmp - &utmpshm->uinfo[0];
+	MPROTECT_UTMP_R;
+	setutmpmode(PAGE);
 	kill(pid, SIGUSR1);
 	clear();
 	prints("正呼叫 %s.....\n鍵入 Ctrl-D 中止....", uin->userid);
@@ -1110,7 +1135,9 @@ static void my_talk(userinfo_t * uin) {
 		{
 		    add_io(0, 0);
 		    close(sock);
+		    MPROTECT_UTMP_RW;
 		    currutmp->sockactive = currutmp->destuid = 0;
+		    MPROTECT_UTMP_R;
 		    outmsg("人家在忙啦");
 		    pressanykey();
 		    unlockutmpmode();
@@ -1125,7 +1152,9 @@ static void my_talk(userinfo_t * uin) {
 		    outs("再");
 		    bell();
 
+		    MPROTECT_UTMP_RW;
 		    uin->destuip = currutmp - &utmpshm->uinfo[0];
+		    MPROTECT_UTMP_R;
 		    if (kill(pid, SIGUSR1) == -1)
 		    {
 #ifdef linux
@@ -1148,7 +1177,9 @@ static void my_talk(userinfo_t * uin) {
 	    {
 		add_io(0, 0);
 		close(sock);
+		MPROTECT_UTMP_RW;
 		currutmp->sockactive = currutmp->destuid = 0;
+		MPROTECT_UTMP_R;
 		unlockutmpmode();
 		return;
 	    }
@@ -1163,7 +1194,9 @@ static void my_talk(userinfo_t * uin) {
 	}
 	add_io(0, 0);
 	close(sock);
+	MPROTECT_UTMP_RW;
 	currutmp->sockactive = NA;
+	MPROTECT_UTMP_R;
 	read(msgsock, &c, sizeof c);
 
 	if (c == 'y')
@@ -1233,8 +1266,10 @@ static void my_talk(userinfo_t * uin) {
 	    close(msgsock);
 	}
     }
+    MPROTECT_UTMP_RW;
     currutmp->mode = mode0;
     currutmp->destuid = 0;
+    MPROTECT_UTMP_R;
     unlockutmpmode();
     pressanykey();
 }
@@ -1711,7 +1746,9 @@ static void pickup_user() {
 	    case 'H':
 		if (HAS_PERM(PERM_SYSOP))
 		{
+		    MPROTECT_UTMP_RW;
 		    currutmp->userlevel ^= PERM_DENYPOST;
+		    MPROTECT_UTMP_R;
 		    state = US_REDRAW;
 		}
 		break;
@@ -1722,8 +1759,11 @@ static void pickup_user() {
 
 		    sprintf(buf, "代號 [%s]：", currutmp->userid);
 		    if (!getdata(1, 0, buf, currutmp->userid, IDLEN + 1,
-				 DOECHO))
+				 DOECHO)) {
+			MPROTECT_UTMP_RW;
 			strcpy(currutmp->userid, cuser.userid);
+			MPROTECT_UTMP_R;
+		    }
 		    state = US_REDRAW;
 		}
 		break;
@@ -1733,8 +1773,11 @@ static void pickup_user() {
 		    char buf[100];
 
 		    sprintf(buf, "故鄉 [%s]：", currutmp->from);
-		    if (!getdata(1, 0, buf, currutmp->from, 17, DOECHO))
+		    if (!getdata(1, 0, buf, currutmp->from, 17, DOECHO)) {
+			MPROTECT_UTMP_RW;
 			strncpy(currutmp->from, fromhost, 23);
+			MPROTECT_UTMP_R;
+		    }
 		    state = US_REDRAW;
 		}
 		break;
@@ -1743,7 +1786,9 @@ static void pickup_user() {
 		if (HAS_PERM(PERM_CLOAK))
 #endif
 		{
+		    MPROTECT_UTMP_RW;
 		    currutmp->invisible ^= 1;
+		    MPROTECT_UTMP_R;
 		    state = US_REDRAW;
 		}
 		break;
@@ -2032,8 +2077,9 @@ static void pickup_user() {
 			    LCECHO, "q");
 		if (*genbuf && genbuf[0] != 'q')
 		{
-		    currutmp->mind = (genbuf[0] == '0' || !IsNum(genbuf, strlen(genbuf))) ?
-			0 : atoi(genbuf) - 1;
+		    MPROTECT_UTMP_RW;
+		    currutmp->mind = (genbuf[0] == '0' || !IsNum(genbuf, strlen(genbuf))) ? 0 : atoi(genbuf) - 1;
+		    MPROTECT_UTMP_R;
 		}
 		refresh();
 		break;
@@ -2147,14 +2193,18 @@ int t_users() {
 	return 0;
     setutmpmode(LUSERS);
     pickup_user();
+    MPROTECT_UTMP_RW;
     currutmp->mode = mode0;
     currutmp->destuid = destuid0;
+    MPROTECT_UTMP_R;
     currstat = stat0;
     return 0;
 }
 
 int t_pager() {
+    MPROTECT_UTMP_RW;
     currutmp->pager = (currutmp->pager + 1) % 5;
+    MPROTECT_UTMP_R;
     return 0;
 }
 
@@ -2170,22 +2220,30 @@ int t_idle() {
 	    "(4)裝死 (5)羅丹 (6)其他 (Q)沒事？", genbuf, 3, DOECHO);
     if (genbuf[0] == 'q' || genbuf[0] == 'Q')
     {
+	MPROTECT_UTMP_RW;
 	currutmp->mode = mode0;
+	MPROTECT_UTMP_R;
 	currstat = stat0;
 	return 0;
-    }
-    else if (genbuf[0] >= '1' && genbuf[0] <= '6')
+    } else if (genbuf[0] >= '1' && genbuf[0] <= '6') {
+	MPROTECT_UTMP_RW;
 	currutmp->destuid = genbuf[0] - '0';
-    else
+	MPROTECT_UTMP_R;
+    } else {
+	MPROTECT_UTMP_RW;
 	currutmp->destuid = 0;
+	MPROTECT_UTMP_R;
+    }
 
-    if (currutmp->destuid == 6)
-	if (!cuser.userlevel ||
-	    !getdata(b_lines - 1, 0, "發呆的理由：", currutmp->chatid, 11,
-		     DOECHO))
+    if(currutmp->destuid == 6)
+	if(!cuser.userlevel ||
+	   !getdata(b_lines - 1, 0, "發呆的理由：", currutmp->chatid, 11,
+		    DOECHO)) {
+	    MPROTECT_UTMP_RW;
 	    currutmp->destuid = 0;
-    do
-    {
+	    MPROTECT_UTMP_R;
+	}
+    do {
 	move(b_lines - 2, 0);
 	clrtoeol();
 	sprintf(buf, "(鎖定螢幕)發呆原因: %s", (currutmp->destuid != 6) ?
@@ -2198,8 +2256,10 @@ int t_idle() {
     while (!checkpasswd(cuser.passwd, passbuf) &&
 	   strcmp(STR_GUEST, cuser.userid));
 
+    MPROTECT_UTMP_RW;
     currutmp->mode = mode0;
     currutmp->destuid = destuid0;
+    MPROTECT_UTMP_R;
     currstat = stat0;
 
     return 0;
@@ -2266,7 +2326,7 @@ int t_talk() {
 	    break;
     }
 
-    if ((uentp = (userinfo_t *) search_ulistn(cmpuids, tuid, unum)))
+    if ((uentp = search_ulistn(cmpuids, tuid, unum)))
 	my_talk(uentp);
 
     return 0;
@@ -2284,7 +2344,9 @@ void talkreply() {
     talkrequest = NA;
     uip = &utmpshm->uinfo[currutmp->destuip];
     sprintf(page_requestor, "%s (%s)", uip->userid, uip->username);
+    MPROTECT_UTMP_RW;
     currutmp->destuid = uip->uid;
+    MPROTECT_UTMP_R;
     currstat = XMODE;		/* 避免出現動畫 */
 
     clear();
@@ -2303,9 +2365,11 @@ void talkreply() {
 	   "  (2) %s？先拿1000銀兩來..\n\n", sig_des[sig], sig_des[sig]);
 
     getuser(uip->userid);
+    MPROTECT_UTMP_RW;
     currutmp->msgs[0].last_pid = uip->pid;
     strcpy(currutmp->msgs[0].last_userid, uip->userid);
     strcpy(currutmp->msgs[0].last_call_in, "呼叫、呼叫，聽到請回答 (Ctrl-R)");
+    MPROTECT_UTMP_R;
     prints("對方來自 [%s]，共上站 %d 次，文章 %d 篇\n",
 	   uip->from, xuser.numlogins, xuser.numposts);
     showplans(uip->userid);
@@ -2321,7 +2385,9 @@ void talkreply() {
 	getdata(0, 0, genbuf, buf, 4, LCECHO);
 	return;
     }
+    MPROTECT_UTMP_RW;
     currutmp->msgcount = 0;
+    MPROTECT_UTMP_R;
     strcpy(save_page_requestor, page_requestor);
     memset(page_requestor, 0, sizeof(page_requestor));
     gethostname(hostname, STRLEN);
@@ -2350,7 +2416,9 @@ void talkreply() {
 	    strcpy(genbuf, "不告訴你咧 !! ^o^");
 	write(a, genbuf, 60);
     }
+    MPROTECT_UTMP_RW;
     uip->destuip = currutmp - &utmpshm->uinfo[0];
+    MPROTECT_UTMP_R;
     if (buf[0] == 'y')
 	switch (sig)
 	{

@@ -7,12 +7,15 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "perm.h"
 #include "modes.h"
 #include "common.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 static int g_board_names(boardheader_t *fhdr) {
     AddNameList(fhdr->brdname);
@@ -235,8 +238,9 @@ static int do_select(int ent, fileheader_t *fhdr, char *direct) {
 	return FULLUPDATE;
     }
     
+    MPROTECT_UTMP_RW;
     currutmp->brc_id = currbid;
-    /*    */
+    MPROTECT_UTMP_R;
 
     brc_initial(bname);
     set_board();
@@ -1544,7 +1548,9 @@ int Read() {
 	more(buf, NA);
 	pressanykey();
     }
+    MPROTECT_UTMP_RW;
     currutmp->brc_id = currbid;
+    MPROTECT_UTMP_R;
     setbdir(buf, currboard);
     curredit &= ~EDIT_MAIL;
     i_read(READING, buf, readtitle, readdoent, read_comms,
@@ -1554,9 +1560,12 @@ int Read() {
 #endif
     brc_update();
 
-    currutmp->brc_id =0;
+    MPROTECT_UTMP_RW;
+    currutmp->brc_id = 0;
     currutmp->mode = mode0;
+    MPROTECT_UTMP_R;
     currstat = stat0;
+
     return 0;
 }
 
@@ -1568,7 +1577,9 @@ void ReadSelect() {
     currstat = XMODE;
     if(do_select(0, 0, genbuf) == NEWDIRECT)
 	Read();
+    MPROTECT_UTMP_RW;
     currutmp->mode = mode0;
+    MPROTECT_UTMP_R;
     currstat = stat0;
 }
 

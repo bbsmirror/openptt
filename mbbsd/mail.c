@@ -6,12 +6,15 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
 #include "perm.h"
 #include "modes.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 extern int b_lines;               /* Screen bottom line number: t_lines-1 */
 extern char save_title[];         /* used by editor when inserting */
@@ -1192,7 +1195,9 @@ int mail_man() {
 	sethomeman(buf, cuser.userid);
 	sprintf(buf1, "%s ªº«H¥ó§¨", cuser.userid);
 	a_menu(buf1, buf, 1);
+	MPROTECT_UTMP_RW;
 	currutmp->mode = mode0;
+	MPROTECT_UTMP_R;
 	currstat = stat0;
 	return FULLUPDATE;
     }

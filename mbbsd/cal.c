@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
@@ -19,8 +20,7 @@ extern int usernum;
 static int count_multiplay(int unmode) {
     register int i, j;
     register userinfo_t *uentp;
-    extern struct utmpfile_t *utmpshm;
-
+    
     for(i = j = 0; i < USHM_SIZE; i++) {
 	uentp = &(utmpshm->uinfo[i]);
 	if(uentp->uid == usernum)
@@ -56,12 +56,16 @@ int lockutmpmode(int unmode, int state) {
     }
     
     setutmpmode(unmode);
+    MPROTECT_UTMP_RW;
     currutmp->lockmode = unmode;
+    MPROTECT_UTMP_R;
     return 0;
 }
 
 int unlockutmpmode() {
+    MPROTECT_UTMP_RW;
     currutmp->lockmode = 0;
+    MPROTECT_UTMP_R;
     return 0;
 }
 
@@ -360,8 +364,10 @@ int p_cloak() {
     if(cuser.money >= 19) {
 	demoney(19);
 	vice(19, "cloak");
+	MPROTECT_UTMP_RW;
 	currutmp->invisible %= 2;
 	outs((currutmp->invisible ^= 1) ? MSG_CLOAKED : MSG_UNCLOAK);
+	MPROTECT_UTMP_R;
 	refresh();
 	safe_sleep(1);
     }
@@ -382,7 +388,9 @@ int p_from() {
 		   currutmp->from, 17, DOECHO)) {
 	demoney(49);
 	vice(49,"home");
+	MPROTECT_UTMP_RW;
 	currutmp->from_alias=0;
+	MPROTECT_UTMP_R;
     }
     return 0;
 }

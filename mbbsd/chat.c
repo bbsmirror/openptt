@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "perm.h"
@@ -16,6 +17,7 @@
 #include "modes.h"
 #include "proto.h"
 
+extern struct utmpfile_t *utmpshm;
 extern userinfo_t *currutmp;
 static int chatline;
 static int stop_line;    /* next line of bottom of message window area */
@@ -204,8 +206,11 @@ static void chat_pager() {
     char genbuf[200];
 
     char *msgs[] = {"關閉", "打開", "拔掉", "防水","好友"};
+    
+    MPROTECT_UTMP_RW;
     sprintf(genbuf, "◆ 您的呼叫器:[%s]",
 	    msgs[currutmp->pager = (currutmp->pager+1)%5]);
+    MPROTECT_UTMP_R;
     printchatline(genbuf);
 }
 
@@ -422,8 +427,10 @@ int t_chat() {
     memset(lastcmd, 0, MAXLASTCMD * 80);
     
     setutmpmode(CHATING);
+    MPROTECT_UTMP_RW;
     currutmp->in_chat = YEA;
     strcpy(currutmp->chatid, chatid);
+    MPROTECT_UTMP_R;
     
     clear();
     chatline = 2;
@@ -588,7 +595,9 @@ int t_chat() {
     
     close(cfd);
     add_io(0, 0);
+    MPROTECT_UTMP_RW;
     currutmp->in_chat = currutmp->chatid[0] = 0;
+    MPROTECT_UTMP_R;
     
     if(flog) {
 	char ans[4];
@@ -616,10 +625,3 @@ int t_chat() {
     
     return 0;
 }
-/* -------------------------------------------------- */
-#if 0
-
-extern char page_requestor[];
-extern userinfo_t *currutmp;
-
-#endif

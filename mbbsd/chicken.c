@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
@@ -13,6 +14,8 @@
 #include "proto.h"
 
 #define NUM_KINDS   13                   /* 有多少種動物 */
+
+extern struct utmpfile_t *utmpshm;
 
 static const char *cage[17] = {
     "誕生", "週歲", "幼年", "少年", "青春", "青年",
@@ -915,8 +918,10 @@ int chickenpk(int fd) {
 	    continue;
 	} else if(currutmp->turn) {
 	    count = 0;
+	    MPROTECT_UTMP_RW;
 	    currutmp->turn = 0;
 	    uin->turn = 1;
+	    MPROTECT_UTMP_R;
 	    mychicken->tiredstrong ++;
 	    switch(ch) {
 	    case 'y':

@@ -7,12 +7,15 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "perm.h"
 #include "modes.h"
 #include "common.h"
 #include "proto.h"
+
+extern struct utmpfile_t *utmpshm;
 
 #define BRC_STRLEN 15             /* Length of board name */
 #define BRC_MAXSIZE     24576
@@ -980,54 +983,9 @@ int New() {
 
     class_uid = -1;
     choose_board(1);
+    MPROTECT_UTMP_RW;
     currutmp->mode = mode0;
+    MPROTECT_UTMP_R;
     currstat = stat0;
     return 0;
 }
-
-/*
-int v_favorite(){
-    char fname[256];
-    char inbuf[2048];
-    FILE* fp;
-    int nGroup;
-    char* strtmp;
-    
-    setuserfile(fname,str_favorite);
-    
-    if (!(fp=fopen(fname,"r")))
-        return -1;
-    move(0,0);
-    clrtobot();
-    fgets(inbuf,sizeof(inbuf),fp);
-    nGroup=atoi(inbuf);
-    
-    currutmp->nGroup=0;
-    currutmp->ninRoot=0;
-    
-    while(nGroup!=currutmp->nGroup+1){
-        fgets(inbuf,sizeof(inbuf),fp);
-        prints("%s\n",strtmp=strtok(inbuf," \n"));
-        strcpy(currutmp->gfavorite[currutmp->nGroup++],strtmp);
-        while((strtmp=strtok(NULL, " \n"))){
-            prints("     %s %d\n",strtmp,getbnum(strtmp));
-        }
-        currutmp->nGroup++;
-    }
-    prints("+++%d+++\n",currutmp->nGroup);
-    
-    fgets(inbuf,sizeof(inbuf),fp);
-    
-    for(strtmp=strtok(inbuf, " \n");strtmp;strtmp=strtok(NULL, " \n")){
-        if (strtmp[0]!='#')
-            prints("*** %s %d\n",strtmp, getbnum(strtmp));
-        else
-            prints("*** %s %d\n",strtmp+1, -1);
-        currutmp->ninRoot++;
-    }
-    
-    fclose(fp);
-    pressanykey();
-    return 0;
-} 
-*/

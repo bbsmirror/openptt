@@ -17,6 +17,10 @@
 #define MAX_USERS          (120000)
 #endif
 
+#ifndef MAX_ACTIVE
+#define MAX_ACTIVE        (1024)         /* 程计 */
+#endif
+
 #ifndef MAX_POST_MONEY                      /* 祇ゅ彻絑禣 */
 #define MAX_POST_MONEY     100
 #endif
@@ -61,7 +65,6 @@
 #define MAX_MOVIE         (999)          /* 程笆篈计 */
 #define MAX_MOVIE_SECTION (10)		 /* 程笆篈狾摸 */
 #define MAX_FROM          (300)          /* 程珿秏计 */
-#define MAX_ACTIVE        (1024)         /* 程计 */
 #define MAX_ITEMS         (1000)         /* ヘ魁程Τ碭兜 */
 #define MAX_HISTORY       (12)           /* 笆篈狾玂 12 掸菌癘魁 */
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */

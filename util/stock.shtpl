@@ -1,5 +1,0 @@
-#!/bin/sh
-# $Id$
-#
-%BBSHOME%/bin/stock.perl
-%BBSHOME%/bin/post Record 今日股票收盤價 [股市小姐] %BBSHOME%/etc/stock.tmp

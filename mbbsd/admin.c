@@ -891,9 +891,10 @@ int scan_register_form(char *regfile, int automode, int neednum) {
 			mhdr.filemode = 0;
 			sethomedir(title, muser.userid);
 			if(append_record(title, &mhdr, sizeof(mhdr)) != -1) {
-			    fp = fopen(buf1, "w");
-			    fprintf(fp, "%s\n", genbuf);
-			    fclose(fp);
+			    if((fp = fopen(buf1, "w")) != NULL) {
+				fprintf(fp, "%s\n", genbuf);
+				fclose(fp);
+			    }
 			}
 			if((fout = fopen(logfile, "a"))) {
 			    for(n = 0; field[n]; n++)

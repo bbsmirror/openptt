@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<META http-equiv="Content-Type" content="text/html;charset=big5">
+<LINK rel="stylesheet" href="/openptt.css" type="text/css">
+</HEAD>
+<BODY>
+<IMG src="openptt.jpg">
+<BR><BR>
+<TABLE><TR>
+<!-------------------------------------------------------->
+<TD width="20%" valign="top">
+<TABLE border="0" bgcolor="black" cellspacing="0"><TD>
+<TABLE bgcolor="#F0C060"><TD>
+
+<BR>
+<FONT size="-1">
+<B>最新資訊</B><P>
+&middot; 公告</A><BR>
+&middot; <A href="download.html">下載最新版本</A><BR>
+<P>
+<B>相關文件</B><P>
+&middot; 常見問題集<BR>
+&middot; <A href="https://sourceforge.net/forum/forum.php?forum_id=124653">線上討論區</A><BR>
+<P>
+<B>技術支援</B><P>
+&middot; <A href="mailto:me@davidyu.org">聯絡我們</A><BR>
+</FONT>
+<BR>
+
+</TD></TABLE>
+</TD></TABLE>
+<P>
+<CENTER>
+<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=37637" width="88" height="31" border="0" alt="SourceForge Logo"></A><BR>
+提供協助
+</CENTER>
+</TD>
+<!-------------------------------------------------------->
+<TD valign="top">
+歡迎使用 <A href="https://sourceforge.net/forum/forum.php?forum_id=124653">
+線上討論區</A> 與 
+<A href="https://sourceforge.net/tracker/?func=add&group_id=37637&atid=422247">
+臭虫回報系統</A>
+</TD>
+<!-------------------------------------------------------->
+</TR></TABLE>
+
+<HR size="1" noshade="noshade">
+$Id$<P>
+Currently we do not support other languages. Only Traditional Chinese (Big5) is supported. Sorry.
+
+</BODY>
+</HTML>

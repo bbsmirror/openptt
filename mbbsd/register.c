@@ -242,7 +242,6 @@ void new_register() {
     newuser.userlevel = PERM_DEFAULT;
     newuser.uflag = COLOR_FLAG | BRDSORT_FLAG | MOVIE_FLAG;
     newuser.firstlogin = newuser.lastlogin = time(NULL);
-    newuser.money = 0;
     newuser.pager = 1;
     allocid = getnewuserid();
     if(allocid > MAX_USERS || allocid <= 0) {

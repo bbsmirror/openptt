@@ -712,6 +712,7 @@ static void choose_board(int newflag) {
 	    }
 	    show_brdlist(head, 1, newflag ^= 1);
 	    break;
+#if 0
 	case 'a': {
 	    if(yank_flag != 2 ) {
 		if(getdata_str(1, 0, "§@ªÌ ", genbuf, IDLEN + 2, DOECHO,
@@ -727,6 +728,7 @@ static void choose_board(int newflag) {
 	    show_brdlist(head, 1, newflag);
 	    break;
 	}
+#endif
 	case KEY_PGUP:
 	case 'P':
 	case 'b':

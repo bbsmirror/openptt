@@ -42,127 +42,6 @@ static int icurrchar = 0;
 /* ----------------------------------------------------- */
 /* 定時顯示動態看板                                      */
 /* ----------------------------------------------------- */
-#ifdef HAVE_MOVIE
-#define STAY_TIMEOUT    (30 * 60)
-
-static char *Proverb[100];
-static char Proverbtop = 0;
-
-static void GetProverb() {
-    char *ch, buf[256];
-    FILE *fp;
-    
-    setuserfile(buf, fn_proverb);
-    if((fp = fopen(buf, "r"))) {
-	Proverbtop = 0;
-	while(fgets(buf, 200, fp) && Proverbtop <= 99) {
-	    if((ch = strchr(buf,'\n')))
-		*ch = 0;
-	    if(buf[0]) {
-		Proverb[Proverbtop] = (char *)malloc(strlen(buf) + 1);
-		strcpy(Proverb[Proverbtop],buf);
-		Proverbtop++;
-	    }
-        }
-	fclose(fp);
-    }
-    if(!Proverbtop) {
-	Proverb[0] = (char *)malloc(100);
-	strcpy(Proverb[0], "座右銘狀態為[自定型]要記得設座右銘的內容唷!!");
-	Proverbtop = 1;
-    }
-}
-
-static void hit_alarm_clock() {
-    static int stay_time = 0;
-    static int idle_time = 0;
-    
-    time_t now = time(0);
-    char buf[100]="";
-    
-    alarm(MOVIE_INT);
-    
-//    if((idle_time = now - currutmp->lastact) > IDLE_TIMEOUT) {
-    if((idle_time = now - currutmp->lastact) > curr_idle_timeout) {
-	clear();
-	demoney(10);  /* 扣十兩銀 */
-	abort_bbs();
-    }
-
-    if(currstat && currstat < CLASS)
-	movie(0);
-    stay_time += MOVIE_INT;
-
-    if(currutmp->pid != currpid)
-	setup_utmp(XMODE);   /* 重新配置 shm */
-
-//    if(idle_time > IDLE_TIMEOUT - 60) {
-    if(idle_time > curr_idle_timeout - 60) {
-	sprintf(buf, "\033[1;5;37;41m警告：您已閒置過久，"
-		"若無回應，系統即將切離！！ 並課十兩罰金!!\033[m");
-    } else if(stay_time > 10 * 60 && chkmail(0)) {
-        sprintf(buf, "\033[1;33;41m[%s] 信箱裏還有沒看過的信唷\033[m",
-		Cdate(&now));
-        stay_time = 0 ;
-    } else if(stay_time > STAY_TIMEOUT) {
-	/* 在這裡提示 user 休息一下 */
-	char *msg[10] = {"伸伸腰, 揉揉眼, 喝口茶....喘口氣...再繼續...!",
-			 "一邊是友情 一邊是愛情 左右的故事為難著自己...",
-			 "是否有人瞭解您內心的孤寂? 大家來talk talk吧.. ",
-			 "左三圈,右三圈,脖子扭扭屁股扭扭 大家來作運動唷~",
-			 "我灌..我灌..我灌灌灌! 灌到硬碟爆掉...",
-			 "用‧功\‧唸‧書",
-			 "書念完了沒啊....^.^",
-			 "明天有沒有考試啊...念書重要唷...!",
-			 "學海本無止境,唯有篤學沉靜之士始能入得其深.",
-			 "‧書在心中氣自皇‧讀書去‧"};
-	int i = rand() % 5 , j ;
-	switch(cuser.proverb) {
-	case 2:        /* 自定型 */
-	    if(!Proverbtop)
-		GetProverb();
-	    j = rand() % Proverbtop;
-	    msg[i + 5] = Proverb[j];
-	case 0:        /* 用功型 */
-	    i += 5;
-	case 1:        /* 安逸型 */
-	    sprintf(buf, "\033[1;33;41m[%s] %s\033[m",
-		    Cdate(&now), msg[i]);
-	case 3:
-	    break;
-	}
-	stay_time = 0 ;
-    }
-
-    if(buf[0]) {
-	outmsg(buf);
-	refresh();
-	bell();
-    }
-}
-
-static void init_alarm() {
-/*
-  alarm(0);
-  signal(SIGALRM, hit_alarm_clock);
-  alarm(MOVIE_INT);
-*/
-/* jochang: try to do it better */
-    struct sigaction act;
-
-    act.sa_handler = hit_alarm_clock;
-    sigemptyset(&act.sa_mask);
-    /* block SIGALRM and these signal in hit_alarm_clock */
-    sigaddset(&act.sa_mask, SIGUSR1);
-    sigaddset(&act.sa_mask, SIGUSR2);
-    sigaddset(&act.sa_mask, SIGHUP);
-    act.sa_flags = 0;
-    sigaction(SIGALRM,&act, NULL);
-    alarm(MOVIE_INT);
-}
-
-#else                           /* HAVE_MOVIE */
-
 extern userec_t cuser;
 
 static void hit_alarm_clock() {
@@ -182,7 +61,6 @@ void init_alarm() {
 //    alarm(IDLE_TIMEOUT);
     alarm(curr_idle_timeout);
 }
-#endif                          /* HAVE_MOVIE */
 
 /* ----------------------------------------------------- */
 /* output routines                                       */
@@ -280,7 +158,8 @@ static int dogetch() {
 	    while((len = select(i_newfd+1, &readfds, NULL, NULL, i_top?&timeout:NULL))<0)
 	    {
 		if(errno != EINTR)
-		    raise(SIGHUP);
+		    abort_bbs(0);
+		    /* raise(SIGHUP); */
 	    }
 
 	    if(len == 0)
@@ -292,7 +171,8 @@ static int dogetch() {
 
 	while((len = read(0, inbuf, IBUFSIZE)) <= 0) {
 	    if(len == 0 || errno != EINTR)
-		raise(SIGHUP);
+	    	abort_bbs(0);
+		/* raise(SIGHUP); */
 	}
 	ibufsize = len;
 	icurrchar = 0;

@@ -1747,8 +1747,10 @@ static void pickup_user() {
 		    char buf[100];
 
 		    sprintf(buf, "暱稱 [%s]：", currutmp->username);
+		    MPROTECT_UTMP_RW;
 		    if (!getdata(1, 0, buf, currutmp->username, 17, DOECHO))
 			strcpy(currutmp->username, cuser.username);
+		    MPROTECT_UTMP_R;
 
 		    state = US_REDRAW;
 		}
@@ -2246,13 +2248,11 @@ int t_idle() {
     }
 
     if(currutmp->destuid == 6)
-	if(!cuser.userlevel ||
-	   !getdata(b_lines - 1, 0, "發呆的理由：", currutmp->chatid, 11,
-		    DOECHO)) {
-	    MPROTECT_UTMP_RW;
+	MPROTECT_UTMP_RW;
+	if(!cuser.userlevel || !getdata(b_lines - 1, 0, "發呆的理由：", currutmp->chatid, 11, DOECHO)) {
 	    currutmp->destuid = 0;
-	    MPROTECT_UTMP_R;
 	}
+	MPROTECT_UTMP_R;
     do {
 	move(b_lines - 2, 0);
 	clrtoeol();

@@ -420,11 +420,6 @@ static int do_general() {
 	
 	outs("順利貼出佈告，");
 	
-	if(strcmp(currboard, "Test") && !ifuseanony) {
-	    prints("這是您的第 %d 篇文章。", ++cuser.numposts);
-	} else
-	    outs("測試信件不列入紀錄，敬請包涵。");
-	
 	/* 回應到原作者信箱 */
 	
 	if(curredit & EDIT_BOTH) {
@@ -671,7 +666,6 @@ static int cross_post(int ent, fileheader_t *fhdr, char *direct) {
 	if(!xfile.filemode && !(bp->brdattr && BRD_NOTRAN))
 	    outgo_post(&xfile, xboard);
 	inbtotal(getbnum(xboard), 1);
-	cuser.numposts++;
 	UPDATE_USEREC;
 	outs("文章轉錄完成");
 	pressanykey();
@@ -1018,15 +1012,6 @@ static int del_post(int ent, fileheader_t *fhdr, char *direct) {
 	    cancelpost(fhdr, not_owned);
 
 	    inbtotal(currbid, -1);
-	    if(!not_owned && strcmp(currboard, "Test")) {
-		if(cuser.numposts)
-		    cuser.numposts--;
-		move(b_lines - 1, 0);
-		clrtoeol();
-		prints("%s，您的文章減為 %d 篇", msg_del_ok, cuser.numposts);
-		refresh();
-		pressanykey();
-	    }
 	    return DIRCHANGED;
 	}
     }
@@ -1151,33 +1136,6 @@ static int b_notes_edit() {
     return 0;
 }
 
-static int b_water_edit() {
-    if(currmode & MODE_BOARD) {
-	friend_edit(BOARD_WATER);
-	return FULLUPDATE;
-    }
-    return 0;
-}
-
-static int visable_list_edit() {
-    if(currmode & MODE_BOARD) {
-	friend_edit(BOARD_VISABLE);
-	return FULLUPDATE;
-    }
-    return 0;
-}
-
-static int b_visitor() {
-    char buf[200];
-
-    if(currmode & MODE_BOARD) {
-	setbfile(buf, currboard, "brdvisitor");
-	more(buf,YEA);
-	return FULLUPDATE;
-    }
-    return 0;
-}
-
 static int b_post_note() {
     char buf[200], yn[3];
   
@@ -1200,14 +1158,6 @@ static int b_application() {
     if(currmode & MODE_BOARD) {
 	setbfile(buf, currboard,  FN_APPLICATION);
 	vedit(buf, NA, NULL);
-	return FULLUPDATE;
-    }
-    return 0;
-}
-
-static int can_vote_edit() {
-    if(currmode & MODE_BOARD) {
-	friend_edit(FRIEND_CANVOTE);
 	return FULLUPDATE;
     }
     return 0;
@@ -1383,11 +1333,7 @@ struct onekey_t read_comms[] = {
     {'W', b_notes_edit},
     {'O', b_post_note},
     {'t', post_tag},
-    {'w', b_water_edit},
-    {'v', visable_list_edit},
     {'i', b_application},
-    {'o', can_vote_edit},
-    {'f', b_visitor},
     {Ctrl('D'), post_del_tag},
     {'x', cross_post},
     {'h', b_help},

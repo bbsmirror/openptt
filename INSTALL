@@ -1,0 +1,45 @@
+先切換成 root:
+1. 打 vipw, 加入底下兩行
+
+   bbs:*:9999:99::0:0:Ptt BBS:/home/bbs:/home/bbs/bin/bbsrf
+   bbsadm::9999:99::0:0:Ptt BBS:/home/bbs:/usr/local/bin/tcsh
+
+2. passwd bbsadm 設 bbsadm的密碼
+3. 在 /etc/group 中加入一行
+
+   bbs:*:99:
+
+4. mkdir /home/bbs
+5. chown bbs.bbs /home/bbs
+6. chmod 700 /home/bbs
+
+然後切換成 bbsadm
+
+7. mkdir adm bin boards etc home man out tmp
+8. cd home; mkdir a b c ............ z A B C .......... Z
+9. touch .PASSWDS
+10. cp BOARDS.init .BOARDS
+11. tar xvfz <你抓下來的pttsrc的位置>
+12. 修改 pttsrc/include/config.h
+13. cd pttsrc; make install(註1)
+
+假如一切都很順立的話,這樣子大概就安裝完了
+接下來是啟動 bbs 的部份
+
+14. 執行 bin/uhash_loader (註2)
+15. 用 root 執行 bin/mbbsd 23 (註3)
+
+然後 telnet localhost 23 看看
+new一個帳號叫SYSOP,然後logout再login, 這樣子就會擁有站長權限囉~
+再new一個帳號叫 guest, 這樣子別人就可以用 guest 參觀你的站了
+開板,開群組,以及搬動群組的方法會再另外介紹 :)
+
+註:
+1. 在 Linux 下請用 pmake
+
+2. 這個程式是在 initial shared memory 用的, 只有開機後第一次執行, 或是
+   你手動清除 shm 後才需要執行
+
+3.. bin/mbbsd 23 是指定要 bind 23 port, 依照 UNIX 規定, 1024 以下的 port
+   須要有 root 權限, 所以如果要 bind 23 port 的話就要用 root 去執行,
+   3000 port 則不需要

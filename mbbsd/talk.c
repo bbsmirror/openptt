@@ -2372,8 +2372,8 @@ void talkreply() {
     prints("       (1) %s？先拿100銀兩來"
 	   "  (2) %s？先拿1000銀兩來..\n\n", sig_des[sig], sig_des[sig]);
 
-    getuser(uip->userid);
     MPROTECT_UTMP_RW;
+    getuser(uip->userid);
     currutmp->msgs[0].last_pid = uip->pid;
     strcpy(currutmp->msgs[0].last_userid, uip->userid);
     strcpy(currutmp->msgs[0].last_call_in, "呼叫、呼叫，聽到請回答 (Ctrl-R)");

@@ -9,7 +9,6 @@
 #include "common.h"
 #include "proto.h"
 
-extern char *BC;
 extern int t_lines, t_columns;  /* Screen size / width */
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern int p_lines;             /* a Page of Screen line numbers: tlines-4 */
@@ -95,10 +94,7 @@ static void rel_move(int was_col, int was_ln, int new_col, int new_ln) {
 	    return;
 
 	if(new_col == was_col - 1) {
-	    if(BC)
-		tputs(BC, 1, ochar);
-	    else
-		ochar(Ctrl('H'));
+	    ochar(Ctrl('H'));
 	    return;
 	}
     }

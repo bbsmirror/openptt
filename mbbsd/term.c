@@ -44,45 +44,27 @@ void init_tty() {
 
 #define TERMCOMSIZE (40)
 
-char clearbuf[TERMCOMSIZE];
-int clearbuflen;
+char *clearbuf = "\33[H\33[J";
+int clearbuflen = 6;
 
-char cleolbuf[TERMCOMSIZE];
-int cleolbuflen;
+char *cleolbuf = "\33[K";
+int cleolbuflen = 3;
 
-static char cursorm[TERMCOMSIZE];
-static char *cm;
+char *scrollrev = "\33M";
+int scrollrevlen = 2;
 
-static char changescroll[TERMCOMSIZE];
-static char *cs;
+char *strtstandout = "\33[7m";
+int strtstandoutlen = 4;
 
-static char savecursor[TERMCOMSIZE];
-static char *sc;
-
-static char restorecursor[TERMCOMSIZE];
-static char *rc;
-
-static char scrollforward[TERMCOMSIZE];
-static char *sf;
-
-static char scrollreverse[TERMCOMSIZE];
-static char *sr;
-
-char scrollrev[TERMCOMSIZE];
-int scrollrevlen;
-
-char strtstandout[TERMCOMSIZE];
-int strtstandoutlen;
-
-char endstandout[TERMCOMSIZE];
-int endstandoutlen;
+char *endstandout = "\33[m";
+int endstandoutlen = 3;
 
 int t_lines = 24;
 int b_lines = 23;
 int p_lines = 20;
 int t_columns = 80;
 
-int automargins;
+int automargins = 1;
 
 static char *outp;
 static int *outlp;
@@ -122,88 +104,7 @@ static void term_resize(int sig) {
     signal(SIGWINCH, term_resize);
 }
 
-extern speed_t ospeed;
-
 int term_init() {
-    extern char PC, *UP, *BC;
-    static char UPbuf[TERMCOMSIZE];
-    static char BCbuf[TERMCOMSIZE];
-    static char buf[1024];
-    char sbuf[2048];
-    char *sbp, *s;
-    char *term = "vt100";
-    
-    ospeed = cfgetospeed(&tty_state);
-    if(tgetent(buf, term) != 1)
-	return NA;
-
-    sbp = sbuf;
-    s = tgetstr("pc", &sbp);      /* get pad character */
-    if(s) PC = *s;
-
-    automargins = tgetflag("am");
-
-    outp = clearbuf;              /* fill clearbuf with clear screen command */
-    outlp = &clearbuflen;
-    clearbuflen = 0;
-    sbp = sbuf;
-    s = tgetstr("cl", &sbp);
-    if(s) tputs(s, t_lines, outcf);
-
-    outp = cleolbuf;              /* fill cleolbuf with clear to eol command */
-    outlp = &cleolbuflen;
-    cleolbuflen = 0;
-    sbp = sbuf;
-    s = tgetstr("ce", &sbp);
-    if(s) tputs(s, 1, outcf);
-
-    outp = scrollrev;
-    outlp = &scrollrevlen;
-    scrollrevlen = 0;
-    sbp = sbuf;
-    s = tgetstr("sr", &sbp);
-    if(s) tputs(s, 1, outcf);
-
-    outp = strtstandout;
-    outlp = &strtstandoutlen;
-    strtstandoutlen = 0;
-    sbp = sbuf;
-    s = tgetstr("so", &sbp);
-    if(s) tputs(s, 1, outcf);
-
-    outp = endstandout;
-    outlp = &endstandoutlen;
-    endstandoutlen = 0;
-    sbp = sbuf;
-    s = tgetstr("se", &sbp);
-    if(s) tputs(s, 1, outcf);
-
-    sbp = cursorm;
-    cm = tgetstr("cm", &sbp);
-
-    sbp = changescroll;
-    cs = tgetstr("cs", &sbp);
-
-    sbp = scrollforward;
-    sf = tgetstr("sf", &sbp);
-
-    sbp = scrollreverse;
-    sr = tgetstr("sr", &sbp);
-
-    sbp = savecursor;
-    sc = tgetstr("sc", &sbp);
-
-    sbp = restorecursor;
-    rc = tgetstr("rc", &sbp);
-
-    sbp = UPbuf;
-    UP = tgetstr("up", &sbp);
-    sbp = BCbuf;
-    BC = tgetstr("bc", &sbp);
-
-    b_lines = t_lines - 1;
-    p_lines = t_lines - 4;
-
     signal(SIGWINCH, term_resize);
     return YEA;
 }
@@ -211,21 +112,32 @@ int term_init() {
 char term_buf[32];
 
 void do_move(int destcol, int destline) {
-    tputs(tgoto(cm, destcol, destline), 0, ochar);
+    char buf[16], *p;
+    
+    sprintf(buf, "\33[%d;%dH", destline + 1, destcol + 1);
+    for(p = buf; *p; p++)
+	ochar(*p);
 }
 
 void save_cursor() {
-    tputs(sc, 0, ochar);
+    ochar('\33');
+    ochar('7');
 }
 
 void restore_cursor() {
-    tputs(rc, 0, ochar);
+    ochar('\33');
+    ochar('8');
 }
 
 void change_scroll_range(int top, int bottom) {
-    tputs(tparm(cs, top, bottom), 0, ochar);
+    char buf[16], *p;
+    
+    sprintf(buf, "\33[%d;%dr", top + 1, bottom + 1);
+    for(p = buf; *p; p++)
+	ochar(*p);
 }
 
 void scroll_forward() {
-    tputs(sf, 0, ochar);
+    ochar('\33');
+    ochar('D');
 }

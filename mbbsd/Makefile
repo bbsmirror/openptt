@@ -1,7 +1,7 @@
 # FreeBSD
 CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
 LDFLAGS=-pipe -Wall -g -O3
-LIBS=	-ltermcap -lutil -lkvm
+LIBS=	-lutil -lkvm
 
 # Linux
 #CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include

@@ -668,7 +668,7 @@ static void choose_board(int newflag) {
 	    load_boards();
 	    if(brdnum <= 0) {
 		if(HAS_PERM(PERM_SYSOP) || (currmode & MODE_MENU)) {
-		    if(m_newbrd() == -1)
+		    if(m_newbrd(0) == -1)
 			break;
 		    brdnum = -1;
 		    continue;
@@ -872,9 +872,15 @@ static void choose_board(int newflag) {
 		brdnum = -1;
 	    }
 	    break;
+	case 'R':
+	    if(HAS_PERM(PERM_SYSOP) || (currmode & MODE_MENU)) {
+		m_newbrd(1);
+		brdnum = -1;
+	    }
+	    break;
 	case 'B':
 	    if(HAS_PERM(PERM_SYSOP) || (currmode & MODE_MENU)) {
-		m_newbrd();
+		m_newbrd(0);
 		brdnum = -1;
 	    }
 	    break;

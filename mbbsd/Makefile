@@ -6,7 +6,7 @@ LIBS=	-lutil -lkvm
 # Linux
 #CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
 #LDFLAGS=-pipe -Wall -g -O3
-#LIBS=	-lncurses -lcrypt
+#LIBS=	-lcrypt
 
 
 CC=	gcc

@@ -2,6 +2,7 @@
 #ifndef INCLUDE_CONFIG_H
 #define INCLUDE_CONFIG_H
 
+#include <syslog.h>
 #include "../pttbbs.conf"
 
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 主程式 */
@@ -24,6 +25,14 @@
 #define MAX_CHICKEN_MONEY  100
 #endif
 
+#ifndef MAX_GUEST_LIFE                      /* 最長未認證使用者保留時間(秒) */
+#define MAX_GUEST_LIFE     (3 * 24 * 60 * 60)
+#endif
+
+#ifndef MAX_LIFE                            /* 最長使用者保留時間(秒) */
+#define MAX_LIFE           (120 * 24 * 60 * 60)
+#endif
+
 #ifndef HAVE_SEARCH_ALL                     /* 搜尋某使用者在所有板上的文章 */
 #define HAVE_SEARCH_ALL    0
 #endif
@@ -38,6 +47,10 @@
 
 #ifndef TITLE_COLOR
 #define TITLE_COLOR       "\033[0;1;37;46m"
+#endif
+
+#ifndef SYSLOG_FACILITY
+#define SYSLOG_FACILITY   LOG_LOCAL0
 #endif
 
 /* 以下還未整理 */

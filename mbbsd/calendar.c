@@ -277,6 +277,6 @@ int calendar() {
 	outc('\n');
     }
     FreeEvent(head);
-    outc('\n');
-    return XEASY;
+    pressanykey();
+    return 0;
 }

@@ -1,9 +1,8 @@
-SUBDIR=mbbsd util innbbsd
-BBSHOME?=$(HOME)
+SUBDIR=	mbbsd util innbbsd
 
 all install clean depend:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
-		make BBSHOME=$(BBSHOME) OSTYPE=$(OSTYPE) $@;\
+		make $@;\
 		cd ..;\
 	done

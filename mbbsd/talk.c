@@ -1086,7 +1086,7 @@ static void my_talk(userinfo_t * uin) {
 		}
 		else
 		{
-#ifdef linux
+#ifdef Linux
 		    add_io(sock, 20);	/* added for linux... achen */
 #endif
 		    move(0, 0);
@@ -1096,7 +1096,7 @@ static void my_talk(userinfo_t * uin) {
 		    uin->destuip = currutmp - &utmpshm->uinfo[0];
 		    if(pid <= 0 || kill(pid, SIGUSR1) == -1)
 		    {
-#ifdef linux
+#ifdef Linux
 			add_io(sock, 20);	/* added 4 linux... achen */
 #endif
 			outmsg(msg_usr_left);

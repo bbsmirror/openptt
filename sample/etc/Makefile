@@ -1,6 +1,9 @@
-SUBDIR=chickens
-BBSHOME?=$(HOME)
-TARGET=$(BBSHOME)/etc/
+# $Id$
+
+include ../../Makefile.inc
+
+SUBDIR=	chickens
+TARGET=	$(BBSHOME)/etc/
 FILES=	Welcome Welcome_login goodbye register registered ve.hlp Logout\
 	Welcome_birth domain_name_query feast today_boring
 
@@ -9,7 +12,7 @@ all:
 install_sub:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
-		make BBSHOME=$(BBSHOME) OSTYPE=$(OSTYPE) install;\
+		make install;\
 		cd ..;\
 	done
 

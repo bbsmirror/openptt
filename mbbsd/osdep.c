@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#if defined(linux)
+#if defined(Linux)
 int cpuload(char *str) {
     double l[3] = {-1, -1, -1};
     FILE *fp;

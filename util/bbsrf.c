@@ -57,7 +57,7 @@ void gethid(char *hid, char *tty)
 int getload(double load[3])
 {
     int rtv = -1;
-#if defined(linux)
+#if defined(Linux)
     FILE *fp;
 
     fp = fopen(LOAD_FILE, "r");

@@ -1,0 +1,10 @@
+BBSHOME=	/home/bbs
+PLATFORM=	Linux
+ADMINUSER=	root@your.domain.name
+
+CC=		gcc
+CFLAGS=		-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DLinux
+LDFLAGS=	-pipe -Wall -g -O3
+LIBS_MBBSD=	-lcrypt
+LIBS_MAIL=	
+LIBS_CHAT=	-lcrypt

@@ -1,6 +1,9 @@
-BBSHOME?=$(HOME)
-TARGET=$(BBSHOME)/innd/
-FILES=bbsname.bbs newsfeeds.bbs nodelist.bbs ntu.active
+# $Id$
+
+include ../../Makefile.inc
+
+TARGET=	$(BBSHOME)/innd/
+FILES=	bbsname.bbs newsfeeds.bbs nodelist.bbs ntu.active
 
 all:
 

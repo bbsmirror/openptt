@@ -17,7 +17,7 @@
 #include "common.h"
 #include "proto.h"
 
-#if defined(linux)
+#if defined(Linux)
 #define OBUFSIZE  2048
 #define IBUFSIZE  128
 #else

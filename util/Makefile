@@ -1,26 +1,8 @@
 # $Id$
 
-BBSHOME?=$(HOME)
+include ../Makefile.inc
 
-# FreeBSD
-CC_FreeBSD=	gcc
-CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
-LIBS_FreeBSD=
-LIBMAIL_FreeBSD=-lutil
-LIBCHAT_FreeBSD=
-
-# Linux
-CC_linux=	gcc
-CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
-LIBS_linux=	-lresolv
-LIBMAIL_linux=	
-LIBCHAT_linux=	-lcrypt
-
-CC=	$(CC_$(OSTYPE))
-CFLAGS=	$(CFLAGS_$(OSTYPE))
-LDFLAGS=$(LDFLAGS_$(OSTYPE))
-LIBMAIL=$(LIBMAIL_$(OSTYPE))
-LIBCHAT=$(LIBCHAT_$(OSTYPE))
+CFLAGS+=-DBBSHOME='"$(BBSHOME)"' -I../include
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
@@ -114,7 +96,7 @@ reaper: reaper.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ reaper.c $(OBJS)
 
 xchatd: xchatd.c descrypt.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ xchatd.c descrypt.c $(OBJS) $(LIBCHAT)
+	$(CC) $(CFLAGS) -o $@ xchatd.c descrypt.c $(OBJS) $(LIBS_CHAT)
 
 outmail: outmail.c
-	$(CC) $(CFLAGS) -o $@ outmail.c $(LIBMAIL)
+	$(CC) $(CFLAGS) -o $@ outmail.c $(LIBS_MAIL)

@@ -1,0 +1,10 @@
+BBSHOME=	/home/bbs
+PLATFORM=	FreeBSD
+ADMINUSER=	root@your.domain.name
+
+CC=		gcc
+CFLAGS=		-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DFreeBSD
+LDFLAGS=	-pipe -Wall -g -O3
+LIBS_MBBSD=	-lutil -lkvm
+LIBS_MAIL=	-lutil
+LIBS_CHAT=	

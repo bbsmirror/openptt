@@ -6,13 +6,13 @@
 #  update : 95/12/15                                      #
 # ------------------------------------------------------- #
 
+include ../Makefile.inc
+
 ####################################################
 # this is a bbs <--> news gateway
 #####################################################
 VERSION=0.50beta-4
 LASTVERSION=0.50beta-3
-ADMINUSER= root@your.domain.name
-BBSHOME?=$(HOME)
 BBS_SRC = ..
 TARGET  = $(INNBBSD) $(BBSNNRP) $(BBSLINK)
 ####################################################
@@ -64,41 +64,16 @@ EXES     = $(TARGET)
 	$(CC) $(OPT) $(CFLAGS) $*.c
 
 
-all: $(OSTYPE)
+all: $(PLATFORM)
 
 depend:
 	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
-sun: 
-	@$(MAKE) EXTRAFLAGS="-DMMAP -DGETRUSAGE -DMALLOCMAP" LDFLAGS="$(DEBUGOBJ)" target
-
-
-aix: 
-	@$(MAKE) CC=cc EXTRAFLAGS="-DMMAP -DGETRUSAGE -DAIX -DSYSV" target
-
-linux: 
+Linux: 
 	@$(MAKE) EXTRAFLAGS="-DLINUX -DGETRUSAGE" target
-
-hpux: 
-	@$(MAKE) OPT= EXTRAFLAGS="-DMMAP -DHPUX -DSYSV" target
-
-irix: 
-	@$(MAKE) EXTRAFLAGS="-DMMAP -DIRIX -DSYSV" target
-
-solaris:
-	@$(MAKE) EXTRAFLAGS="-DMMAP -DSOLARIS -DSYSV" LDFLAGS="-lsocket -lnsl" YACC="bison -y" target
 
 FreeBSD:
 	@$(MAKE) CC=cc EXTRAFLAGS="-DBSD44 -DMMAP -DGETRUSAGE" LIBCRYPT=-lcrypt  target
-
-bsd:
-	@$(MAKE) CC=cc EXTRAFLAGS="-DMMAP -DGETRUSAGE" target
-
-alpha:
-	@$(MAKE) CC=cc EXTRAFLAGS="-DMMAP -DDEC_ALPHA -DGETRUSAGE" target
-
-sysv: 
-	@$(MAKE) OPT= EXTRAFLAGS="-DMMAP -DSYSV" target
 
 target: $(EXES)
 

@@ -1,4 +1,7 @@
-BBSHOME?=$(HOME)
+# $Id$
+
+include ../../../Makefile.inc
+
 TARGET=$(BBSHOME)/etc/chickens/
 FILES=	buymedicine buyoo clean deadth eat food hit kiss\
 	medicine nofood nohp nosatis oo read sell toofat tootired\

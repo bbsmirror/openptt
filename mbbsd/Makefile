@@ -1,22 +1,9 @@
 # $Id$
 
-BBSHOME?=$(HOME)
+include ../Makefile.inc
 
-# FreeBSD
-CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -DFreeBSD -I../include
-LDFLAGS_FreeBSD=-pipe -Wall -g -O3
-LIBS_FreeBSD=	-lutil -lkvm
+CFLAGS+=-DBBSHOME='"$(BBSHOME)"' -I../include
 
-# Linux
-CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -DLinux -I../include
-LDFLAGS_linux=	-pipe -Wall -g -O3
-LIBS_linux=	-lcrypt
-
-CFLAGS=	$(CFLAGS_$(OSTYPE))
-LDFLAGS=$(LDFLAGS_$(OSTYPE))
-LIBS=	$(LIBS_$(OSTYPE))
-
-CC=	gcc
 PROG=	mbbsd
 OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o\
 	chat.o chicken.o\
@@ -45,7 +32,7 @@ depend:
 	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 $(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS_MBBSD)
 
 install: $(PROG)
 	install -d $(BBSHOME)/bin/

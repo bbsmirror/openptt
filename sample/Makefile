@@ -1,11 +1,10 @@
-SUBDIR=etc innd
-BBSHOME?=$(HOME)
+SUBDIR=	etc innd
 
 all:
 
 install:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
-		make BBSHOME=$(BBSHOME) OSTYPE=$(OSTYPE) $@;\
+		make $@;\
 		cd ..;\
 	done

@@ -97,12 +97,12 @@ extern struct fromcache_t *fcache;
 extern uhash_t *uhash;
 
 int main() {
-    int hour, max, item, total, i, j, mo, da, max_user = 0, max_login = 0,
-	max_reg = 0, mahour = 0, k;
+    int hour, max, item, total, i, j, mo, da, max_user = 0,
+	mahour = 0;
     char *act_file = ".act";
     char *log_file = "usies";
     char buf[256], buf1[256], *p;
-    FILE *fp, *fp1;
+    FILE *fp;
     int act[27];		/* ¦¸¼Æ/²Ö­p®É¶¡/pointer */
     time_t now;
     struct tm *ptime;
@@ -217,58 +217,7 @@ int main() {
     now += ADJUST_M * 60;	/* back to future */
 
 
-    printf("¾ú¥v¨Æ¥ó³B²z\n");
-/* Ptt ¾ú¥v¨Æ¥ó³B²z */
-    if((fp = fopen("etc/history.data", "r"))) { /*³Ì¦h¦P®É¤W½u */
-	if (fscanf(fp, "%d %d %d %d", &max_login, &max, &max_reg, &k))
-	{
-	    int a;
-	    resolve_fcache();
-	    printf("¦¹®É¬q³Ì¦h¦P®É¤W½u:%d ¹L¥h:%d\n", a = fcache->max_user, k);
-	    fclose(fp);
-	    if (a > k)
-	    {
-		ptime = localtime(&fcache->max_time);
-		if((fp1 = fopen("etc/history", "a")))
-		{
-		    fprintf(fp1,
-			    "¡· ¡i%02d/%02d/%02d %02d:%02d¡j"
-			    "[32m¦P®É¦b§{¤º¤H¼Æ[m­º¦¸¹F¨ì [1;36m%d[m ¤H¦¸\n",
-			    ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100,
-			    ptime->tm_hour, ptime->tm_min, a);
-		    fclose(fp1);
-		}
-		if((fp = fopen("etc/history.data", "w")))
-		{
-		    fprintf(fp, "%d %d %d %d", max_login, max, max_reg, a);
-		    fclose(fp);
-		}
-	    }
-	}
-	else
-	    fclose(fp);
-    }
     ptime = localtime(&now);
-
-    if (ptime->tm_hour)
-    {
-	/* rotate one line in today_is */
-	puts("¦h­Ó¸`¤é³B²z");
-	if((fp1 = fopen("etc/today_is", "r"))) {
-	    char tod[100][20];
-	    
-	    i = 0;
-	    while(i < 100 && fgets(tod[i], sizeof(tod[0]), fp1))
-		i++;
-	    fclose(fp1);
-	    
-	    fp1 = fopen("etc/today_is", "w");
-	    for(j = 0; j < i; j++)
-		fputs(tod[j + 1 < i ? j + 1 : 0], fp1);
-	    fclose(fp1);
-	}
-    }
-
 
     if (!ptime->tm_hour)
     {
@@ -287,74 +236,9 @@ int main() {
 	ptime = localtime(&now);
 
 	attach_uhash();
-	if((fp = fopen("etc/history.data", "r")))
-	{			/* ³æ¤é³Ì¦h¦¸¤H¦¸,¦P®É¤W½u,µù¥U */
-	    if (fscanf(fp, "%d %d %d %d", &max_login, &max, &max_reg, &k))
-	    {
-		fp1 = fopen("etc/history", "r+");
-		fseek(fp1, 0, 2);
-		if (max_user > max)
-		{
-		    fprintf(fp1, "¡º ¡i%02d/%02d/%02d %02d¡j   "
-			    "[1;32m³æ¤@¤p®É¤W½u¤H¦¸[m­º¦¸¹F¨ì [1;35m%d[m ¤H¦¸ \n"
-			    ,ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100, mahour, max_user);
-		    max = max_user;
-		}
-		if (total > max_login)
-		{
-		    fprintf(fp1, "¡» ¡i%02d/%02d/%02d¡j      "
-			    "[1;32m³æ¤é¤W½u¤H¦¸[m­º¦¸¹F¨ì[1;33m %d[m ¤H¦¸   \n"
-			    ,ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100, total);
-		    max_login = total;
-		}
-
-		if (uhash->number > max_reg + max_reg / 10)
-		{
-		    fprintf(fp1, "¡¹ ¡i%02d/%02d/%02d¡j      "
-			    "[1;32mÁ`µù¥U¤H¼Æ[m´£¤É¨ì[1;31m %d[m ¤H   \n"
-			    ,ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100, uhash->number);
-		    max_reg = uhash->number;
-		}
-
-		fclose(fp1);
-	    }
-	    fclose(fp);
-	    fp = fopen("etc/history.data", "w");
-	    fprintf(fp, "%d %d %d %d", max_login, max, max_reg, k);
-	    fclose(fp);
-	}
 	now += ADJUST_M * 60;	/* back to future */
 	ptime = localtime(&now);
 
-	/* Ptt ¸`¤é³B²z */
-	printf("¸`¤é³B²z\n");
-	if((fp1 = fopen("etc/today_is", "w"))) {
-	    i = 0;
-	    if((fp = fopen("etc/feast", "r"))) {
-		while(fgets(buf1, sizeof(buf1), fp)) {
-		    if(buf[0] != '#' &&
-		       sscanf(buf1, "%d %d ", &mo, &da) == 2) {
-			if(ptime->tm_mday == da && ptime->tm_mon + 1 == mo) {
-			    i = 1;
-			    fprintf(fp1, "%-14.14s", &buf1[6]);
-			}
-		    }
-		}
-		fclose(fp);
-	    }
-	    printf("¸`¤é³B²z1\n");
-	    if(i == 0) {
-		if((fp = fopen("etc/today_boring", "r"))) {
-		    while(fgets(buf1, sizeof(buf1), fp))
-			if(strlen(buf) > 3)
-			    fprintf(fp1, "%s", buf1);
-		    fclose(fp);
-		} else
-		    fprintf(fp1, "¥»¤é¸`¤é¼x¨D¤¤");
-	    }
-	    fclose(fp1);
-	}
-	
 	/* Ptt Åwªïµe­±³B²z */
 	printf("Åwªïµe­±³B²z\n");
 
@@ -404,8 +288,6 @@ int main() {
 /* Ptt reset Ptt's share memory */
     printf("­«³]Pttcache »Pfcache\n");
 
-    fcache->uptime = 0;
-    resolve_fcache();
     reset_garbage();
     return 0;
 }

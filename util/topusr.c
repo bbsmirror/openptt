@@ -180,7 +180,6 @@ char **argv;
 	    strncpy(allman[i].username, aman.username, 23);
 	    allman[i].numlogins = aman.numlogins;
 	    allman[i].numposts = aman.numposts;
-	    allman[i].money = aman.money;
 	    i++;
 	}
     }

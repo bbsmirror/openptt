@@ -122,13 +122,6 @@ int note() {
     } notedata_t;
     notedata_t myitem;
 
-    if(cuser.money < 5) {
-	outmsg("\033[1;41m 哎呀! 要投五銀才能留言...沒錢耶..\033[m");
-	clrtoeol();
-	refresh();
-	return 0;
-    }
-
     setutmpmode(EDNOTE);
     do {
 	myitem.buf[0][0] = myitem.buf[1][0] = myitem.buf[2][0] = '\0';
@@ -143,7 +136,6 @@ int note() {
 	if(buf[0] == 'q' || (i == 0 && *buf != 'e'))
 	    return 0;
     } while(buf[0] == 'e');
-    demoney(5);
     strcpy(myitem.userid, cuser.userid);
     strncpy(myitem.username, cuser.username, 18);
     myitem.username[18] = '\0';

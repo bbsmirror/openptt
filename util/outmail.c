@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -240,9 +241,13 @@ void usage() {
     fprintf(stderr, "usage: outmail [-qh]\n");
 }
 
+void wakeup(int s) {
+}
+
 int main(int argc, char **argv, char **envp) {
     int ch;
-    
+ 
+    signal(SIGHUP, wakeup);
     initsetproctitle(argc, argv, envp);
     
     if(chdir(BBSHOME))

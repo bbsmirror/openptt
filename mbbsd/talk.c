@@ -1739,7 +1739,9 @@ static void pickup_user() {
 		}
 		break;
 	    case 'C':
+#if !HAVE_FREECLOAK
 		if (HAS_PERM(PERM_CLOAK))
+#endif
 		{
 		    currutmp->invisible ^= 1;
 		    state = US_REDRAW;

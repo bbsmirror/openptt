@@ -2,7 +2,8 @@
 
 include ../Makefile.inc
 
-CFLAGS+=-DBBSHOME='"$(BBSHOME)"' -I../include
+CFLAGS+=$(CFLAGS_MBBSD) -pipe -Wall -g -O3 -I../include
+LDFLAGS=-pipe -Wall -g -O3
 
 PROG=	mbbsd
 OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o\
@@ -22,7 +23,6 @@ SRCS=	admin.c announce.c args.c bbs.c board.c cache.c cal.c\
 	voteboard.c syspost.c var.c descrypt.c toolkit.c passwd.c
 
 .SUFFIXES: .c .o
-
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 

@@ -18,11 +18,6 @@
 #include <errno.h>
 #include <time.h>
 #include <stdlib.h>
-/*
-#ifndef BSD44
-# include <malloc.h>
-#endif
-*/
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/file.h>
@@ -36,11 +31,6 @@
     BBS home directory
     It has been overridden in Makefile
 */
-#ifndef _PATH_BBSHOME
-# define _PATH_BBSHOME "/u/staff/bbsroot/csie_util/bntpd/home"
-/*# define _PATH_BBSHOME "/home/bbs"*/
-#endif
-
 #ifndef EXPIREDAYS
 #  define EXPIREDAYS 7
 #endif
@@ -134,12 +124,6 @@
 # endif
 */
 /* machine dependend */
-#if defined(__linux)
-# ifndef LINUX
-#  define LINUX
-# endif
-#endif
-
 #if !defined(__svr4__) || defined(sun)
 #  define WITH_TM_GMTOFF  
 #endif

@@ -37,7 +37,7 @@ if the incore facility is used.
 #ifndef __STDC__
 extern int errno;
 #endif
-#include <dbz.h>
+#include "dbz.h"
 #include "clibrary.h"
 
 /*

@@ -2,7 +2,8 @@
 
 include ../Makefile.inc
 
-CFLAGS+=-DBBSHOME='"$(BBSHOME)"' -I../include
+CFLAGS+=$(CFLAGS_UTIL) -pipe -Wall -g -O3 -I../include
+LDFLAGS=-pipe -Wall -g -O3
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
@@ -27,10 +28,8 @@ PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
 JUNK=	$(CPROGS) $(SCRIPTS) $(OBJS) sed.tmp
 
 .SUFFIXES: .c .o .shtpl .sh
-
 .c:
 	$(CC) $(CFLAGS) -o $* $*.c
-
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 

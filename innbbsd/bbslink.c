@@ -1,4 +1,4 @@
-#if defined( LINUX )
+#if defined(Linux)
 # include "innbbsconf.h"
 # include "bbslib.h"
 # include <varargs.h>

@@ -1,4 +1,4 @@
-#if defined( LINUX )
+#if defined(Linux)
 # include "innbbsconf.h"
 # include "bbslib.h"
 # include <varargs.h>
@@ -26,10 +26,6 @@ newsfeeds_t *NEWSFEEDS=NULL, **NEWSFEEDS_BYBOARD=NULL;
 static char *NODELIST_BUF, *NEWSFEEDS_BUF;
 int NFCOUNT, NLCOUNT;
 int LOCALNODELIST=0, NONENEWSFEEDS=0;
-
-#ifndef _PATH_BBSHOME
-# define _PATH_BBSHOME "/u/staff/bbsroot/csie_util/bntpd/home"
-#endif
 
 static FILE *bbslogfp;
 

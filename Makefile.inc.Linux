@@ -1,10 +1,27 @@
-BBSHOME=	/home/bbs
-PLATFORM=	Linux
-ADMINUSER=	root@your.domain.name
+# $Id$
 
+BBSHOME=	/home/bbs		# 杆ヘ魁
+BBSNAME=	穝у金金		# いゅ
+MYHOSTNAME=	ptt2.twbbs.org		# Domain Name
+MYIP=		140.112.30.143		# IP
+BBSUSER=	bbs			# BBS Username
+BBSUID=		9999			# BBS User ID
+BBSGID=		99			# BBS Group ID
+MAX_USERS=	10000			# 程爹计
+
+# ┏ぃ惠э
 CC=		gcc
-CFLAGS=		-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DLinux
-LDFLAGS=	-pipe -Wall -g -O3
+CFLAGS=		-DBBSHOME=\"$(BBSHOME)\" -DBBSUID=$(BBSUID) -DBBSGID=$(BBSGID)
+CFLAGS_MBBSD=	-DBBSNAME=\"$(BBSNAME)\" -DMYHOSTNAME=\"$(MYHOSTNAME)\"\
+		-DMYIP=\"$(MYIP)\" -DBBSUSER=\"$(BBSUSER)\"\
+		-DMAX_USERS=$(MAX_USERS)
+CFLAGS_UTIL=	-DBBSNAME=\"$(BBSNAME)\" -DMYHOSTNAME=\"$(MYHOSTNAME)\"\
+		-DMAX_USERS=$(MAX_USERS)
+
+CFLAGS+=	-DLinux
+CFLAGS_INND=
+CFLAGS_MBBSD+=	-DHAVE_DES_CRYPT
+CFLAGS_UTIL+=	-DHAVE_DES_CRYPT
 LIBS_MBBSD=	-lcrypt
-LIBS_MAIL=	
+LIBS_MAIL=
 LIBS_CHAT=	-lcrypt

@@ -3,7 +3,6 @@
 #define INCLUDE_CONFIG_H
 
 #include <syslog.h>
-#include "../pttbbs.conf"
 
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 主程式 */
 #define BAN_FILE        "BAN"                        /* 關站通告檔 */

@@ -1,5 +1,0 @@
-#!/bin/sh
-# $Id$
-#
-%BBSHOME%/bin/weather.perl
-%BBSHOME%/bin/post Record 全省各地天氣預報 [氣象小姐] %BBSHOME%/etc/weather.tmp

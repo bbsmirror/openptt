@@ -1173,9 +1173,7 @@ static void shell_login(int argc, char *argv[], char *envp[]) {
     }
 	
     close(2);
-    /* don't close fd 1, at least init_tty need it */
-
-    init_tty();	
+    InitTerminal();
     if(check_ban_and_load(0)) exit(0);
 }
 

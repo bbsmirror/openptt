@@ -681,7 +681,7 @@ static void do_talk_char(talkwin_t * twin, int ch) {
 	    ++(line->len);
 	    memcpy(buf, line->data + twin->curcol, 80);
 	    save_cursor();
-	    do_move(twin->curcol, twin->curln);
+	    DoMove(twin->curcol, twin->curln);
 	    ochar(line->data[twin->curcol] = ch0);
 	    for (i = twin->curcol + 1; i < line->len; i++)
 		ochar(line->data[i] = buf[i - twin->curcol - 1]);
@@ -703,7 +703,7 @@ static void do_talk_char(talkwin_t * twin, int ch) {
 	{
 	    --(line->len);
 	    save_cursor();
-	    do_move(twin->curcol, twin->curln);
+	    DoMove(twin->curcol, twin->curln);
 	    for (i = twin->curcol; i < line->len; i++)
 		ochar(line->data[i] = line->data[i + 1]);
 	    line->data[i] = 0;
@@ -718,7 +718,7 @@ static void do_talk_char(talkwin_t * twin, int ch) {
 	{
 	    --(line->len);
 	    save_cursor();
-	    do_move(twin->curcol, twin->curln);
+	    DoMove(twin->curcol, twin->curln);
 	    for (i = twin->curcol; i < line->len; i++)
 		ochar(line->data[i] = line->data[i + 1]);
 	    line->data[i] = 0;

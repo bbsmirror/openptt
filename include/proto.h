@@ -375,13 +375,11 @@ int p_ticket_main();
 int j_ticket_main();
 
 /* term */
-void init_tty();
+void InitTerminal();
 int term_init();
 void save_cursor();
 void restore_cursor();
-void do_move(int destcol, int destline);
-void scroll_forward();
-void change_scroll_range(int top, int bottom);
+void DoMove(int destcol, int destline);
 int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
 int igetch();
 int getdata_str(int line, int col, char *prompt, char *buf, int len, int echo, char *defaultstr);
@@ -393,7 +391,6 @@ void oflush();
 int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo);
 void output(char *s, int len);
 void init_alarm();
-int num_in_buf();
 int ochar(int c);
 void move(int y, int x);
 void outs(char *str);

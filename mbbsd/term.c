@@ -10,6 +10,7 @@
 #include <time.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include "config.h"
 #include "pttstruct.h"
@@ -18,13 +19,24 @@
 #include "modes.h"
 #include "common.h"
 
+#if defined(linux)
+#define OBUFSIZE  2048
+#define IBUFSIZE  128
+#else
+#define OBUFSIZE  4096
+#define IBUFSIZE  256
+#endif
+
 int t_lines = 24;
 int b_lines = 23;
 int p_lines = 20;
 int t_columns = 80;
 int automargins = 1;
 
-void init_tty() {
+screenline_t *big_picture = NULL;
+
+/* initialization */
+void InitTerminal() {
     struct termios tty_state;
     
     if(tcgetattr(1, &tty_state) < 0) {
@@ -35,161 +47,35 @@ void init_tty() {
     tcsetattr(1, TCSANOW, &tty_state);
 }
 
-void do_move(int destcol, int destline) {
-    char buf[16], *p;
-    
-    sprintf(buf, "\33[%d;%dH", destline + 1, destcol + 1);
-    for(p = buf; *p; p++)
-	ochar(*p);
-}
-
-void save_cursor() {
-    ochar('\33');
-    ochar('7');
-}
-
-void restore_cursor() {
-    ochar('\33');
-    ochar('8');
-}
-
-void change_scroll_range(int top, int bottom) {
-    char buf[16], *p;
-    
-    sprintf(buf, "\33[%d;%dr", top + 1, bottom + 1);
-    for(p = buf; *p; p++)
-	ochar(*p);
-}
-
-void scroll_forward() {
-    ochar('\33');
-    ochar('D');
-}
-
-#if defined(linux)
-#define OBUFSIZE  2048
-#define IBUFSIZE  128
-#else
-#define OBUFSIZE  4096
-#define IBUFSIZE  256
-#endif
-
-extern int current_font_type;
-extern char *fn_proverb;
-extern userinfo_t *currutmp;
-extern unsigned int currstat;
-extern pid_t currpid;
-extern int errno;
-extern screenline_t *big_picture;
-extern int t_lines, t_columns;  /* Screen size / width */
-extern int curr_idle_timeout;
-
-static char outbuf[OBUFSIZE], inbuf[IBUFSIZE];
-static int obufsize = 0, ibufsize = 0;
-static int icurrchar = 0;
-
-/* ----------------------------------------------------- */
-/* 定時顯示動態看板                                      */
-/* ----------------------------------------------------- */
-extern userec_t cuser;
-
-static void hit_alarm_clock() {
-    if(HAS_PERM(PERM_NOTIMEOUT) || PERM_HIDE(currutmp) || currstat == MAILALL)
-	return;
-//    if(time(0) - currutmp->lastact > IDLE_TIMEOUT - 2) {
-    if(time(0) - currutmp->lastact > curr_idle_timeout - 2) {
-	clear();
-	kill(currpid, SIGHUP);
-    }
-//    alarm(IDLE_TIMEOUT);
-    alarm(curr_idle_timeout);
-}
-
-void init_alarm() {
-    signal(SIGALRM, (void (*)(int))hit_alarm_clock);
-//    alarm(IDLE_TIMEOUT);
-    alarm(curr_idle_timeout);
-}
-
-/* ----------------------------------------------------- */
-/* output routines                                       */
-/* ----------------------------------------------------- */
-
-void oflush() {
-    if(obufsize) {
-	write(1, outbuf, obufsize);
-	obufsize = 0;
-    }
-}
-
-void output(char *s, int len) {
-    /* Invalid if len >= OBUFSIZE */
-
-    if(obufsize + len > OBUFSIZE) {
-	write(1, outbuf, obufsize);
-	obufsize = 0;
-    }
-    memcpy(outbuf + obufsize, s, len);
-    obufsize += len;
-}
-
-int ochar(int c) {
-    if(obufsize > OBUFSIZE - 1) {
-	write(1, outbuf, obufsize);
-	obufsize = 0;
-    }
-    outbuf[obufsize++] = c;
-    return 0;
-}
-
-/* ----------------------------------------------------- */
-/* input routines                                        */
-/* ----------------------------------------------------- */
-
+/* input */
 static int i_newfd = 0;
 static struct timeval i_to, *i_top = NULL;
-static int (*flushf) () = NULL;
+
+static char inbuf[IBUFSIZE];
 
 void add_io(int fd, int timeout) {
     i_newfd = fd;
     if(timeout) {
 	i_to.tv_sec = timeout;
-	i_to.tv_usec = 16384;  /* Ptt: 改成16384 避免不按時for loop吃cpu time
-				  16384 約每秒64次 */
+	i_to.tv_usec = 0;
 	i_top = &i_to;
     } else
 	i_top = NULL;
 }
 
-int num_in_buf() {
-    return icurrchar - ibufsize;
-}
+static int icurrchar = 0, ibufsize = 0;
 
-char watermode = -1; 
-/* Ptt 水球回顧用的參數 */
-/* watermode = -1  沒在回水球
-             = 0   在回上一顆水球  (Ctrl-R)
-	     > 0   在回前 n 顆水球 (Ctrl-R Ctrl-R) */
-
-extern  char no_oldmsg,oldmsg_count;
-
-/*
-	dogetch() is not reentrant-safe. SIGUSR[12] might happen at any time,
-	and dogetch() might be called again, and then ibufsize/icurrchar/inbuf
-	might be inconsistent.
-	We try to not segfault here... 
-*/
-
+/* dogetch() is not reentrant-safe. SIGUSR[12] might happen at any time,
+   and dogetch() might be called again, and then ibufsize/icurrchar/inbuf
+   might be inconsistent.
+   We try to not segfault here... */
 static int dogetch() {
     int len;
-
+    extern userinfo_t *currutmp;
+    
     if(ibufsize <= icurrchar) {
-
-	if(flushf)
-	    (*flushf)();
-
 	refresh();
-
+	
 	if(i_newfd) {
 	
 	    struct timeval timeout;
@@ -232,8 +118,16 @@ static int dogetch() {
     return inbuf[icurrchar++];
 }
 
+char watermode = -1; 
+/* watermode = -1  沒在回水球
+             = 0   在回上一顆水球  (Ctrl-R)
+	     > 0   在回前 n 顆水球 (Ctrl-R Ctrl-R) */
+
 int igetch() {
     register int ch;
+    extern userinfo_t *currutmp;
+extern char oldmsg_count;
+    
     while((ch = dogetch())) {
 	switch(ch) {
 	case Ctrl('L'):
@@ -576,12 +470,110 @@ int i_get_key() {
     }
 }                
 
-extern int t_lines, t_columns;  /* Screen size / width */
-extern int b_lines;             /* Screen bottom line number: t_lines-1 */
-extern int p_lines;             /* a Page of Screen line numbers: tlines-4 */
+/* output */
+
+
+/* ------------ */
+
+void DoMove(int destcol, int destline) {
+    char buf[16], *p;
+    
+    sprintf(buf, "\33[%d;%dH", destline + 1, destcol + 1);
+    for(p = buf; *p; p++)
+	ochar(*p);
+}
+
+void save_cursor() {
+    ochar('\33');
+    ochar('7');
+}
+
+void restore_cursor() {
+    ochar('\33');
+    ochar('8');
+}
+
+static void change_scroll_range(int top, int bottom) {
+    char buf[16], *p;
+    
+    sprintf(buf, "\33[%d;%dr", top + 1, bottom + 1);
+    for(p = buf; *p; p++)
+	ochar(*p);
+}
+
+static void scroll_forward() {
+    ochar('\33');
+    ochar('D');
+}
+
+extern int current_font_type;
+extern char *fn_proverb;
+extern unsigned int currstat;
+extern pid_t currpid;
+extern int errno;
+extern int curr_idle_timeout;
+
+static char outbuf[OBUFSIZE];
+static int obufsize = 0;
+
+int ochar(int c) {
+    if(obufsize > OBUFSIZE - 1) {
+	write(1, outbuf, obufsize);
+	obufsize = 0;
+    }
+    outbuf[obufsize++] = c;
+    return 0;
+}
+
+/* ----------------------------------------------------- */
+/* 定時顯示動態看板                                      */
+/* ----------------------------------------------------- */
+extern userec_t cuser;
+
+static void hit_alarm_clock() {
+    extern userinfo_t *currutmp;
+    
+    if(HAS_PERM(PERM_NOTIMEOUT) || PERM_HIDE(currutmp) || currstat == MAILALL)
+	return;
+//    if(time(0) - currutmp->lastact > IDLE_TIMEOUT - 2) {
+    if(time(0) - currutmp->lastact > curr_idle_timeout - 2) {
+	clear();
+	kill(currpid, SIGHUP);
+    }
+//    alarm(IDLE_TIMEOUT);
+    alarm(curr_idle_timeout);
+}
+
+void init_alarm() {
+    signal(SIGALRM, (void (*)(int))hit_alarm_clock);
+//    alarm(IDLE_TIMEOUT);
+    alarm(curr_idle_timeout);
+}
+
+/* ----------------------------------------------------- */
+/* output routines                                       */
+/* ----------------------------------------------------- */
+
+void oflush() {
+    if(obufsize) {
+	write(1, outbuf, obufsize);
+	obufsize = 0;
+    }
+}
+
+void output(char *s, int len) {
+    /* Invalid if len >= OBUFSIZE */
+
+    if(obufsize + len > OBUFSIZE) {
+	write(1, outbuf, obufsize);
+	obufsize = 0;
+    }
+    memcpy(outbuf + obufsize, s, len);
+    obufsize += len;
+}
+
 extern int showansi;
 
-extern int automargins;
 #ifdef SUPPORT_GB    
 static int current_font_type=TYPE_BIG5;
 static int gbinited=0;
@@ -600,12 +592,8 @@ static unsigned char standing = NA;
 static char roll = 0;
 static int scrollcnt, tc_col, tc_line;
 
-screenline_t *big_picture = NULL;
-
 #define MODIFIED (1)            /* if line has been modifed, screen output */
 #define STANDOUT (2)            /* if this line has a standout region */
-
-int tputs(const char *str, int affcnt, int (*putc)(int));
 
 void initscr() {
     if(!big_picture) {
@@ -655,7 +643,7 @@ static void rel_move(int was_col, int was_ln, int new_col, int new_ln) {
 	    return;
 	}
     }
-    do_move(new_col, new_ln);
+    DoMove(new_col, new_ln);
 }
 
 static void standoutput(char *buf, int ds, int de, int sso, int eso) {
@@ -714,8 +702,7 @@ void redoscr() {
 void refresh() {
     register screenline_t *bp = big_picture;
     register int i, j, len;
-    extern int automargins;
-    if(num_in_buf())
+    if(icurrchar != ibufsize)
 	return;
 
     if((docls) || (abs(scrollcnt) >= (scr_lns - 3))) {
@@ -1079,7 +1066,7 @@ void region_scroll_up(int top, int bottom) {
     memset(big_picture[i].data, ' ', scr_cols);
     save_cursor();
     change_scroll_range(top, bottom);
-    do_move(0, bottom);
+    DoMove(0, bottom);
     scroll_forward();
     change_scroll_range(0, scr_lns - 1);
     restore_cursor();

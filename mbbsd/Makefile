@@ -43,7 +43,7 @@ SRCS=	admin.c announce.c args.c bbcall.c bbs.c board.c cache.c cal.c card.c\
 all: $(PROG)
 
 depend:
-	mkdep $(CFLAGS) $(SRCS)
+	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)

@@ -4,3 +4,4 @@ ctlinnbbsd
 innbbsd
 mkhistory
 *.o
+.depend

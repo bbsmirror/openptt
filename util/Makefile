@@ -41,7 +41,7 @@ PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 all: $(PROGS)
 
 depend:
-	mkdep $(CFLAGS) $(SRCS)
+	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 bbsmail: bbsmail.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c

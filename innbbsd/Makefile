@@ -67,7 +67,7 @@ EXES     = $(TARGET)
 all: $(OSTYPE)
 
 depend:
-	mkdep $(CFLAGS) $(SRCS)
+	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 sun: 
 	@$(MAKE) EXTRAFLAGS="-DMMAP -DGETRUSAGE -DMALLOCMAP" LDFLAGS="$(DEBUGOBJ)" target

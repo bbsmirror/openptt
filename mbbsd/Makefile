@@ -14,12 +14,18 @@ LIBS_linux=	-lcrypt
 
 CFLAGS=	$(CFLAGS_$(OSTYPE))
 LDFLAGS=$(LDFLAGS_$(OSTYPE))
-LIBS=	../libptt/libptt.a $(LIBS_$(OSTYPE))
+LIBS=	$(LIBS_$(OSTYPE))
 
 CC=	gcc
 PROG=	mbbsd
-OBJS=	admin.o bbs.o cal.o edit.o mbbsd.o osdep.o read.o term.o toolkit.o\
-	ui.o xyz.o
+OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o card.o\
+	chat.o chc_draw.o chc_net.o chc_play.o chc_rule.o chicken.o dark.o\
+	dice.o edit.o friend.o gamble.o gomo.o gomo1.o guess.o indict.o io.o\
+	kaede.o lovepaper.o mail.o mbbsd.o menu.o more.o name.o osdep.o\
+	othello.o page.o read.o record.o register.o screen.o stuff.o\
+	talk.o term.o topsong.o user.o vice.o vote.o xyz.o\
+	tmpjack.o voteboard.o syspost.o var.o descrypt.o toolkit.o passwd.o\
+	calendar.o
 
 .SUFFIXES: .c .o
 .c.o:

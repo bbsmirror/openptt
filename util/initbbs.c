@@ -206,6 +206,15 @@ static void initSymLink() {
     symlink(BBSHOME "/man/boards/EditExp", BBSHOME "/etc/editexp");
 }
 
+static void initHistory() {
+    FILE *fp = fopen("etc/history.data", "w");
+    
+    if(fp) {
+	fprintf(fp, "0 0 0 0");
+	fclose(fp);
+    }
+}
+
 int main() {
     if(chdir(BBSHOME)) {
 	perror(BBSHOME);
@@ -218,6 +227,7 @@ int main() {
     initBoards();
     initMan();
     initSymLink();
+    initHistory();
     
     return 0;
 }

@@ -19,8 +19,39 @@ extern char *fn_note_ans;
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern char *BBSName;
 extern char fromhost[];
+extern userinfo_t *currutmp;
 extern int curr_idle_timeout;
 extern userec_t cuser;
+
+/* 各種統計及相關資訊列表 */
+/* Ptt88年度大學聯招查榜系統  */
+int x_88() {
+    extern char dict[21], database[41];
+
+    strcpy(dict, "(88)准考證號/姓名/學校/科系/類組");
+    strcpy(database, "etc/88");
+    use_dict();
+    return 0;
+}    
+/* Ptt87年度大學聯招查榜系統  */
+int x_87() {
+    extern char dict[21], database[41];
+
+    strcpy(dict, "(87)准考證號/姓名/學校/科系");
+    strcpy(database, "etc/87");
+    use_dict();
+    return 0;
+}    
+
+/* Ptt86年度大學聯招查榜系統  */
+int x_86() {
+    extern char dict[21], database[41];
+
+    strcpy(dict, "(86)准考證號/姓名/學校/科系");
+    strcpy(database, "etc/86");
+    use_dict();
+    return 0;
+}
 
 int x_boardman() {
     more("etc/topboardman", YEA);
@@ -121,6 +152,13 @@ int note() {
     } notedata_t;
     notedata_t myitem;
 
+    if(cuser.money < 5) {
+	outmsg("\033[1;41m 哎呀! 要投五銀才能留言...沒錢耶..\033[m");
+	clrtoeol();
+	refresh();
+	return 0;
+    }
+
     setutmpmode(EDNOTE);
     do {
 	myitem.buf[0][0] = myitem.buf[1][0] = myitem.buf[2][0] = '\0';
@@ -135,6 +173,7 @@ int note() {
 	if(buf[0] == 'q' || (i == 0 && *buf != 'e'))
 	    return 0;
     } while(buf[0] == 'e');
+    demoney(5);
     strcpy(myitem.userid, cuser.userid);
     strncpy(myitem.username, cuser.username, 18);
     myitem.username[18] = '\0';

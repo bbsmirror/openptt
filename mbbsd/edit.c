@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/types.h>
-#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "config.h"
@@ -14,8 +13,6 @@
 #include "modes.h"
 #include "perm.h"
 #include "proto.h"
-
-extern struct utmpfile_t *utmpshm;
 
 #define WRAPMARGIN (511)
 
@@ -758,6 +755,29 @@ void write_header(FILE *fp) {
 	
 	strcpy(postlog.author, cuser.userid);
 	ifuseanony=0;
+#ifdef HAVE_ANONYMOUS
+	if(currbrdattr& BRD_ANONYMOUS) {   
+	    int defanony = (currbrdattr & BRD_DEFAULTANONYMOUS);
+	    if(defanony) 
+		getdata(3, 0, "請輸入你想用的ID，也可直接按[Enter]，"
+			"或是按[r]用真名：", real_name, 12, DOECHO);
+	    else
+		getdata(3, 0, "請輸入你想用的ID，也可直接按[Enter]使用原ID：",
+			real_name, 12, DOECHO);
+	    if(!real_name[0] && defanony) {
+		strcpy(real_name, "Anonymous");
+		strcpy(postlog.author, real_name);
+		ifuseanony = 1;
+	    } else {
+		if(!strcmp("r",real_name) || (!defanony && !real_name[0]))
+		    sprintf(postlog.author,"%s",cuser.userid);
+		else {
+		    sprintf(postlog.author,"%s.",real_name);
+		    ifuseanony=1;
+		}
+	    }
+	}
+#endif
 	strcpy(postlog.board, currboard);
 	ptr = save_title;
 	if(!strncmp(ptr, str_reply, 4))
@@ -766,6 +786,25 @@ void write_header(FILE *fp) {
 	postlog.date = now;
 	postlog.number = 1;
 	append_record(".post", (fileheader_t *)&postlog, sizeof(postlog));
+#ifdef HAVE_ANONYMOUS
+	if(currbrdattr & BRD_ANONYMOUS) {
+	    int defanony = (currbrdattr & BRD_DEFAULTANONYMOUS);
+	    
+	    fprintf(fp, "%s %s (%s) %s %s\n", str_author1, postlog.author ,
+		    (((!strcmp(real_name,"r") && defanony) ||
+		      (!real_name[0] && (!defanony))) ? cuser.username :
+		     "猜猜我是誰 ? ^o^"), 
+		    local_article ? str_post2 : str_post1, currboard);
+	} else {
+	    fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
+#if defined(REALINFO) && defined(POSTS_REALNAMES)
+		    cuser.realname,
+#else
+		    cuser.username,
+#endif
+		    local_article ? str_post2 : str_post1, currboard);
+	}
+#else   /* HAVE_ANONYMOUS */
 	fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
 #if defined(REALINFO) && defined(POSTS_REALNAMES)
 		cuser.realname,
@@ -773,6 +812,8 @@ void write_header(FILE *fp) {
 		cuser.username,
 #endif
 		local_article ? str_post2 : str_post1, currboard);
+#endif  /* HAVE_ANONYMOUS */
+
     }
     save_title[72] = '\0';
     fprintf(fp, "標題: %s\n時間: %s\n", save_title, ctime(&now));
@@ -814,14 +855,23 @@ void addsignature(FILE *fp, int ifuseanony) {
 	}
     }
 #ifdef HAVE_ORIGIN
-    {
+#ifdef HAVE_ANONYMOUS
+    if(ifuseanony)
+	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
+		") \n◆ From: %s\n", "暱名天使的家");
+    else {
 	char temp[32];
 	
-	strncpy (temp,fromhost,15);
-	temp[15] = '\0';
+	strncpy(temp, fromhost, 31);
+	temp[32] = '\0';
 	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
 		") \n◆ From: %s\n", temp);
     }
+#else
+    strncpy (temp,fromhost,15);
+    fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
+	    ") \n◆ From: %s\n", temp);
+#endif
 #endif
 }
 
@@ -934,6 +984,9 @@ write_file(char *fpath, int saveheader, int *islocal) {
 	free(p);
     }
     currline = NULL;
+    
+    if(postrecord.times > MAX_CROSSNUM - 1)
+	anticrosspost();
     
     if(po && sum == 3) {
 	memcpy(&postrecord.checksum[1], checksum, sizeof(int) * 3);
@@ -1472,12 +1525,13 @@ static void block_color() {
 /* 編輯處理：主程式、鍵盤處理 */
 int vedit(char *fpath, int saveheader, int *islocal) {
     FILE *fp1;
-    char last = 0;   /* the last key you press */
+    char last = 0, buf[200];   /* the last key you press */
     int ch, foo;
     int lastindent = -1;
     int last_margin;
     int mode0 = currutmp->mode;
     int destuid0 = currutmp->destuid;
+    unsigned int money=0;
     unsigned short int interval=0;
     time_t now=0,th;
     
@@ -1496,10 +1550,8 @@ int vedit(char *fpath, int saveheader, int *islocal) {
     int edit_margin0 = edit_margin;
     int blockln0 = blockln, count=0, tin=0;
     
-    MPROTECT_UTMP_RW;
     currutmp->mode = EDITING;
     currutmp->destuid = currstat;
-    MPROTECT_UTMP_R;
     insert_character = redraw_everything = 1;
     prevln = blockln = -1;
     
@@ -1536,6 +1588,7 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	if((interval = (unsigned short int)((th = currutmp->lastact) - now))) {
 	    now = th;
 	    if((char)ch != last) {
+		money++;
 		last = (char)ch;
 	    }
         }
@@ -1546,7 +1599,19 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	  count=0;
 	  tin = interval;
 	 }
-	
+        /* 連續240個interval一樣 , 分明是在斂財 */
+	if(count >= 240) {
+	    sprintf(buf, "\033[1;33;46m%s\033[37m在\033[37;45m%s"
+		    "\033[37m板違法賺錢 , %s\033[m", cuser.userid,
+		    currboard,ctime(&now));
+	    log_file ("etc/illegal_money",buf);
+	    money = 0 ;
+	    post_violatelaw(cuser.userid, "Ptt 系統警察", "違法賺錢", "扣除不法所得");
+	    mail_violatelaw(cuser.userid, "Ptt 系統警察", "違法賺錢", "扣除不法所得");
+//	    demoney(10000);
+//	    abort_bbs(0);
+	}
+
 	if(raw_mode)
 	    switch (ch) {
 	    case Ctrl('S'):
@@ -1602,10 +1667,8 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	    case Ctrl('X'):           /* Save and exit */
 		foo = write_file(fpath, saveheader, islocal);
 		if(foo != KEEP_EDITING) {
-		    MPROTECT_UTMP_RW;
 		    currutmp->mode = mode0;
 		    currutmp->destuid = destuid0;
-		    MPROTECT_UTMP_R;
 		    firstline = firstline0;
 		    lastline = lastline0;
 		    currline = currline0;
@@ -1621,7 +1684,7 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 		    edit_margin = edit_margin0;
 		    blockln = blockln0;
 		    if(!foo)
-			return 0;
+			return money;
 		    else
 			return foo;
 		}
@@ -1636,10 +1699,8 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	    case Ctrl('Q'):           /* Quit without saving */
 		ch = ask("結束但不儲存 (Y/N)? [N]: ");
 		if(ch == 'y' || ch == 'Y') {
-		    MPROTECT_UTMP_RW;
 		    currutmp->mode = mode0;
-		    currutmp->destuid = destuid0;	
-		    MPROTECT_UTMP_R;
+		    currutmp->destuid = destuid0;
 		    firstline = firstline0;
 		    lastline = lastline0;
 		    currline = currline0;

@@ -536,7 +536,7 @@ static int b_newuid() {
     return i;
 }
 
-int m_newbrd() {
+int m_newbrd(int recover) {
     boardheader_t newboard;
     char ans[4];
     int bid;
@@ -580,7 +580,16 @@ int m_newbrd() {
     if(genbuf[0])
 	strcpy(newboard.title + 7, genbuf);
     setbpath(genbuf, newboard.brdname);
-    if(getbnum(newboard.brdname) > 0 || mkdir(genbuf, 0755) == -1) {
+    
+    if(recover) {
+	struct stat sb;
+	
+	if(stat(genbuf, &sb) == -1 || !(sb.st_mode & S_IFDIR)) {
+	    outs(err_bid);
+	    pressanykey();
+	    return -1;
+	}
+    } else if(getbnum(newboard.brdname) > 0 || mkdir(genbuf, 0755) == -1) {
 	outs(err_bid);
 	pressanykey();
 	return -1;
@@ -632,6 +641,7 @@ int m_newbrd() {
     setup_man(&newboard);
     touch_boards();
     outs("\n新板成立");
+    post_newboard(newboard.title, newboard.brdname, newboard.BM);
     log_usies("NewBoard", newboard.title);
     pressanykey();
     return 0;
@@ -1019,4 +1029,98 @@ int cat_register() {
 	mprints(22, 0, "沒辦法CAT過去呢 去檢查一下系統吧!!                                    ");
     pressanykey();
     return 0;
+}
+
+static void give_id_money(char *user_id, int money, FILE *log_fp, char *mail_title, time_t t) {
+    char tt[TTLEN + 1] = {0};
+    
+    if(inumoney(user_id, money) < 0) {
+        move(12, 0);
+        clrtoeol();
+        prints("id:%s money:%d 不對吧!!", user_id, money);
+        pressanykey();
+    } else {
+//  	move(12, 0);
+//	clrtoeol();
+//      prints("%s %d", user_id, money);
+        fprintf(log_fp, "%ld %s %d", t, user_id, money);
+        sprintf(tt, "%s : %d ptt 幣", mail_title, money);
+        mail_id(user_id, tt, "~bbs/etc/givemoney.why", "[PTT 銀行]");
+    }
+}            
+
+int give_money() {
+    FILE *fp, *fp2;
+    char *ptr, *id, *mn;
+    char buf[200] = {0}, tt[TTLEN + 1] = {0}; 
+    time_t t = time(NULL);
+    struct tm *pt = localtime(&t);
+    int to_all = 0, money = 0;
+    
+    getdata(0, 0, "指定使用者(S) 全站使用者(A) 取消(Q)？[S]", buf, 3, LCECHO);
+    if(buf[0] == 'q')
+	return 1;
+    else if( buf[0] == 'a') {
+	to_all = 1;
+	getdata(1, 0, "發多少錢呢?", buf, 20, DOECHO);
+	money = atoi(buf);
+	if(money <= 0) {
+	    move(2, 0);
+	    prints("輸入錯誤!!");
+	    pressanykey();
+	    return 1;
+	}
+    } else {
+	if(vedit("etc/givemoney.txt", NA, NULL) < 0)
+	    return 1;
+    }
+    
+    clear();
+    getdata(0, 0, "要發錢了嗎(Y/N)[N]", buf, 3, LCECHO);
+    if(buf[0] != 'y')
+	return 1;
+
+    if(!(fp2 = fopen("etc/givemoney.log", "a")))
+	return 1;
+    strftime(buf, 200, "%Y/%m/%d/%H:%M", pt);
+    fprintf(fp2, "%s\n", buf);
+    
+    getdata(1, 0, "紅包袋標題 ：", tt, TTLEN, DOECHO);
+    move(2, 0);
+    
+    prints("編紅包袋內容");
+    pressanykey();
+    if(vedit("etc/givemoney.why", NA, NULL) < 0)
+	return 1;
+    
+    stand_title("發錢中...");
+    if(to_all) {
+	extern struct uhash_t *uhash;
+	int i, unum;
+	for(unum = uhash->number, i=0; i<unum; i++) {
+	    if(bad_user_id(uhash->userid[i]))
+		continue;
+	    id = uhash->userid[i];
+	    give_id_money(id, money, fp2, tt, t);
+	}
+    } else {
+	if(!(fp = fopen("etc/givemoney.txt", "r+"))) {
+	    fclose(fp2);
+	    return 1;
+	}
+	while(fgets(buf, 255, fp)) {
+//  	    clear();
+	    if (!(ptr = strchr(buf, ':')))
+		continue;
+	    *ptr = '\0';
+	    id = buf;
+	    mn = ptr + 1;
+	    give_id_money(id, atoi(mn), fp2, tt, t);
+	}
+	fclose(fp);
+    }
+    
+    fclose(fp2);
+    pressanykey();
+    return FULLUPDATE;
 }

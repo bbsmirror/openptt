@@ -15,7 +15,6 @@
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/time.h>
-#include <sys/mman.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <arpa/telnet.h>
@@ -30,8 +29,6 @@
 #define TH_LOW 100
 #define TH_HIGH 120
 
-extern struct utmpfile_t *utmpshm;
-
 extern int t_lines, t_columns;  /* Screen size / width */
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern userinfo_t *currutmp;
@@ -45,7 +42,9 @@ int talkrequest = NA;
 
 static char remoteusername[40] = "?";
 
+extern struct fromcache_t *fcache;
 extern struct utmpfile_t *utmpshm;
+extern int fcache_semid;
 
 static unsigned char enter_uflag;
 static int use_shell_login_mode=0;
@@ -162,36 +161,32 @@ extern int usernum;
 extern int currmode;
 
 void u_exit(char *mode) {
-    static char enter_count = 0;
     userec_t xuser;
     int diff = (time(0) - login_start_time) / 60;
 
-    if(!enter_count) {
-	enter_count++;
-	passwd_query(usernum, &xuser);
-	
-	auto_backup();
-	
-	setflags(PAGER_FLAG, currutmp->pager != 1);
-	setflags(CLOAK_FLAG, currutmp->invisible);
-	
-	xuser.invisible = currutmp->invisible % 2;
-	xuser.pager = currutmp->pager % 5;
-	
-	if(!(HAS_PERM(PERM_SYSOP) && HAS_PERM(PERM_DENYPOST)))
-	    do_aloha("<<下站通知>> -- 我走囉！");
-	
-	purge_utmp(currutmp);
-	if((cuser.uflag != enter_uflag) || (currmode & MODE_DIRTY) || !diff) {
-	    xuser.uflag = cuser.uflag;
-	    xuser.numposts = cuser.numposts;
-	    /* Leeym 上站停留時間限制式 */
-	    if(!diff && cuser.numlogins)
-		xuser.numlogins = --cuser.numlogins;
-	    passwd_update(usernum, &xuser);
-	}
-	log_usies(mode, NULL);
+    passwd_query(usernum, &xuser);
+    
+    auto_backup();
+    
+    setflags(PAGER_FLAG, currutmp->pager != 1);
+    setflags(CLOAK_FLAG, currutmp->invisible);
+    
+    xuser.invisible = currutmp->invisible % 2;
+    xuser.pager = currutmp->pager % 5;
+    
+    if(!(HAS_PERM(PERM_SYSOP) && HAS_PERM(PERM_DENYPOST)))
+	do_aloha("<<下站通知>> -- 我走囉！");
+    
+    purge_utmp(currutmp);
+    if((cuser.uflag != enter_uflag) || (currmode & MODE_DIRTY) || !diff) {
+	xuser.uflag = cuser.uflag;
+	xuser.numposts = cuser.numposts;
+	if(!diff && cuser.numlogins)
+	    xuser.numlogins = --cuser.numlogins; /* Leeym 上站停留時間限制式 */
+	reload_money();
+	passwd_update(usernum, &xuser);
     }
+    log_usies(mode, NULL);
 }
 
 static void system_abort() {
@@ -211,17 +206,21 @@ void abort_bbs(int sig) {
 }
 
 static void abort_bbs_debug(int sig) {
-    if(currmode)
-	u_exit("AXXED");
-#ifdef DEBUG
-    setproctitle("debug me!! (%d)", sig);
-    sleep(3600 * 6);
-#endif
+    static int reentrant = 0;
+    
+    if(!reentrant) {
+	reentrant = 1;
+	if(currmode)
+	    u_exit("AXXED");
+	// printpt("debug me!(%d)",sig);
+	// sleep(3600);	/* wait 60 mins for debug */
+    }
     exit(0);
 }
 
 /* 登錄 BBS 程式 */
 static void mysrand() {
+    extern struct utmpfile_t *utmpshm;
     register int i = utmpshm->number;	/* 站上的人數當洗牌次數 */
     
     srand(time(NULL) + currutmp->pid);	/* 時間跟 pid 當 rand 的 seed */
@@ -261,16 +260,12 @@ static void talk_request() {
 	screenline_t *screen0 = calloc(t_lines, sizeof(screenline_t));
 	extern screenline_t *big_picture;
 	
-	MPROTECT_UTMP_RW;
 	currutmp->mode = 0;
 	currutmp->chatid[0] = 1;
-	MPROTECT_UTMP_R;
 	memcpy(screen0, big_picture, t_lines * sizeof(screenline_t));
  	talkreply();
-	MPROTECT_UTMP_RW;
 	currutmp->mode = mode0;
 	currutmp->chatid[0] = c0;
-	MPROTECT_UTMP_R;
 	memcpy(big_picture, screen0, t_lines * sizeof(screenline_t));
 	free(screen0);
 	redoscr();
@@ -335,19 +330,15 @@ static void write_request(int sig) {
 	int currstat0 = currstat;
 	unsigned char mode0 = currutmp->mode;
 	
-	MPROTECT_UTMP_RW;
 	currutmp->mode = 0;
 	currutmp->chatid[0] = 2;
-	MPROTECT_UTMP_R;
 	currstat = XMODE;
 	
 	do {
 	    bell();
 	    show_last_call_in(1);
 	    igetch();
-	    MPROTECT_UTMP_RW;
 	    currutmp->msgcount--;
-	    MPROTECT_UTMP_R;
 	    if(currutmp->msgcount>=MAX_MSGS)
 	    {
 		/* this causes chaos... jochang */
@@ -360,15 +351,11 @@ static void write_request(int sig) {
 	    if(oldmsg_count < MAX_REVIEW)
 		oldmsg_count++;
 	    
-	    MPROTECT_UTMP_RW;
-	    for(i = 0; i < currutmp->msgcount && i < MAX_MSGS; i++)
+	    for(i = 0; i < currutmp->msgcount; i++)
 		currutmp->msgs[i] = currutmp->msgs[i + 1];
-	    MPROTECT_UTMP_R;
 	} while(currutmp->msgcount);
-	MPROTECT_UTMP_RW;
 	currutmp->chatid[0] = c0;
 	currutmp->mode = mode0;
-	MPROTECT_UTMP_R;
 	currstat = currstat0;
     } else {
 	bell();
@@ -384,9 +371,7 @@ static void write_request(int sig) {
 	    t_display_new();
 	}
 	refresh();
-	MPROTECT_UTMP_RW;
 	currutmp->msgcount = 0;
-	MPROTECT_UTMP_R;
     }
 }
 
@@ -399,7 +384,7 @@ static void multi_user_check() {
 	return;		/* don't check sysops */
     
     if(cuser.userlevel) {
-	if(!(ui = search_ulist(cmpuids, usernum)))
+	if(!(ui = (userinfo_t *)search_ulist(cmpuids, usernum)))
 	    return;	/* user isn't logged in */
 	
 	pid = ui->pid;
@@ -410,7 +395,7 @@ static void multi_user_check() {
 		genbuf, 3, LCECHO);
 
 	if(genbuf[0] != 'n') {
-	    kill(pid, SIGHUP);
+	    if(pid > 0) kill(pid, SIGHUP);
 	    log_usies("KICK ", cuser.username);
 	} else {
 	    if(count_multi() >= 3)
@@ -460,6 +445,7 @@ static void login_query() {
     char uid[IDLEN + 1], passbuf[PASSLEN];
     int attempts;
     char genbuf[200];
+    extern struct utmpfile_t *utmpshm;
     resolve_utmp();
     attach_uhash();
     attempts = utmpshm->number;
@@ -607,6 +593,30 @@ void del_distinct(char *fname, char *line) {
     }
 }
 
+#ifdef WHERE
+static int where(char *from) {
+    register int i = 0, count = 0, j;
+    
+    for (j = 0; j < fcache->top; j++) {
+	char *token = strtok(fcache->domain[j], "&");
+	
+	i = 0;
+	count = 0;
+	while(token) {
+	    if(strstr(from, token))
+		count++;
+	    token = strtok(NULL, "&");
+	    i++;
+	}
+	if(i == count)
+	    break;
+    }
+    if(i != count)
+	return 0;
+    return j;
+}
+#endif
+
 static void check_BM() {
     int i;
     boardheader_t *bhdr;
@@ -653,7 +663,11 @@ static void setup_utmp(int mode) {
     uinfo.pager = cuser.pager % 5;
     
     uinfo.brc_id = 0;
+#ifdef WHERE
+    uinfo.from_alias = where(fromhost);
+#else
     uinfo.from_alias = 0;
+#endif
     setuserfile(buf, "remoteuser");
     
     strcpy(remotebuf, getenv("RFC931"));
@@ -678,12 +692,38 @@ static void user_login() {
     char genbuf[200];
     struct tm *ptime, *tmp;
     time_t now;
+    int a;
+    /*** Heat:廣告詞
+	 char *ADV[17] = {
+	 "記得唷!! 5/12在台大二活地下室見~~~",
+	 "你知道Ptt之夜是什麼嗎? 5/12號就要上演耶 快去問吧!",
+	 "5/12 Ptt之夜即將引爆 能不去嗎? 在台大二活地下室咩",
+	 "不來就落伍了 啥? 就Ptt之夜啊 很棒的晚會唷 時間:5/12",
+	 "差點忘了提醒你 5/12我們有約 就台大二活地下室咩!!",
+	 "Ptt是啥 想知嗎? 5/12在台大二活地下室告訴你唷",
+	 "來來來....5/12快到台大二活地下室去拿獎品吧~~",
+	 "去去去...到台大二活地下室去 就5/12麻 有粉多獎品耶",
+	 "喂喂喂 怎還楞在這!!快呼朋引伴大鬧ptt",
+	 "Ptt最佳豬腳 換你幹幹看 5/12來吧....*^_^*",
+	 "幹什麼幹什麼?? 你怎麼不曉得啥是Ptt之夜..老土唷",
+	 "累了嗎? 讓我們來為你來一段精采表演吧.. 5/12 Ptt之夜",
+	 "世紀末最屁力的晚會 就在台大二活地下室 5/12不見不散 gogo",
+	 "到底誰比較帥(美) 來比比吧 5/12Ptt之夜 一較高下",       
+	 "台大二活地下室 5/12 聽說會有一場很棒的晚會唷 Ptt之夜",
+	 "台大二活地下室 5/12 你能不來嗎?粉多網友等著你耶",
+	 "5/12 台大二活地下室 是各約網友見面的好地方呢",
+	 }; 
+	 char *ADV[] = {
+	 "7/17 @LIVE 亂彈, 何欣穗 的 入場卷要送給 ptt 的愛用者!",
+	 "欲知詳情請看 PttAct 板!!",
+	 }; ***/
 
     log_usies("ENTER", getenv("RFC931") /* fromhost */ );
     setproctitle("%s: %s", margs, cuser.userid);
     
     /* resolve all cache */
     resolve_garbage();	/* get ptt cache */
+    resolve_fcache();
     resolve_boards();
     
     /* 初始化 uinfo、flag、mode */
@@ -697,6 +737,13 @@ static void user_login() {
     ptime = localtime(&now);
     tmp = localtime(&cuser.lastlogin);
     
+    if((a = utmpshm->number) > fcache->max_user) {
+	sem_init(FROMSEM_KEY, &fcache_semid);
+	sem_lock(SEM_ENTER, fcache_semid);
+	fcache->max_user = a;
+	fcache->max_time = now;
+	sem_lock(SEM_LEAVE, fcache_semid);
+    }
 #ifdef INITIAL_SETUP
     if(!getbnum(DEFAULT_BOARD)) {
 	strcpy(currboard, "尚未選定");
@@ -712,16 +759,12 @@ static void user_login() {
 	do_aloha("<<上站通知>> -- 我來啦！");
     if(ptime->tm_mday == cuser.day && ptime->tm_mon + 1 == cuser.month) {
 	more("etc/Welcome_birth", NA);
-	MPROTECT_UTMP_RW;
 	currutmp->birth = 1;
-	MPROTECT_UTMP_R;
     } else {
 	more("etc/Welcome_login", NA);
 //	pressanykey();
 //    more("etc/CSIE_Week", NA);
-	MPROTECT_UTMP_RW;
 	currutmp->birth = 0;
-	MPROTECT_UTMP_R;
     }
     
     if(cuser.userlevel) {	/* not guest */
@@ -730,9 +773,7 @@ static void user_login() {
 	       "上次您是從 \033[1;33m%s\033[0;37m 連往本站，\n"
 	       "     我記得那天是 \033[1;33m%s\033[0;37m。\n",
 	       ++cuser.numlogins, cuser.lasthost, Cdate(&cuser.lastlogin));
-	MPROTECT_UTMP_RW;
 	currutmp->mind=rand()%8;  /* 初始心情 */
-	MPROTECT_UTMP_R;
 	pressanykey();
  	
 	if(currutmp->birth && tmp->tm_mday != ptime->tm_mday) {
@@ -767,14 +808,12 @@ static void user_login() {
 	    "愛之味", "天上", "藍色珊瑚礁"};
 	i = login_start_time % 13;
 	sprintf(cuser.username, "海邊漂來的%s", nick[(int)i]);
-	sprintf(cuser.realname, name[(int)i]);
-	MPROTECT_UTMP_RW;
 	sprintf(currutmp->username, cuser.username);
+	sprintf(cuser.realname, name[(int)i]);
 	sprintf(currutmp->realname, cuser.realname);
-	currutmp->pager = 2;
-	MPROTECT_UTMP_R;
 	sprintf(cuser.address, addr[(int)i]);
 	cuser.sex = i % 8;
+	currutmp->pager = 2;
 	pressanykey();
     } else
 	pressanykey();
@@ -782,6 +821,7 @@ static void user_login() {
     if(!PERM_HIDE(currutmp))
 	cuser.lastlogin = login_start_time;
     
+    reload_money();
     passwd_update(usernum, &cuser);
     
     for(i = 0; i < NUMVIEWFILE; i++)
@@ -804,7 +844,7 @@ static void do_aloha(char *hello) {
 	    int tuid;
 	    
 	    if((tuid = searchuser(userid)) && tuid != usernum &&
-	       (uentp = search_ulistn(cmpuids, tuid, 1)) &&
+	       (uentp = (userinfo_t *)search_ulistn(cmpuids, tuid, 1)) &&
 	       ((uentp->userlevel & PERM_SYSOP) ||
 		((!currutmp->invisible ||
 		  uentp->userlevel & PERM_SEECLOAK) &&
@@ -817,6 +857,7 @@ static void do_aloha(char *hello) {
 }
 
 static void do_term_init() {
+    term_init();
     initscr();
 }
 
@@ -853,7 +894,8 @@ static void start_client() {
     login_query();		/* Ptt 加上login time out */
     user_login();
     m_init();
-    
+
+#if FORCE_PROCESS_REGISTER_FORM    
     if (HAS_PERM(PERM_SYSOP) && (nreg = dashs(fn_register)/163) > 100)
     {
     	char cpu_load[30];
@@ -862,7 +904,9 @@ static void start_client() {
 	else
 	    scan_register_form(fn_register, 1, nreg/10);
     }
-    
+#endif
+    if(HAVE_PERM(PERM_SYSOP | PERM_BM))
+	b_closepolls();
     if(!(cuser.uflag & COLOR_FLAG))
 	showansi = 0;
 #ifdef DOTIMEOUT
@@ -880,8 +924,8 @@ static void start_client() {
 /* FSA (finite state automata) for telnet protocol */
 static void telnet_init() {
     static char svr[] = {
-	IAC, DO, TELOPT_TTYPE,
-	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
+//	IAC, DO, TELOPT_TTYPE,
+//	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
 	IAC, WILL, TELOPT_ECHO,
 	IAC, WILL, TELOPT_SGA,
 	IAC, DO, TELOPT_BINARY
@@ -899,8 +943,9 @@ static void telnet_init() {
     rset = to.tv_usec = 0;
     FD_SET(0, (fd_set *) & rset);
     oset = rset;
-    for(n = 0, cmd = svr; n < 5; n++) {
-	len = (n == 1 ? 6 : 3);
+    for(n = 0, cmd = svr; n < 3; n++) {
+//	len = (n == 1 ? 6 : 3);
+	len = 3;
 	write(0, cmd, len);
 	cmd += len;
 	
@@ -1136,7 +1181,9 @@ static void shell_login(int argc, char *argv[], char *envp[]) {
     }
 	
     close(2);
-    InitTerminal();
+    /* don't close fd 1, at least init_tty need it */
+
+    init_tty();	
     if(check_ban_and_load(0)) exit(0);
 }
 

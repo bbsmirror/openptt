@@ -98,15 +98,15 @@ static void FreeEvent(event_t *e) {
     }
 }
 
+extern userec_t cuser;
+
 static event_t *ReadEvent(int today) {
     FILE *fp;
     char *p, buf[256];
     static event_t head;
     
     head.next = NULL;
-    p = getenv("HOME");
-    strcpy(buf, p ? p : "");
-    strcat(buf, "/.cald");
+    setcalfile(buf, cuser.userid);
     fp = fopen(buf, "r");
     if(fp) {
 	while(fgets(buf, sizeof(buf), fp)) {

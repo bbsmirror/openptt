@@ -341,6 +341,7 @@ void initscr();
 void Jaky_outs(char *str, int line);
 
 /* stuff */
+void setcalfile(char *buf, char *userid);
 void stand_title(char *title);
 void pressanykey();
 void trim(char *buf);

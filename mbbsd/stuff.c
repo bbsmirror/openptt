@@ -29,6 +29,9 @@ static char *str_board_file = "boards/%s/%s";
 #define STR_DOTDIR  ".DIR"
 static char *str_dotdir = STR_DOTDIR;
 
+void setcalfile(char *buf, char *userid) {
+    sprintf(buf, "home/%c/%s/calendar", userid[0], userid);
+}
 
 void sethomepath(char *buf, char *userid) {
     sprintf(buf, "home/%c/%s", userid[0], userid);

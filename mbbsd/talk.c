@@ -320,7 +320,7 @@ static void my_kick(userinfo_t * uentp) {
     {
 	sprintf(genbuf, "%s (%s)", uentp->userid, uentp->username);
 	log_usies("KICK ", genbuf);
-	if ((kill(uentp->pid, SIGHUP) == -1) && (errno == ESRCH))
+	if((uentp->pid <= 0 || kill(uentp->pid, SIGHUP) == -1) && (errno == ESRCH))
 	    purge_utmp(uentp);
 	outs("踢出去囉");
     }
@@ -533,7 +533,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	/* 不懂 */
 	uin->destuip = currutmp - &utmpshm->uinfo[0];
 	uin->sig = 2;
-	kill(uin->pid, SIGUSR1);
+	if(uin->pid > 0) kill(uin->pid, SIGUSR1);
     } else if(flag != 2 &&
 	      !HAS_PERM(PERM_SYSOP) &&
 	      (uin->pager == 3 || 
@@ -553,7 +553,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	} else if (flag != 2)
 	    outmsg("\033[1;33;41m糟糕! 對方不行了! (收到太多水球) \033[37m@_@\033[m");
 	
-	if(uin->msgcount == 1 && kill(uin->pid, SIGUSR2) == -1 && flag != 2)
+	if(uin->msgcount == 1 && (uin->pid <= 0 || kill(uin->pid, SIGUSR2) == -1) && flag != 2)
 	    outmsg("\033[1;33;41m糟糕! 沒打中! \033[37m~>_<~\033[m");
 	else if(uin->msgcount == 1 && flag != 2)
 	    outmsg("\033[1;33;44m水球砸過去了! \033[37m*^o^*\033[m");
@@ -1083,7 +1083,7 @@ static void my_talk(userinfo_t * uin) {
 	currutmp->destuid = uin->uid;
 	setutmpmode(PAGE);
 	uin->destuip = currutmp - &utmpshm->uinfo[0];
-	kill(pid, SIGUSR1);
+	if(pid > 0) kill(pid, SIGUSR1);
 	clear();
 	prints("正呼叫 %s.....\n鍵入 Ctrl-D 中止....", uin->userid);
 
@@ -1126,7 +1126,7 @@ static void my_talk(userinfo_t * uin) {
 		    bell();
 
 		    uin->destuip = currutmp - &utmpshm->uinfo[0];
-		    if (kill(pid, SIGUSR1) == -1)
+		    if(pid <= 0 || kill(pid, SIGUSR1) == -1)
 		    {
 #ifdef linux
 			add_io(sock, 20);	/* added 4 linux... achen */
@@ -1508,7 +1508,7 @@ static void pickup_user() {
 		    if ((diff > curr_idle_timeout + 10) &&
 			(diff < 60 * 60 * 24 * 5))
 		    {
-			if ((kill(uentp->pid, SIGHUP) == -1) &&
+			if ((uentp->pid <= 0 || kill(uentp->pid, SIGHUP) == -1) &&
 			    (errno == ESRCH))
 			    purge_utmp(uentp);
 			continue;
@@ -1696,6 +1696,8 @@ static void pickup_user() {
 		if (head)
 		    state = US_REDRAW;
 		break;
+#if 0
+		/* 這功能似乎會導致shared memory的混亂, 先暫時拿掉 */
 	    case 'N':
 		if (HAS_PERM(PERM_BASIC))
 		{
@@ -1708,6 +1710,7 @@ static void pickup_user() {
 		    state = US_REDRAW;
 		}
 		break;
+#endif
 	    case 'H':
 		if (HAS_PERM(PERM_SYSOP))
 		{
@@ -1867,7 +1870,7 @@ static void pickup_user() {
 			uentp = pklist[--actor_pos].ui;
 			if (uentp->pid &&
 			    currpid != uentp->pid &&
-			    kill(uentp->pid, 0) != -1 &&
+			    uentp->pid > 0 && kill(uentp->pid, 0) != -1 &&
 			    (HAS_PERM(PERM_SYSOP) ||
 			     (uentp->pager != 3 &&
 			      (uentp->pager != 4 || is_friend(uentp) & HFM))))
@@ -2079,7 +2082,7 @@ static void pickup_user() {
 		state = US_PICKUP;
 		break;
 	    case 'K':
-		if (uentp->pid && (kill(uentp->pid, 0) != -1))
+		if (uentp->pid > 0 && kill(uentp->pid, 0) != -1)
 		{
 		    move(1, 0);
 		    clrtobot();

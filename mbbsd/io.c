@@ -50,7 +50,7 @@ static void hit_alarm_clock() {
 //    if(time(0) - currutmp->lastact > IDLE_TIMEOUT - 2) {
     if(time(0) - currutmp->lastact > curr_idle_timeout - 2) {
 	clear();
-	kill(currpid, SIGHUP);
+	if(currpid > 0) kill(currpid, SIGHUP);
     }
 //    alarm(IDLE_TIMEOUT);
     alarm(curr_idle_timeout);

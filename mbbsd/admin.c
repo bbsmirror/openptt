@@ -536,7 +536,7 @@ static int b_newuid() {
     return i;
 }
 
-int m_newbrd() {
+int m_newbrd(int recover) {
     boardheader_t newboard;
     char ans[4];
     int bid;
@@ -580,7 +580,16 @@ int m_newbrd() {
     if(genbuf[0])
 	strcpy(newboard.title + 7, genbuf);
     setbpath(genbuf, newboard.brdname);
-    if(getbnum(newboard.brdname) > 0 || mkdir(genbuf, 0755) == -1) {
+    
+    if(recover) {
+	struct stat sb;
+	
+	if(stat(genbuf, &sb) == -1 || !(sb.st_mode & S_IFDIR)) {
+	    outs(err_bid);
+	    pressanykey();
+	    return -1;
+	}
+    } else if(getbnum(newboard.brdname) > 0 || mkdir(genbuf, 0755) == -1) {
 	outs(err_bid);
 	pressanykey();
 	return -1;

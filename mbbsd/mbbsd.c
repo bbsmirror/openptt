@@ -206,10 +206,15 @@ void abort_bbs(int sig) {
 }
 
 static void abort_bbs_debug(int sig) {
-    if(currmode)
-	u_exit("AXXED");
-    // printpt("debug me!(%d)",sig);
-    // sleep(3600);	/* wait 60 mins for debug */
+    static int reentrant = 0;
+    
+    if(!reentrant) {
+	reentrant = 1;
+	if(currmode)
+	    u_exit("AXXED");
+	// printpt("debug me!(%d)",sig);
+	// sleep(3600);	/* wait 60 mins for debug */
+    }
     exit(0);
 }
 
@@ -390,7 +395,7 @@ static void multi_user_check() {
 		genbuf, 3, LCECHO);
 
 	if(genbuf[0] != 'n') {
-	    kill(pid, SIGHUP);
+	    if(pid > 0) kill(pid, SIGHUP);
 	    log_usies("KICK ", cuser.username);
 	} else {
 	    if(count_multi() >= 3)
@@ -889,7 +894,8 @@ static void start_client() {
     login_query();		/* Ptt ¥[¤Wlogin time out */
     user_login();
     m_init();
-    
+
+#if FORCE_PROCESS_REGISTER_FORM    
     if (HAS_PERM(PERM_SYSOP) && (nreg = dashs(fn_register)/163) > 100)
     {
     	char cpu_load[30];
@@ -898,7 +904,7 @@ static void start_client() {
 	else
 	    scan_register_form(fn_register, 1, nreg/10);
     }
-    
+#endif
     if(HAVE_PERM(PERM_SYSOP | PERM_BM))
 	b_closepolls();
     if(!(cuser.uflag & COLOR_FLAG))
@@ -918,8 +924,8 @@ static void start_client() {
 /* FSA (finite state automata) for telnet protocol */
 static void telnet_init() {
     static char svr[] = {
-	IAC, DO, TELOPT_TTYPE,
-	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
+//	IAC, DO, TELOPT_TTYPE,
+//	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
 	IAC, WILL, TELOPT_ECHO,
 	IAC, WILL, TELOPT_SGA,
 	IAC, DO, TELOPT_BINARY
@@ -937,8 +943,9 @@ static void telnet_init() {
     rset = to.tv_usec = 0;
     FD_SET(0, (fd_set *) & rset);
     oset = rset;
-    for(n = 0, cmd = svr; n < 5; n++) {
-	len = (n == 1 ? 6 : 3);
+    for(n = 0, cmd = svr; n < 3; n++) {
+//	len = (n == 1 ? 6 : 3);
+	len = 3;
 	write(0, cmd, len);
 	cmd += len;
 	

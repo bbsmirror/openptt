@@ -120,10 +120,10 @@ int connectMailServer() {
 #endif
     addr.sin_family = AF_INET;
     addr.sin_port = htons(SMTPPORT);
-    addr.sin_addr.s_addr = inet_addr(RELAYSERVERIP);
+    addr.sin_addr.s_addr = inet_addr(RELAY_SERVER_IP);
     
     if(connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-	perror(RELAYSERVERIP);
+	perror(RELAY_SERVER_IP);
 	close(sock);
 	return -1;
     }

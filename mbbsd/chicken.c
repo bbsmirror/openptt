@@ -456,8 +456,8 @@ static int ch_sell() {
     
     if(money < 0)
 	money =0 ;
-    else if(money>100)
-	money =100; //防止怪雞
+    else if(money > MAX_CHICKEN_MONEY)
+	money = MAX_CHICKEN_MONEY; //防止怪雞
     if(mychicken->type == 1 || mychicken->type == 7) {
 	outs("\n\033[31m ㄜ..親愛的..販賣人口是會犯法的唷..\033[m");
 	pressanykey();

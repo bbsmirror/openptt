@@ -653,7 +653,7 @@ static void choose_board(int newflag) {
     static int num = 0;
     boardstat_t *ptr;
     int head = -1, ch = 0, tmp,tmp1, uidtmp, classtmp;
-#if HAVE_SEARCHALL
+#if HAVE_SEARCH_ALL
     char genbuf[200];
 #endif
     extern time_t board_visit_time;
@@ -721,7 +721,7 @@ static void choose_board(int newflag) {
 	    }
 	    show_brdlist(head, 1, newflag ^= 1);
 	    break;
-#if HAVE_SEARCHALL
+#if HAVE_SEARCH_ALL
 	case 'a': {
 	    if(yank_flag != 2 ) {
 		if(getdata_str(1, 0, "§@ªÌ ", genbuf, IDLEN + 2, DOECHO,
@@ -737,7 +737,7 @@ static void choose_board(int newflag) {
 	    show_brdlist(head, 1, newflag);
 	    break;
 	}
-#endif /* HAVE_SEARCHALL */
+#endif /* HAVE_SEARCH_ALL */
 	case KEY_PGUP:
 	case 'P':
 	case 'b':

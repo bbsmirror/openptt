@@ -20,10 +20,6 @@ void a_copyitem(char* fpath, char* title, char* owner, int mode);
 int Announce();
 void gem(char* maintitle, item_t* path, int update);
 
-/* args */
-void initsetproctitle(int argc, char **argv, char **envp);
-void setproctitle(const char* format, ...);
-
 /* bbs */
 void make_blist();
 int invalid_brdname(char *brd);
@@ -95,37 +91,10 @@ void remove_from_uhash(int n);
 void add_to_uhash(int n, char *id);
 
 /* cal */
-int inumoney(char *tuser, int money);
 int cal();
-int reload_money();
-int demoney(int money);
-int inmoney(int money);
-int deumoney(char *tuser, int money);
-int lockutmpmode(int unmode, int state);
-int unlockutmpmode();
 int p_touch_boards();
 int x_file();
-int give_money();
 int p_sysinfo();
-int p_give();
-int p_cloak();
-int p_from();
-int ordersong();
-int p_exmail();
-void mail_redenvelop(char* from, char* to, int money, char mode);
-
-/* chat */
-int t_chat();
-
-/* chicken */
-int show_file(char *filename, int y, int lines, int mode);
-void ch_buyitem(int money, char *picture, int *item);
-int chicken_main();
-int chickenpk(int fd);
-void time_diff(chicken_t *thechicken);
-int isdeadth(chicken_t *thechicken);
-void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken);
-int reload_chicken();
 
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
@@ -148,9 +117,6 @@ int Rename(char* src, char* dst);
 int Link(char* src, char* dst);
 char *Ptt_prints(char *str, int mode);
 char *my_ctime(const time_t *t);
-
-/* lovepaper */
-int x_love();
 
 /* mail */
 int mail_muser(userec_t muser, char *title, char *filename);
@@ -342,10 +308,6 @@ void getyx(int *y, int *x);
 void initscr();
 void Jaky_outs(char *str, int line);
 
-/* topsong */
-void sortsong();
-int topsong();
-
 /* user */
 int u_editcalendar();
 void user_display(userec_t *u, int real);
@@ -363,18 +325,6 @@ int u_editproverb();
 int u_cloak();
 int u_register();
 int u_list();
-
-/* vote */
-int strip_ansi(char *buf, char *str, int mode);
-void b_suckinfile(FILE *fp, char *fname);
-int b_results();
-int b_vote();
-int b_vote_maintain();
-int b_closepolls();
-
-/* voteboard */
-int do_voteboard();
-void do_voteboardreply(fileheader_t *fhdr);
 
 /* xyz */
 int m_sysop();
@@ -400,6 +350,11 @@ int Goodbye();
 unsigned StringHash(unsigned char *s);
 int IsNum(char *a, int n);
 void mprotect_utmp(int lock);
+int strip_ansi(char *buf, char *str, int mode);
+void b_suckinfile(FILE *fp, char *fname);
+int show_file(char *filename, int y, int lines, int mode);
+void initsetproctitle(int argc, char **argv, char **envp);
+void setproctitle(const char* format, ...);
 
 /* ui */
 void showtitle(char *title, char *mid);
@@ -415,8 +370,5 @@ int passwd_query(int num, userec_t *buf);
 int passwd_apply(int (*fptr)(userec_t *));
 void passwd_lock();
 void passwd_unlock();
-
-/* calendar */
-int calendar();
 
 #endif

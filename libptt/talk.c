@@ -330,42 +330,12 @@ static void my_kick(userinfo_t * uentp) {
     pressanykey();
 }
 
-static void chicken_query(char *userid) {
-    char buf[100];
-
-    if (getuser(userid))
-    {
-	if (xuser.mychicken.name[0])
-	{
-	    time_diff(&(xuser.mychicken));
-	    if (!isdeadth(&(xuser.mychicken)))
-	    {
-		show_chicken_data(&(xuser.mychicken), NULL);
-		sprintf(buf, "\n\n以上是 %s 的寵物資料..", userid);
-		outs(buf);
-	    }
-	}
-	else
-	{
-	    move(1, 0);
-	    clrtobot();
-	    sprintf(buf, "\n\n%s 並沒有養寵物..", userid);
-	    outs(buf);
-	}
-	pressanykey();
-    }
-}
-
 int my_query(char *uident) {
     extern char currmaildir[];
     userec_t muser;
-    int tuid, i;
-    unsigned long int j;
+    int tuid;
     userinfo_t *uentp;
-    char *money[10] =
-    {"債台高築", "赤貧", "清寒", "普通", "小康",
-     "小富", "中富", "大富翁", "富可敵國", "比爾蓋\天"};
-
+    
     if ((tuid = getuser(uident)))
     {
 	memcpy(&muser, &xuser, sizeof(muser));
@@ -377,14 +347,10 @@ int my_query(char *uident) {
 	currutmp->destuid = tuid;
 	MPROTECT_UTMP_R;
 
-	j = muser.money;
-	for (i = 0; i < 10 && j > 10; i++)
-	    j /= 10;
-	prints("《ＩＤ暱稱》%s(%s)%*s《經濟狀況》%s\n",
+	prints("《ＩＤ暱稱》%s(%s)%*s\n",
 	       muser.userid,
 	       muser.username,
-	       26 - strlen(muser.userid) - strlen(muser.username), "",
-	       money[i]);
+	       26 - strlen(muser.userid) - strlen(muser.username), "");
 	prints("《上站次數》%d次", muser.numlogins);
 	move(2, 40);
 	prints("《文章篇數》%d篇\n", muser.numposts);
@@ -411,14 +377,9 @@ int my_query(char *uident) {
 	     MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
 	     MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME};
 
-	    prints("《 性  別 》%-28.28s《私有財產》%ld 銀兩\n",
-		   sex[muser.sex % 8],
-		   muser.money);
+	    prints("《 性  別 》%-28.28s\n",
+		   sex[muser.sex % 8]);
 	}
-	prints("《五子棋戰績》%3d 勝 %3d 敗 %3d 和      "
-	       "《象棋戰績》%3d 勝 %3d 敗 %3d 和",
-	       muser.five_win, muser.five_lose, muser.five_tie,
-	       muser.chc_win, muser.chc_lose, muser.chc_tie);
 	showplans(uident);
 	pressanykey();
 	return FULLUPDATE;
@@ -976,10 +937,8 @@ static void do_talk(int fd) {
     setutmpmode(XINFO);
 }
 
-#define lockreturn(unmode, state) if(lockutmpmode(unmode, state)) return 
-
 static void my_talk(userinfo_t * uin) {
-    int sock, msgsock, length, ch, error = 0;
+    int sock, msgsock, length, ch;
     struct sockaddr_in server;
     pid_t pid;
     char c;
@@ -1037,26 +996,6 @@ static void my_talk(userinfo_t * uin) {
 	    uin->sig = SIG_TALK;
 	    MPROTECT_UTMP_R;
 	    break;
-	case 'p':
-	    reload_chicken();
-	    getuser(uin->userid);
-	    if (uin->lockmode == CHICKEN || currutmp->lockmode == CHICKEN)
-		error = 1;
-	    if (!cuser.mychicken.name[0] || !xuser.mychicken.name[0])
-		error = 2;
-	    if (error)
-	    {
-		outmsg(error == 2 ? "並非兩人都養寵物" :
-		       "有一方的寵物正在使用中");
-		bell();
-		refresh();
-		sleep(1);
-		return;
-	    }
-	    MPROTECT_UTMP_RW;
-	    uin->sig = SIG_PK;
-	    MPROTECT_UTMP_R;
-	    break;
 	default:
 	    return;
 	}
@@ -1072,7 +1011,6 @@ static void my_talk(userinfo_t * uin) {
 	if (sock < 0)
 	{
 	    perror("sock err");
-	    unlockutmpmode();
 	    return;
 	}
 	server.sin_family = PF_INET;
@@ -1082,7 +1020,6 @@ static void my_talk(userinfo_t * uin) {
 	{
 	    close(sock);
 	    perror("bind err");
-	    unlockutmpmode();
 	    return;
 	}
 	length = sizeof(server);
@@ -1090,7 +1027,6 @@ static void my_talk(userinfo_t * uin) {
 	{
 	    close(sock);
 	    perror("sock name err");
-	    unlockutmpmode();
 	    return;
 	}
 	MPROTECT_UTMP_RW;
@@ -1132,7 +1068,6 @@ static void my_talk(userinfo_t * uin) {
 		    MPROTECT_UTMP_R;
 		    outmsg("人家在忙啦");
 		    pressanykey();
-		    unlockutmpmode();
 		    return;
 		}
 		else
@@ -1155,7 +1090,6 @@ static void my_talk(userinfo_t * uin) {
 			outmsg(msg_usr_left);
 			refresh();
 			pressanykey();
-			unlockutmpmode();
 			return;
 		    }
 		    continue;
@@ -1172,7 +1106,6 @@ static void my_talk(userinfo_t * uin) {
 		MPROTECT_UTMP_RW;
 		currutmp->sockactive = currutmp->destuid = 0;
 		MPROTECT_UTMP_R;
-		unlockutmpmode();
 		return;
 	    }
 	}
@@ -1181,7 +1114,6 @@ static void my_talk(userinfo_t * uin) {
 	if (msgsock == -1)
 	{
 	    perror("accept");
-	    unlockutmpmode();
 	    return;
 	}
 	add_io(0, 0);
@@ -1198,9 +1130,6 @@ static void my_talk(userinfo_t * uin) {
 	    /* gomo */
 	    switch (uin->sig)
 	    {
-	    case SIG_PK:
-		chickenpk(msgsock);
-		break;
 	    case SIG_TALK:
 	    default:
 		do_talk(msgsock);
@@ -1253,7 +1182,6 @@ static void my_talk(userinfo_t * uin) {
     currutmp->mode = mode0;
     currutmp->destuid = 0;
     MPROTECT_UTMP_R;
-    unlockutmpmode();
     pressanykey();
 }
 
@@ -2000,45 +1928,6 @@ static void pickup_user() {
 	    case 'r':
 		m_read();
 		break;
-	    case 'g':		/* give money */
-		move(b_lines - 2, 0);
-		if (strcmp(uentp->userid, cuser.userid))
-		{
-		    sprintf(genbuf, "要給 %s 多少錢呢?  ", uentp->userid);
-		    outs(genbuf);
-		    if (getdata(b_lines - 1, 0, "[銀行轉帳]:", genbuf, 7,
-				LCECHO))
-		    {
-			clrtoeol();
-			if ((ch = atoi(genbuf)) <= 0)
-			    break;
-			reload_money();
-			if (ch > cuser.money)
-			    outs("\033[41m 現金不足~~\033[m");
-			else
-			{
-			    inumoney(uentp->userid, ch);
-			    sprintf(genbuf, "\033[44m 嗯..還剩下 %d 錢.."
-				    "\033[m", demoney(ch));
-			    outs(genbuf);
-			    sprintf(genbuf, "%s\t給%s\t%d\t%s", cuser.userid,
-				    uentp->userid, ch,
-				    ctime(&currutmp->lastact));
-			    log_file(FN_MONEY, genbuf);
-			    mail_redenvelop(cuser.userid, uentp->userid, ch, 'Y');
-			}
-		    }
-		    else
-		    {
-			clrtoeol();
-			outs("\033[41m 交易取消! \033[m");
-		    }
-		}
-		else
-		    outs("\033[33m 自己給自己? 耍笨..\033[m");
-		refresh();
-		sleep(1);
-		break;
 #ifdef SHOWMIND
 	    case 'i':
 		clear();
@@ -2127,9 +2016,6 @@ static void pickup_user() {
 	    case 'q':
 		strcpy(currauthor, uentp->userid);
 		my_query(uentp->userid);
-		break;
-	    case 'c':
-		chicken_query(uentp->userid);
 		break;
 	    case 'u':		/* Thor: 可線上查看及修改使用者 */
 	    {
@@ -2246,16 +2132,6 @@ int t_idle() {
     MPROTECT_UTMP_R;
     currstat = stat0;
 
-    return 0;
-}
-
-int t_qchicken() {
-    char uident[STRLEN];
-
-    stand_title("查詢寵物");
-    usercomplete(msg_uid, uident);
-    if (uident[0])
-	chicken_query(uident);
     return 0;
 }
 
@@ -2406,9 +2282,6 @@ void talkreply() {
     if (buf[0] == 'y')
 	switch (sig)
 	{
-	case SIG_PK:
-	    chickenpk(a);
-	    break;
 	case SIG_TALK:
 	default:
 	    do_talk(a);

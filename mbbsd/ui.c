@@ -104,7 +104,6 @@ void movie(int i) {
        !ptt->busystate && ptt->max_film > 0) {
         if(currstat == PSALE) {
             i = PSALE;
-            reload_money();
         } else {
             do {
                 if(!i)
@@ -312,7 +311,6 @@ static commands_t adminlist[] = {
     {cat_register, PERM_SYSOP,        "CCatregister   無法審核時用的"},
     {p_touch_boards, PERM_SYSOP,      "TTouch Boards  更新BCACHE"},
     {x_file, PERM_SYSOP|PERM_VIEWSYSOP,     "XXfile         編輯系統檔案"},
-    {give_money, PERM_SYSOP|PERM_VIEWSYSOP, "GGivemoney     紅包雞"},
 #ifdef  HAVE_MAILCLEAN
     {m_mclean, PERM_SYSOP,            "MMail Clean    清理使用者個人信箱"},
 #endif
@@ -344,12 +342,7 @@ static commands_t talklist[] = {
     {t_pager, PERM_BASIC,   "PPager         切換呼叫器"},
     {t_idle, 0,             "IIdle          發呆"},
     {t_query, 0,            "QQuery         查詢網友"},
-    {t_qchicken, 0,         "WWatch Pet     查詢寵物"},
     {t_talk, PERM_PAGE,     "TTalk          找人聊聊"},
-    {t_chat, PERM_CHAT,     "CChat          找家茶坊喫茶去"},
-#ifdef HAVE_MUD
-    {x_mud, 0,              "VVrChat        \033[1;32m虛擬實業聊天廣場\033[m"},
-#endif
     {t_display, 0,          "DDisplay       顯示上幾次熱訊"},
     {NULL, 0, NULL}
 };
@@ -379,8 +372,6 @@ static commands_t namelist[] = {
 /* User menu */
 static commands_t userlist[] = {
     {u_info, PERM_LOGINOK,          "IInfo          設定個人資料與密碼"},
-    {calendar, PERM_LOGINOK,          "CCalendar      個人行事曆"},
-    {u_editcalendar, PERM_LOGINOK,    "CCalendarEdit  編輯個人行事曆"},
     {u_loginview, PERM_LOGINOK,     "LLogin View    選擇進站畫面"},
     {u_ansi, 0, "AANSI          切換 ANSI \033[36m彩\033[35m色\033[37m/"
      "\033[30;47m黑\033[1;37m白\033[m模示"},
@@ -422,33 +413,12 @@ static commands_t xyzlist[] = {
     {NULL, 0, NULL}
 };
 
-/* Ptt money menu */
-static commands_t moneylist[] = {
-    {p_give, 0,         "00Give        給其他人錢"},
-    {save_violatelaw, 0,"11ViolateLaw  繳罰單"},
-#if !HAVE_FREECLOAK
-    {p_cloak, 0,        "22Cloak       切換 隱身/現身   $19  /次"},
-#endif
-    {p_from, 0,         "33From        暫時修改故鄉     $49  /次"},
-    {ordersong,0,       "44OSong       歐桑動態點歌機   $200 /次"},
-    {p_exmail, 0,       "55Exmail      購買信箱         $1000/封"},
-    {NULL, 0, NULL}
-};
-
-static int p_money() {
-    domenu(PSALE, "Ｐtt量販店", '0', moneylist);
-    return 0;
-}
-
 /* Ptt Play menu */
 static commands_t playlist[] = {
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
     {x_history, 0,           "HHistory     【 我們的成長 】"},
     {x_weather,0 ,           "WWeather     【 氣象預報 】"},
     {x_stock,0 ,             "SStock       【 股市行情 】"},
-    {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
-    {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
-    {chicken_main,PERM_LOGINOK, "CChicken     【\033[1;34m Ｐtt養雞場 \033[m】"},
     {NULL, 0, NULL}
 };
 

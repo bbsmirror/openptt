@@ -42,81 +42,6 @@ static void mail_by_link(char* owner, char* title, char* path) {
 
 extern int usernum;
 
-void anticrosspost() {
-    char buf[200];
-    time_t now = time(NULL);
-    
-    sprintf(buf,
-	    "\033[1;33;46m%s \033[37;45mcross post 文章 \033[37m %s\033[m",
-	    cuser.userid, ctime(&now));
-    log_file("etc/illegal_money", buf);
-    
-    post_violatelaw(cuser.userid, "Ptt系統警察", "Cross-post", "罰單處份");    
-    cuser.userlevel |= PERM_VIOLATELAW;
-    cuser.vl_count ++;
-    mail_by_link("Ptt警察部隊", "Cross-Post罰單",
-		 BBSHOME "/etc/crosspost.txt");
-    reload_money();
-    passwd_update(usernum, &cuser);
-    exit(0);
-}
-
-/* Heat CharlieL*/
-int save_violatelaw() {
-    char buf[128], ok[3];
-    
-    setutmpmode(VIOLATELAW); 
-    clear();
-    stand_title("繳罰單中心");
-
-    if(!(cuser.userlevel & PERM_VIOLATELAW)) {
-	mprints(22, 0, "\033[1;31m你無聊啊? 你又沒有被開罰單~~\033[m");
-	pressanykey();
-	return 0;
-    }
-  
-    reload_money();
-    if(cuser.money < (int)cuser.vl_count*1000) {
-	sprintf(buf, "\033[1;31m這是你第 %d 次違反本站法規"
-		"必須繳出 %d $Ptt ,你只有 %ld 元, 錢不夠啦!!\033[m",
-		(int)cuser.vl_count, (int)cuser.vl_count * 1000, cuser.money);
-	mprints(22, 0, buf);
-	pressanykey();
-	return 0;
-    }
-                            
-    move(5,0);
-    prints("\033[1;37m你知道嗎? 因為你的違法 "
-	   "已經造成很多人的不便\033[m\n");
-    prints("\033[1;37m你是否確定以後不會再犯了？\033[m\n");
-    
-    if(!getdata(10,0,"確定嗎？[y/n]:", ok, 2, LCECHO) ||
-       ok[0] == 'n' || ok[0] == 'N') {
-	mprints(22,0,"\033[1;31m等你想通了再來吧!! "
-		"我相信你不會知錯不改的~~~\033[m");
-	pressanykey();
-	return 0;
-    }
-
-    sprintf(buf, "這是你第 %d 次違法 必須繳出 %d $Ptt",
-	    cuser.vl_count, cuser.vl_count*1000);
-    mprints(11,0,buf);
-
-    if(!getdata(10, 0, "要付錢[y/n]:", ok, 2, LCECHO) || 
-       ok[0] == 'N' || ok[0] == 'n') {
-
-	mprints(22,0, "\033[1;31m 嗯 存夠錢 再來吧!!!\033[m");
-	pressanykey();
-	return 0;
-    }
-    
-    demoney(cuser.vl_count*1000);
-    cuser.userlevel &= (~PERM_VIOLATELAW);
-    reload_money();   
-    passwd_update(usernum, &cuser);
-    return 0;
-}
-
 void make_blist() {
     CreateNameList();
     apply_boards(g_board_names);
@@ -455,8 +380,6 @@ static int do_general() {
     owner = cuser.userid;
 #endif
     /* 錢 */
-    aborted = (aborted > MAX_POST_MONEY * 2) ? MAX_POST_MONEY : aborted / 2;
-    postfile.money = aborted;
     strcpy(postfile.owner, owner);
     strcpy(postfile.title, save_title);
     if(islocal) {            /* local save */
@@ -503,9 +426,7 @@ static int do_general() {
 	outs("順利貼出佈告，");
 	
 	if(strcmp(currboard, "Test") && !ifuseanony) {
-	    prints("這是您的第 %d 篇文章。 稿酬 %d 銀。",
-		   ++cuser.numposts, aborted );
-	    inmoney(aborted);
+	    prints("這是您的第 %d 篇文章。", ++cuser.numposts);
 	} else
 	    outs("測試信件不列入紀錄，敬請包涵。");
 	
@@ -549,10 +470,7 @@ static int do_general() {
 int do_post() {
     boardheader_t *bp;
     bp = getbcache(currbid);
-    if(bp->brdattr & BRD_VOTEBOARD)
-        return do_voteboard();
-    else
-        return do_general();
+    return do_general();
 }
 
 extern int b_lines;
@@ -613,10 +531,7 @@ int invalid_brdname(char *brd) {
 static void do_reply(fileheader_t *fhdr) {
     boardheader_t *bp;
     bp = getbcache(currbid);
-    if (bp->brdattr & BRD_VOTEBOARD)
-        do_voteboardreply(fhdr);
-    else
-        do_generalboardreply(fhdr);
+    do_generalboardreply(fhdr);
 }
 
 static int reply_post(int ent, fileheader_t *fhdr, char *direct) {
@@ -688,9 +603,6 @@ static int cross_post(int ent, fileheader_t *fhdr, char *direct) {
 	
     if((ent = str_checksum(fhdr->title)) != 0 &&
        ent == postrecord.checksum[0]) {
-	/* 檢查 cross post 次數 */
-	if(postrecord.times++ > MAX_CROSSNUM)
-	    anticrosspost();
     } else {
 	postrecord.times = 0;
 	postrecord.checksum[0] = ent;
@@ -1117,34 +1029,18 @@ static int del_post(int ent, fileheader_t *fhdr, char *direct) {
 	    cancelpost(fhdr, not_owned);
 
 	    inbtotal(currbid, -1);
-	    if (fhdr->money < 0)
-		fhdr->money = 0;
-	    if (not_owned && strcmp(currboard, "Test")){		
-		deumoney(fhdr->owner, fhdr->money);
-	    }
 	    if(!not_owned && strcmp(currboard, "Test")) {
 		if(cuser.numposts)
 		    cuser.numposts--;
 		move(b_lines - 1, 0);
 		clrtoeol();
-		demoney(fhdr->money);
-		prints("%s，您的文章減為 %d 篇，支付清潔費 %d 銀", msg_del_ok,
-		       cuser.numposts,fhdr->money);
+		prints("%s，您的文章減為 %d 篇", msg_del_ok, cuser.numposts);
 		refresh();
 		pressanykey();
 	    }
 	    return DIRCHANGED;
 	}
     }
-    return FULLUPDATE;
-}
-
-static int view_postmoney(int ent, fileheader_t *fhdr, char *direct) {
-    move(b_lines - 1, 0);
-    clrtoeol();
-    prints("這一篇文章值 %d 銀", fhdr->money);
-    refresh();
-    pressanykey();
     return FULLUPDATE;
 }
 
@@ -1416,11 +1312,6 @@ static int good_post(int ent, fileheader_t *fhdr, char *direct) {
 
     if(fhdr->filemode & FILE_DIGEST) {
 	fhdr->filemode = (fhdr->filemode & ~FILE_DIGEST);
-	if(!strcmp(currboard,"Note") || !strcmp(currboard,"PttBug") ||
-	   !strcmp(currboard,"Artdsn") || !strcmp(currboard, "PttLaw")) {
-	    deumoney(fhdr->owner,1000);
-	    fhdr->money -= 1000;
-	}
     } else {
 	fileheader_t digest;
 	char *ptr, buf[64];
@@ -1439,11 +1330,6 @@ static int good_post(int ent, fileheader_t *fhdr, char *direct) {
 	    append_record(buf, &digest, sizeof(digest));
 	}
 	fhdr->filemode = (fhdr->filemode & ~FILE_MARKED) | FILE_DIGEST;
-	if(!strcmp(currboard, "Note") || !strcmp(currboard, "PttBug") ||
-	   !strcmp(currboard,"Artdsn") || !strcmp(currboard, "PttLaw")) {
-	    inumoney(fhdr->owner, 1000);
-	    fhdr->money += 1000;
-	}
     }
     substitute_record(direct, fhdr, sizeof(*fhdr), ent);
     if(currmode & MODE_SELECT) {
@@ -1504,9 +1390,6 @@ struct onekey_t read_comms[] = {
     {'E', edit_post},
     {'T', edit_title},
     {'s', do_select},
-    {'R', b_results},
-    {'V', b_vote},
-    {'M', b_vote_maintain},
     {'B', bh_title_edit},
     {'W', b_notes_edit},
     {'O', b_post_note},
@@ -1525,7 +1408,6 @@ struct onekey_t read_comms[] = {
     {'m', mark_post},
     {'L', solve_post},
     {Ctrl('P'), do_post},
-    {'Q', view_postmoney},
     {'\0', NULL}
 };
 

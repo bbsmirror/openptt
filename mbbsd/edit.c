@@ -988,9 +988,6 @@ write_file(char *fpath, int saveheader, int *islocal) {
     }
     currline = NULL;
     
-    if(postrecord.times > MAX_CROSSNUM - 1)
-	anticrosspost();
-    
     if(po && sum == 3) {
 	memcpy(&postrecord.checksum[1], checksum, sizeof(int) * 3);
 	postrecord.times  =0;
@@ -1528,13 +1525,12 @@ static void block_color() {
 /* 編輯處理：主程式、鍵盤處理 */
 int vedit(char *fpath, int saveheader, int *islocal) {
     FILE *fp1;
-    char last = 0, buf[200];   /* the last key you press */
+    char last = 0;   /* the last key you press */
     int ch, foo;
     int lastindent = -1;
     int last_margin;
     int mode0 = currutmp->mode;
     int destuid0 = currutmp->destuid;
-    unsigned int money=0;
     unsigned short int interval=0;
     time_t now=0,th;
     
@@ -1593,7 +1589,6 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	if((interval = (unsigned short int)((th = currutmp->lastact) - now))) {
 	    now = th;
 	    if((char)ch != last) {
-		money++;
 		last = (char)ch;
 	    }
         }
@@ -1604,19 +1599,7 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 	  count=0;
 	  tin = interval;
 	 }
-        /* 連續240個interval一樣 , 分明是在斂財 */
-	if(count >= 240) {
-	    sprintf(buf, "\033[1;33;46m%s\033[37m在\033[37;45m%s"
-		    "\033[37m板違法賺錢 , %s\033[m", cuser.userid,
-		    currboard,ctime(&now));
-	    log_file ("etc/illegal_money",buf);
-	    money = 0 ;
-	    post_violatelaw(cuser.userid, "Ptt 系統警察", "違法賺錢", "扣除不法所得");
-	    mail_violatelaw(cuser.userid, "Ptt 系統警察", "違法賺錢", "扣除不法所得");
-//	    demoney(10000);
-//	    abort_bbs(0);
-	}
-
+	
 	if(raw_mode)
 	    switch (ch) {
 	    case Ctrl('S'):
@@ -1691,7 +1674,7 @@ int vedit(char *fpath, int saveheader, int *islocal) {
 		    edit_margin = edit_margin0;
 		    blockln = blockln0;
 		    if(!foo)
-			return money;
+			return 0;
 		    else
 			return foo;
 		}

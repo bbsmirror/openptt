@@ -57,11 +57,6 @@ char *Ptt_prints(char *str, int mode) {
 	sprintf(strbuf, "%s%s%s", str, cuser.username, po + 3);
 	strcpy(str, strbuf);
     }
-    while((po = strstr(str, "\033*m"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%ld%s", str, cuser.money, po + 3);
-	strcpy(str, strbuf);
-    }
     strip_ansi(str, str ,mode);
     return str;
 }

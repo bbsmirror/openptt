@@ -128,6 +128,7 @@ static event_t *ReadEvent(int today) {
 		continue;
 	    }
 	    t->color = ParseColor(color) + 30;
+	    for(; *content == ' ' || *content == '\t'; content++);
 	    t->content = strdup(content);
 	    InsertEvent(&head, t);
 	}

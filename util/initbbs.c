@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "config.h"
@@ -200,9 +201,9 @@ static void initMan() {
 }
 
 static void initSymLink() {
-    symlink("/home/bbs/man/boards/Note/SONGBOOK", "/home/bbs/etc/SONGBOOK");
-    symlink("/home/bbs/man/boards/Note/SONGO", "/home/bbs/etc/SONGO");
-    symlink("/hoem/bbs/man/boards/EditExp", "/home/bbs/etc/editexp");
+    symlink(BBSHOME "/man/boards/Note/SONGBOOK", BBSHOME "/etc/SONGBOOK");
+    symlink(BBSHOME "/man/boards/Note/SONGO", BBSHOME "/etc/SONGO");
+    symlink(BBSHOME "/man/boards/EditExp", BBSHOME "/etc/editexp");
 }
 
 static void initHistory() {

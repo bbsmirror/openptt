@@ -1,7 +1,8 @@
-SUBDIR=	libptt mbbsd util
+# $Id$
+SUBDIR=libptt mbbsd util
 BBSHOME?=$(HOME)
 
-all install clean:
+depend all install clean depclean:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
 		make BBSHOME=$(BBSHOME) OSTYPE=$(OSTYPE) $@;\

@@ -863,7 +863,7 @@ void addsignature(FILE *fp, int ifuseanony) {
 	char temp[32];
 	
 	strncpy(temp, fromhost, 31);
-	temp[32] = '\0';
+	temp[31] = '\0';
 	fprintf(fp, "\n--\n¡° µo«H¯¸: " BBSNAME "(" MYHOSTNAME
 		") \n¡» From: %s\n", temp);
     }

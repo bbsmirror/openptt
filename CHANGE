@@ -2,6 +2,7 @@ o 新增 tunepasswd
 o 修正 innbbsd 的 bug
 o xchatd 運作正常
 o 整合 buildir
+o 修正 Makefile 在某些 Linux 上無法正常工作的 bug
 
 --------------------------------------------------
 Version 0.9.6	2000/06/28

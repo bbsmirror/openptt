@@ -1696,6 +1696,8 @@ static void pickup_user() {
 		if (head)
 		    state = US_REDRAW;
 		break;
+#if 0
+		/* 這功能似乎會導致shared memory的混亂, 先暫時拿掉 */
 	    case 'N':
 		if (HAS_PERM(PERM_BASIC))
 		{
@@ -1708,6 +1710,7 @@ static void pickup_user() {
 		    state = US_REDRAW;
 		}
 		break;
+#endif
 	    case 'H':
 		if (HAS_PERM(PERM_SYSOP))
 		{

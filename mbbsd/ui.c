@@ -438,26 +438,10 @@ static int p_money() {
     return 0;
 }
 
-static commands_t jceelist[] = {
-    {x_88,PERM_LOGINOK,      "0088 JCEE     【88學年度大學聯招查榜系統】"},
-    {x_87,PERM_LOGINOK,      "1187 JCEE     【87學年度大學聯招查榜系統】"},
-    {x_86,PERM_LOGINOK,      "2286 JCEE     【86學年度大學聯招查榜系統】"},
-    {NULL, 0, NULL}
-};
-
-static int m_jcee() {
-    domenu(JCEE, "Ｐtt查榜系統", '0', jceelist);
-    return 0;
-}
-
 static int forsearch();
-static int playground();
 
 /* Ptt Play menu */
 static commands_t playlist[] = {
-#if HAVE_JCEE
-    {m_jcee, PERM_LOGINOK,   "JJCEE        【 大學聯考查榜系統 】"},
-#endif
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
     {x_history, 0,           "HHistory     【 我們的成長 】"},
     {x_weather,0 ,           "WWeather     【 氣象預報 】"},
@@ -486,36 +470,11 @@ static commands_t playlist[] = {
     {forsearch,PERM_LOGINOK, "SSearchEngine【\033[1;35m Ｐtt搜尋器 \033[m】"},
     {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
     {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
-    {chicken_main,PERM_LOGINOK, "CChicken     "
-     "【\033[1;34m Ｐtt養雞場 \033[m】"},
-    {playground,PERM_LOGINOK, "AAmusement   【\033[1;33m Ｐtt遊樂場 \033[m】"},
+    {chicken_main,PERM_LOGINOK, "CChicken     【\033[1;34m Ｐtt養雞場 \033[m】"},
     {NULL, 0, NULL}
 };
-
-static commands_t plist[] = {
-
-/*    {p_ticket_main, PERM_LOGINOK,"00Pre         【 總統機 】"},
-      {alive, PERM_LOGINOK,        "00Alive       【  訂票雞  】"},
-*/
-    {ticket_main, PERM_LOGINOK,  "11Gamble      【 Ｐtt賭場 】"},
-    {guess_main, PERM_LOGINOK,   "22Guess number【 猜數字   】"},
-    {othello_main, PERM_LOGINOK, "33Othello     【 黑白棋   】"},
-//    {dice_main, PERM_LOGINOK,    "44Dice        【 玩骰子   】"},
-    {g_card_jack, PERM_LOGINOK,  "55Jack        【 黑傑克 】"},
-    {g_ten_helf, PERM_LOGINOK,   "66Tenhalf     【 十點半 】"},
-    {card_99, PERM_LOGINOK,      "77Nine        【 九十九 】"},
-    {reg_barbq, PERM_SYSOP,      "88BarBQ       【 烤肉報名 】"},
-    {NULL, 0, NULL}
-};
-
-static int playground() {
-    domenu(AMUSE, "Ｐtt遊樂場",'1',plist);
-    return 0;
-}
 
 static commands_t slist[] = {
-    {x_dict,0,                   "11Dictionary  "
-     "【\033[1;33m 趣味大字典 \033[m】"},
     {main_railway, PERM_LOGINOK,  "33Railway     "
      "【\033[1;32m 火車表查詢 \033[m】"},
     {NULL, 0, NULL}

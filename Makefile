@@ -1,4 +1,4 @@
-SUBDIR=mbbsd util innbbsd
+SUBDIR=mbbsd util
 BBSHOME?=$(HOME)
 
 all install clean depend:

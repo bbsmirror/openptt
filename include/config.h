@@ -29,7 +29,7 @@
 #endif
 
 #ifndef HAVE_FREECLOAK
-#define HAVE_FREECLOCK    0
+#define HAVE_FREECLOAK    0
 #endif
 
 #ifndef TITLE_COLOR

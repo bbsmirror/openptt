@@ -351,11 +351,10 @@ void pressanykey() {
 }
 
 void bell() {
-    char sound[3], *ptr;
+    char c;
     
-    ptr = sound;
-    memset(ptr, Ctrl('G'), sizeof(sound));
-    write(1, ptr, sizeof(sound));
+    c = Ctrl('G');
+    write(1, &c, 1);
 }
 
 int search_num(int ch, int max) {

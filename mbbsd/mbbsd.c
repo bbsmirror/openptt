@@ -94,9 +94,7 @@ static void reapchild(int sig) {
 	;
 }
 
-#define BANNER \
-"【" BBSNAME "】◎ 台大流行網 ◎(" MYHOSTNAME ")\r\n"\
-"  調幅(" MYIP ") "
+#define BANNER "【" BBSNAME "】◎ 台大流行網 ◎(" MYHOSTNAME ")\r\n"
 
 /* check load and print approriate banner string in buf */
 static int chkload(char *buf) {

@@ -13,21 +13,15 @@ echo "Please enter the following questions..."
 echo
 
 AC_SUBST(bbsuser)
+bbsuser=`whoami`
 AC_SUBST(bbsuid)
-AC_SUBST(bbsgid)
-echo -n "BBS User Account: "; read bbsuser
 bbsuid=`id -u $bbsuser`
+AC_SUBST(bbsgid)
 bbsgid=`id -g $bbsuser`
-
 AC_SUBST(bbsname)
 echo -n "BBS Name: "; read bbsname
-
 AC_SUBST(myhostname)
 echo -n "Hostname: "; read myhostname
-
-AC_SUBST(myip)
-echo -n "IP: "; read myip
-
 AC_SUBST(max_users)
 echo -n "Max Users: "; read max_users
 

@@ -938,15 +938,15 @@ LDFLAGS="-pipe -Wall -g -O3"
 echo "Please enter the following questions..."
 echo
 
-echo -n "BBS User Account: "; read bbsuser
+bbsuser=`whoami`
+
 bbsuid=`id -u $bbsuser`
+
 bbsgid=`id -g $bbsuser`
 
 echo -n "BBS Name: "; read bbsname
 
 echo -n "Hostname: "; read myhostname
-
-echo -n "IP: "; read myip
 
 echo -n "Max Users: "; read max_users
 
@@ -3743,7 +3743,6 @@ s,@bbsuid@,$bbsuid,;t t
 s,@bbsgid@,$bbsgid,;t t
 s,@bbsname@,$bbsname,;t t
 s,@myhostname@,$myhostname,;t t
-s,@myip@,$myip,;t t
 s,@max_users@,$max_users,;t t
 s,@build@,$build,;t t
 s,@build_cpu@,$build_cpu,;t t
@@ -3886,7 +3885,7 @@ done; }
   esac
 
   if test x"$ac_file" != x-; then
-    { echo "$as_me:3889: creating $ac_file" >&5
+    { echo "$as_me:3888: creating $ac_file" >&5
 echo "$as_me: creating $ac_file" >&6;}
     rm -f "$ac_file"
   fi
@@ -3904,7 +3903,7 @@ echo "$as_me: creating $ac_file" >&6;}
       -) echo $tmp/stdin ;;
       [\\/$]*)
          # Absolute (can't be DOS-style, as IFS=:)
-         test -f "$f" || { { echo "$as_me:3907: error: cannot find input file: $f" >&5
+         test -f "$f" || { { echo "$as_me:3906: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          echo $f;;
@@ -3917,7 +3916,7 @@ echo "$as_me: error: cannot find input file: $f" >&2;}
            echo $srcdir/$f
          else
            # /dev/null tree
-           { { echo "$as_me:3920: error: cannot find input file: $f" >&5
+           { { echo "$as_me:3919: error: cannot find input file: $f" >&5
 echo "$as_me: error: cannot find input file: $f" >&2;}
    { (exit 1); exit 1; }; }
          fi;;

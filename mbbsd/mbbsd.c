@@ -923,8 +923,8 @@ static void start_client() {
 /* FSA (finite state automata) for telnet protocol */
 static void telnet_init() {
     static char svr[] = {
-	IAC, DO, TELOPT_TTYPE,
-	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
+//	IAC, DO, TELOPT_TTYPE,
+//	IAC, SB, TELOPT_TTYPE, TELQUAL_SEND, IAC, SE,
 	IAC, WILL, TELOPT_ECHO,
 	IAC, WILL, TELOPT_SGA,
 	IAC, DO, TELOPT_BINARY
@@ -942,8 +942,9 @@ static void telnet_init() {
     rset = to.tv_usec = 0;
     FD_SET(0, (fd_set *) & rset);
     oset = rset;
-    for(n = 0, cmd = svr; n < 5; n++) {
-	len = (n == 1 ? 6 : 3);
+    for(n = 0, cmd = svr; n < 3; n++) {
+//	len = (n == 1 ? 6 : 3);
+	len = 3;
 	write(0, cmd, len);
 	cmd += len;
 	

@@ -19,8 +19,8 @@ LIBS=	$(LIBS_$(OSTYPE))
 CC=	gcc
 PROG=	mbbsd
 OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o chat.o\
-	chicken.o edit.o friend.o kaede.o mail.o mbbsd.o ui.o more.o\
-	name.o osdep.o read.o record.o register.o stuff.o talk.o term.o\
+	chicken.o edit.o friend.o kaede.o mail.o mbbsd.o ui.o name.o\
+	osdep.o read.o record.o register.o stuff.o talk.o term.o\
 	topsong.o user.o vote.o xyz.o voteboard.o syspost.o var.o\
 	descrypt.o toolkit.o passwd.o calendar.o
 

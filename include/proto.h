@@ -186,15 +186,6 @@ void show_last_call_in(int save);
 int dosearchuser(char *userid);
 void u_exit(char *mode);
 
-/* menu */
-void showtitle(char *title, char *mid);
-int egetch();
-void movie(int i);
-void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]);
-
-/* more */
-int more(char *fpath, int promptend);
-
 /* name */
 void usercomplete(char *prompt, char *data);
 void namecomplete(char *prompt, char *data);
@@ -409,6 +400,13 @@ int Goodbye();
 unsigned StringHash(unsigned char *s);
 int IsNum(char *a, int n);
 void mprotect_utmp(int lock);
+
+/* ui */
+void showtitle(char *title, char *mid);
+int egetch();
+void movie(int i);
+void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]);
+int more(char *fpath, int promptend);
 
 /* passwd */
 int passwd_mmap();

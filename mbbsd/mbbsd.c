@@ -1121,7 +1121,7 @@ int main(int argc, char *argv[], char *envp[]) {
     signal(SIGUSR2,SIG_IGN);
     
     /* check if invoked as "bbs" */
-    if(argc < 2)
+    if(argc == 3)
 	shell_login(argc,argv,envp);
     else
     	daemon_login(argc,argv,envp);

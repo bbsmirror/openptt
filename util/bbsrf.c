@@ -142,7 +142,7 @@ int main(void)
 		strcpy(ttybuf, "notty");
 		strcpy(hid, "unknown");
 	    }
-	    execl(BBSPROG, "bbs", hid, ttybuf, NULL);
+	    execl(BBSPROG, "mbbsd", hid, ttybuf, NULL);
 	    syslog(LOG_ERR, "execl(): %m");
 	    rtv = -1;
 	}

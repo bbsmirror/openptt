@@ -12,7 +12,7 @@
 #define BBSUSER         "bbs"
 #define BBSUID          9999
 #define BBSGID          99
-#define BBSPROG         "/home/bbs/bin/bbs"          /* 主程式 */
+#define BBSPROG         "/home/bbs/bin/mbbsd"        /* 主程式 */
 #define BAN_FILE        "BAN"                        /* 關站通告 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */
 

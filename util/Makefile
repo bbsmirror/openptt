@@ -38,7 +38,7 @@ SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
 	merge_board.c
 
 SCRIPTS=BM_money.sh backpasswd.sh cvslog.sh mailog.sh opendice.sh\
-	openticket.sh stock.sh topsong.sh weather.sh
+	openticket.sh stock.sh topsong.sh upgrade.sh weather.sh
 
 PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
 

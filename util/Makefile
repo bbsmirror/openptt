@@ -7,40 +7,37 @@ CC_FreeBSD=	gcc
 CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_FreeBSD=
 LIBMAIL_FreeBSD=-lutil
-LIBCHAT_FreeBSD=
 
 # Linux
 CC_linux=	gcc
 CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_linux=	-lresolv
 LIBMAIL_linux=	
-LIBCHAT_linux=	-lcrypt
 
 CC=	$(CC_$(OSTYPE))
 CFLAGS=	$(CFLAGS_$(OSTYPE))
 LDFLAGS=$(LDFLAGS_$(OSTYPE))
 LIBMAIL=$(LIBMAIL_$(OSTYPE))
-LIBCHAT=$(LIBCHAT_$(OSTYPE))
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
-CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
-	horoscope parse_news topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam webgrep bbsrf\
-	createbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
+CPROGS=	bbsmail post account birth deluserfile expire mandex\
+	topusr yearsold uhash_loader\
+	poststat showboard inndBM antispam bbsrf\
+	createbbs outmail userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
-SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
-	mandex.c horoscope.c parse_news.c topusr.c\
+SRCS=	bbsmail.c post.c account.c birth.c deluserfile.c expire.c\
+	mandex.c horoscope.c topusr.c\
 	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
-	webgrep.c bbsrf.c createbbs.c outmail.c xchatd.c\
+	bbsrf.c createbbs.c outmail.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
 	merge_board.c
 
-SCRIPTS=BM_money.sh backpasswd.sh cvslog.sh mailog.sh\
-	stock.sh topsong.sh upgrade.sh weather.sh
+SCRIPTS=backpasswd.sh cvslog.sh mailog.sh\
+	upgrade.sh
 
-PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
+PROGS=	$(CPROGS) $(SCRIPTS)
 
 JUNK=	$(CPROGS) $(SCRIPTS) $(OBJS) sed.tmp
 
@@ -77,9 +74,6 @@ sed.tmp: Makefile
 bbsmail: bbsmail.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ bbsmail.c $(OBJS)
 
-BM_money: BM_money.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ BM_money.c $(OBJS)
-
 post: post.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ post.c $(OBJS)
 
@@ -98,12 +92,6 @@ expire: expire.c $(OBJS)
 mandex: mandex.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ mandex.c $(OBJS)
 
-horoscope: horoscope.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ horoscope.c $(OBJS)
-
-parse_news: parse_news.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ parse_news.c $(OBJS)
-
 topusr: topusr.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ topusr.c $(OBJS)
 
@@ -112,9 +100,6 @@ yearsold: yearsold.c $(OBJS)
 
 reaper: reaper.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ reaper.c $(OBJS)
-
-xchatd: xchatd.c descrypt.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ xchatd.c descrypt.c $(OBJS) $(LIBCHAT)
 
 outmail: outmail.c
 	$(CC) $(CFLAGS) -o $@ outmail.c $(LIBMAIL)

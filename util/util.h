@@ -12,7 +12,6 @@ int getbnum(char *bname);
 void inbtotal(int bid, int add);
 void *attach_shm(int shmkey, int shmsize);
 void reload_pttcache();
-void resolve_fcache();
 void attach_uhash();
 void stamplink(char *fpath, fileheader_t *fh);
 void resolve_utmp();

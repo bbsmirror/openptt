@@ -289,7 +289,7 @@ static void write_request(int sig) {
     
     time(&now);
     ptime = localtime(&now);
-
+    
     if(currutmp->pager && cuser.userlevel && currutmp->msgcount	&&
        currutmp->mode != TALK && currutmp->mode != EDITING &&
        currutmp->mode != CHATING && currutmp->mode != PAGE &&
@@ -803,8 +803,7 @@ static void do_aloha(char *hello) {
     
     setuserfile(genbuf, "aloha");
     if((fp = fopen(genbuf, "r"))) {
-	sprintf(genbuf + 1, hello);
-	*genbuf = 1;
+	sprintf(genbuf, hello);
 	while(fgets(userid, 80, fp)) {
 	    userinfo_t *uentp;
 	    int tuid;
@@ -815,7 +814,7 @@ static void do_aloha(char *hello) {
 		((!currutmp->invisible ||
 		  uentp->userlevel & PERM_SEECLOAK) &&
 		 !(is_rejected(uentp) & 1)))) {
-		my_write(uentp->pid, genbuf, uentp->userid);
+		my_write(uentp->pid, genbuf, uentp->userid, 2);
 	    }
 	}
 	fclose(fp);

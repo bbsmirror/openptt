@@ -311,21 +311,18 @@ static void friend_water(char *message, int type) { /* 群體水球 added by Ptt */
 
     setfriendfile(fpath, type);
     if ((fp = fopen(fpath, "r")))
-	while (fgets(line, 80, fp))
-	{
+	while(fgets(line, 80, fp)) {
 	    userinfo_t *uentp;
 	    int tuid;
-
+	    
 	    sscanf(line, "%s", userid);
-	    if ((tuid = searchuser(userid)) &&
-		tuid != usernum &&
-	      (uentp = (userinfo_t *) search_ulistn(cmpuids, tuid, 1)) &&
-		!(((is_rejected(uentp) & 2) && !HAS_PERM(PERM_SYSOP)) ||
-		  (uentp->invisible && !HAS_PERM(PERM_SEECLOAK) &&
-		   !HAS_PERM(PERM_SYSOP)) ||
-		  (!PERM_HIDE(currutmp) && PERM_HIDE(uentp)) ||
-		  ((cuser.uflag & FRIEND_FLAG) && !is_friend(uentp))))
-		my_write(uentp->pid, message, uentp->userid);
+	    if((tuid = searchuser(userid)) && tuid != usernum &&
+	       (uentp = (userinfo_t *) search_ulistn(cmpuids, tuid, 1)) &&
+	       !(((is_rejected(uentp) & 2) && !HAS_PERM(PERM_SYSOP)) ||
+		 (uentp->invisible && !HAS_PERM(PERM_SEECLOAK) && !HAS_PERM(PERM_SYSOP)) ||
+		 (!PERM_HIDE(currutmp) && PERM_HIDE(uentp)) ||
+		 ((cuser.uflag & FRIEND_FLAG) && !is_friend(uentp))))
+		my_write(uentp->pid, message, uentp->userid, 1);
 	}
     fclose(fp);
 }
@@ -430,8 +427,7 @@ void friend_edit(int type) {
 	}
 	else if (*uident == 'w' && count)
 	{
-	    *uident = 0;
-	    if (!getdata(0, 0, "群體水球:", uident + 1, 60, DOECHO))
+	    if (!getdata(0, 0, "群體水球:", uident, 60, DOECHO))
 		continue;
 	    if (getdata(0, 0, "確定丟出群體水球? [Y]", line, 4, LCECHO) &&
 		*line == 'n')

@@ -236,7 +236,12 @@ int num_in_buf() {
     return icurrchar - ibufsize;
 }
 
-char watermode = -1;  /* Ptt 水球回顧用的參數 */
+char watermode = -1; 
+/* Ptt 水球回顧用的參數 */
+/* watermode = -1  沒在回水球
+             = 0   在回上一顆水球  (Ctrl-R)
+	     > 0   在回前 n 顆水球 (Ctrl-R Ctrl-R) */
+
 extern  char no_oldmsg,oldmsg_count;
 
 /*
@@ -327,29 +332,35 @@ int igetch() {
 	    if(currutmp == NULL)
 		return (ch);
 	    else if(watermode > 0) {
+		/* 按過兩次 Ctrl-R 後再按 Ctrl-R 
+		   適當地將 watermode + 1 */
 		watermode = (watermode + oldmsg_count) % oldmsg_count + 1;
 		t_display_new();
 		continue;
-	    } else if (!currutmp->mode &&
-		       (currutmp->chatid[0] == 2 || currutmp->chatid[0] == 3)
-		       && oldmsg_count && !watermode) {
+	    } else if (currutmp->mode == 0 && (currutmp->chatid[0] == 2 || 
+					       currutmp->chatid[0] == 3) &&
+		       oldmsg_count != 0 && watermode == 0) {
+		/* 第二次按 Ctrl-R */
 		watermode = 1;
 		t_display_new();
 		continue;
             } else if(currutmp->msgs[0].last_pid) {
+		/* 第一次按 Ctrl-R (必須先被丟過水球) */
 		screenline_t *screen0 = calloc(t_lines, sizeof(screenline_t));
 		int y, x, my_newfd;
-
+		
 		getyx(&y, &x);
 		memcpy(screen0, big_picture, t_lines * sizeof(screenline_t));
+		
+		/* 如果正在 talk 的話先不處理對方送過來的封包 (不去select) */
 		my_newfd = i_newfd;
 		i_newfd = 0;
 		show_last_call_in();
 		watermode = 0;
-/*CharlieL*/
-		my_write(currutmp->msgs[0].last_pid, "水球丟過去 ： ",
-			 currutmp->msgs[0].last_userid);
+		my_write(currutmp->msgs[0].last_pid, "水球丟過去 ： ", currutmp->msgs[0].last_userid, 0);
 		i_newfd = my_newfd;
+		
+		/* 還原螢幕 */
 		memcpy(big_picture, screen0, t_lines * sizeof(screenline_t));
 		move(y, x);
 		free(screen0);
@@ -577,8 +588,6 @@ int getdata(int line, int col, char *prompt, char *buf, int len, int echo) {
     return oldgetdata(line, col, prompt, buf, len, echo);
 }
 
-#define TRAP_ESC
-#ifdef  TRAP_ESC
 int KEY_ESC_arg;
 
 int igetkey() {
@@ -623,6 +632,7 @@ int i_get_key() {
     int i;
     while(1) {
 	i = egetch();
+	/* 這邊有問題, 先拿掉, 玩牌的時候不准丟水球
 	if(i == Ctrl('R')) {
 	    if(currutmp->msgs[0].last_pid) {
 		show_last_call_in();
@@ -630,43 +640,7 @@ int i_get_key() {
 			 currutmp->msgs[0].last_userid);
 	    }
 	} else
+	*/
 	    return i;
     }
 }                
-#else                           /* TRAP_ESC */
-
-static int igetkey() {
-    int mode;
-    int ch, last;
-
-    mode = last = 0;
-    while(1) {
-	ch = igetch();
-	if(ch == KEY_ESC)
-	    mode = 1;
-	else if(mode == 0)         /* Normal Key */
-	    return ch;
-	else if(mode == 1) {       /* Escape sequence */
-	    if(ch == '[' || ch == 'O')
-		mode = 2;
-	    else if(ch == '1' || ch == '4')
-		mode = 3;
-	    else
-		return ch;
-	} else if(mode == 2) {    /* Cursor key */
-	    if(ch >= 'A' && ch <= 'D')
-		return KEY_UP + (ch - 'A');
-	    else if(ch >= '1' && ch <= '6')
-		mode = 3;
-	    else
-		return ch;
-	} else if (mode == 3) {   /* Ins Del Home End PgUp PgDn */
-	    if(ch == '~')
-		return KEY_HOME + (last - '1');
-	    else
-		return ch;
-	}
-	last = ch;
-    }
-}
-#endif                          /* TRAP_ESC */

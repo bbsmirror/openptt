@@ -422,53 +422,47 @@ int my_query(char *uident) {
 
 static char t_last_write[200] = "";
 
-/* Ptt: 這邊code蠻髒的 有空最好簡化一下 */
-int my_write(pid_t pid, char *hint, char *id) {
-    int len;
+/* 
+   被呼叫的時機:
+   1. 丟群組水球 flag = 1 (pre-edit)
+   2. 回水球     flag = 0
+   3. 上站aloha  flag = 2 (pre-edit)
+   4. 廣播       flag = 3 if SYSOP, otherwise flag = 1 (pre-edit)
+   5. 丟水球     flag = 0
+*/
+int my_write(pid_t pid, char *prompt, char *id, int flag) {
+    int len, currstat0 = currstat;
     char msg[80], destid[IDLEN + 1];
+    char genbuf[200], buf[200], c0 = currutmp->chatid[0];
+    unsigned char mode0 = currutmp->mode;
     FILE *fp;
-    struct tm *ptime;
     time_t now;
-    char genbuf[200], buf[200];
+    struct tm *ptime;
     userinfo_t *uin;
     extern msgque_t oldmsg[MAX_REVIEW];
-    int a;
-    unsigned char mode0 = currutmp->mode;
-    char c0 = currutmp->chatid[0];
-    int currstat0 = currstat;
-
+    
+    uin = (userinfo_t *)search_ulist(cmppids, pid);
     strcpy(destid, id);
-    if (watermode > 0)
-    {
-	a = (no_oldmsg - watermode + MAX_REVIEW) % MAX_REVIEW;
-	uin = (userinfo_t *) search_ulist(cmppids, oldmsg[a].last_pid);
-	strcpy(destid, oldmsg[a].last_userid);
-    }
-    else
-	uin = (userinfo_t *) search_ulist(cmppids, pid);
-
-    if ((!oldmsg_count || !isprint2(*hint)) && !uin)
-    {
-	outmsg("\033[1;33;41m糟糕! 對方已落跑了(不在站上)! "
-	       "\033[37m~>_<~\033[m");
+    
+    if(!uin && !(flag == 0 && oldmsg_count > 0)) {
+	outmsg("\033[1;33;41m糟糕! 對方已落跑了(不在站上)! \033[37m~>_<~\033[m");
 	clrtoeol();
 	refresh();
 	watermode = -1;
 	return 0;
     }
-
+    
     currutmp->mode = 0;
     currutmp->chatid[0] = 3;
     currstat = XMODE;
-
+    
     time(&now);
     ptime = localtime(&now);
-
-    if (isprint2(*hint))
-    {
+    
+    if(flag == 0) {
+	/* 一般水球 */
 	watermode = 0;
-	if (!(len = getdata(0, 0, hint, msg, 56, DOECHO)))
-	{
+	if(!(len = getdata(0, 0, prompt, msg, 56, DOECHO))) {
 	    outmsg("\033[1;33;42m算了! 放你一馬...\033[m");
 	    clrtoeol();
 	    refresh();
@@ -478,28 +472,26 @@ int my_write(pid_t pid, char *hint, char *id) {
 	    watermode = -1;
 	    return 0;
 	}
-
-	if (watermode > 0)
-	{
-	    a = (no_oldmsg - watermode + MAX_REVIEW) % MAX_REVIEW;
-	    uin = (userinfo_t *) search_ulist(cmppids, oldmsg[a].last_pid);
-	    strcpy(destid, oldmsg[a].last_userid);
+	
+	if(watermode > 0) {
+	    int i;
+	    
+	    i = (no_oldmsg - watermode + MAX_REVIEW) % MAX_REVIEW;
+	    uin = (userinfo_t *)search_ulist(cmppids, oldmsg[i].last_pid);
+	    strcpy(destid, oldmsg[i].last_userid);
 	}
-    }
-    else
-    {
-	strcpy(msg, hint + 1);
+    } else {
+	/* pre-edit 的水球 */
+	strcpy(msg, prompt);
 	len = strlen(msg);
     }
-
+    
     watermode = -1;
     strip_ansi(msg, msg, 0);
-    if (uin && *uin->userid && *hint != 2 && *hint != 1 && *hint != 0)
-    {
+    if(uin && *uin->userid && flag == 0) {
 	sprintf(buf, "丟給 %s : %s [Y/n]?", uin->userid, msg);
 	getdata(0, 0, buf, genbuf, 3, LCECHO);
-	if (genbuf[0] == 'n')
-	{
+	if(genbuf[0] == 'n') {
 	    outmsg("\033[1;33;42m算了! 放你一馬...\033[m");
 	    clrtoeol();
 	    refresh();
@@ -510,11 +502,9 @@ int my_write(pid_t pid, char *hint, char *id) {
 	    return 0;
 	}
     }
-
-    if (!uin || !*uin->userid || strcasecmp(destid, uin->userid))
-    {
-	outmsg("\033[1;33;41m糟糕! 對方已落跑了(不在站上)! "
-	       "\033[37m~>_<~\033[m");
+    
+    if(!uin || !*uin->userid || strcasecmp(destid, uin->userid)) {
+	outmsg("\033[1;33;41m糟糕! 對方已落跑了(不在站上)! \033[37m~>_<~\033[m");
 	clrtoeol();
 	refresh();
 	currutmp->chatid[0] = c0;
@@ -522,64 +512,63 @@ int my_write(pid_t pid, char *hint, char *id) {
 	currstat = currstat0;
 	return 0;
     }
-
-    now = time(0);
-    if (*hint != 1)
-    {
+    
+    time(&now);
+    if(flag != 2) { /* aloha 的水球不用存下來 */
+	/* 存到對方的水球檔 */
 	sethomefile(genbuf, uin->userid, fn_writelog);
-	if ((fp = fopen(genbuf, "a")))
-	{
+	if((fp = fopen(genbuf, "a"))) {
 	    fprintf(fp, "\033[1;33;46m★ %s %s\033[37;45m %s \033[0m[%s]\n",
-		    cuser.userid, (*hint == 2) ? "\033[33;41m廣播" : "",
-		    msg, Cdatelite(&now));
+		    cuser.userid,
+		    (flag == 3) ? "\033[33;41m廣播" : "",
+		    msg,
+		    Cdatelite(&now));
 	    fclose(fp);
 	}
+	/* 存到自己的水球檔 */
 	sethomefile(genbuf, cuser.userid, fn_writelog);
-	if ((fp = fopen(genbuf, "a")))
-	{
+	if((fp = fopen(genbuf, "a"))) {
 	    fprintf(fp, "To %s: %s [%s]\n", uin->userid, msg, Cdatelite(&now));
 	    sprintf(t_last_write, "To %s: %s\n", uin->userid, msg);
 	    fclose(fp);
 	}
     }
-
-    if (*hint == 2 && uin->msgcount)
-    {
+    
+    if(flag == 3 && uin->msgcount) {
+	/* 不懂 */
 	uin->destuip = currutmp;
 	uin->sig = 2;
 	kill(uin->pid, SIGUSR1);
-    }
-    else if (*hint != 1 && !HAS_PERM(PERM_SYSOP) &&
-	     (uin->pager == 3 || uin->pager == 2 ||
-	      (uin->pager == 4 && !(is_friend(uin) & 4))))
+    } else if(flag != 2 &&
+	      !HAS_PERM(PERM_SYSOP) &&
+	      (uin->pager == 3 || 
+	       uin->pager == 2 || 
+	       (uin->pager == 4 &&
+		!(is_friend(uin) & 4))))
 	outmsg("\033[1;33;41m糟糕! 對方防水了! \033[37m~>_<~\033[m");
-    else
-    {
-	if (uin->msgcount < MAX_MSGS)
-	{
+    else {
+	if(uin->msgcount < MAX_MSGS) {
 	    unsigned char pager0 = uin->pager;
-
+	    
 	    uin->pager = 2;
 	    uin->msgs[uin->msgcount].last_pid = currpid;
 	    strcpy(uin->msgs[uin->msgcount].last_userid, cuser.userid);
 	    strcpy(uin->msgs[uin->msgcount++].last_call_in, msg);
 	    uin->pager = pager0;
-	}
-	else if (*hint != 1)
-	    outmsg("\033[1;33;41m糟糕! 對方不行了! (收到太多水球) "
-		   "\033[37m@_@\033[m");
-
-	if (uin->msgcount == 1 && kill(uin->pid, SIGUSR2) == -1 && *hint != 1)
+	} else if (flag != 2)
+	    outmsg("\033[1;33;41m糟糕! 對方不行了! (收到太多水球) \033[37m@_@\033[m");
+	
+	if(uin->msgcount == 1 && kill(uin->pid, SIGUSR2) == -1 && flag != 2)
 	    outmsg("\033[1;33;41m糟糕! 沒打中! \033[37m~>_<~\033[m");
-	else if (uin->msgcount == 1 && *hint != 1)
+	else if(uin->msgcount == 1 && flag != 2)
 	    outmsg("\033[1;33;44m水球砸過去了! \033[37m*^o^*\033[m");
-	else if (uin->msgcount > 1 && uin->msgcount < MAX_MSGS && *hint != 1)
+	else if(uin->msgcount > 1 && uin->msgcount < MAX_MSGS && flag != 2)
 	    outmsg("\033[1;33;44m再補上一粒! \033[37m*^o^*\033[m");
     }
-
+    
     clrtoeol();
     refresh();
-
+    
     currutmp->chatid[0] = c0;
     currutmp->mode = mode0;
     currstat = currstat0;
@@ -1866,12 +1855,11 @@ static void pickup_user() {
 		    char ans[4];
 
 		    state = US_PICKUP;
-		    if (!getdata(0, 0, "廣播訊息:", genbuf + 1, 60, DOECHO))
+		    if (!getdata(0, 0, "廣播訊息:", genbuf, 60, DOECHO))
 			break;
 		    if (getdata(0, 0, "確定廣播? [Y]", ans, 4, LCECHO) &&
 			*ans == 'n')
 			break;
-		    genbuf[0] = HAS_PERM(PERM_SYSOP) ? 2 : 0;
 		    while (actor_pos)
 		    {
 			uentp = pklist[--actor_pos].ui;
@@ -1881,7 +1869,7 @@ static void pickup_user() {
 			    (HAS_PERM(PERM_SYSOP) ||
 			     (uentp->pager != 3 &&
 			      (uentp->pager != 4 || is_friend(uentp) & HFM))))
-			    my_write(uentp->pid, genbuf, uentp->userid);
+			    my_write(uentp->pid, genbuf, uentp->userid, HAS_PERM(PERM_SYSOP) ? 3 : 1);
 		    }
 		}
 		break;
@@ -1966,7 +1954,7 @@ static void pickup_user() {
 	    {
 		cursor_show(num + 3 - head, 0);
 		sprintf(genbuf, "Call-In %s ：", uentp->userid);
-		my_write(uentp->pid, genbuf, uentp->userid);
+		my_write(uentp->pid, genbuf, uentp->userid, 0);
 	    }
 	}
 	else if (ch == 'l')

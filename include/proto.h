@@ -301,29 +301,6 @@ int checkpasswd(char *passwd, char *test);
 void check_register();
 char *genpasswd(char *pw);
 
-/* screen */
-void move(int y, int x);
-void outs(char *str);
-void clrtoeol();
-void clear();
-void refresh();
-void clrtobot();
-void mprints(int y, int x, char *str);
-void outmsg(char *msg);
-void region_scroll_up(int top, int bottom);
-void outc(unsigned char ch);
-void redoscr();
-void clrtoline(int line);
-void standout();
-void standend();
-int edit_outs(char *text);
-void outch(unsigned char c);
-void rscroll();
-void scroll();
-void getyx(int *y, int *x);
-void initscr();
-void Jaky_outs(char *str, int line);
-
 /* stuff */
 void setcalfile(char *buf, char *userid);
 void stand_title(char *title);
@@ -418,6 +395,27 @@ void output(char *s, int len);
 void init_alarm();
 int num_in_buf();
 int ochar(int c);
+void move(int y, int x);
+void outs(char *str);
+void clrtoeol();
+void clear();
+void refresh();
+void clrtobot();
+void mprints(int y, int x, char *str);
+void outmsg(char *msg);
+void region_scroll_up(int top, int bottom);
+void outc(unsigned char ch);
+void redoscr();
+void clrtoline(int line);
+void standout();
+void standend();
+int edit_outs(char *text);
+void outch(unsigned char c);
+void rscroll();
+void scroll();
+void getyx(int *y, int *x);
+void initscr();
+void Jaky_outs(char *str, int line);
 
 /* topsong */
 void sortsong();

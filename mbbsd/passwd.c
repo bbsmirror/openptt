@@ -21,7 +21,7 @@ static int semid = -1;
 int passwd_mmap() {
     int fd;
     
-    fd = open(fn_passwd, O_RDONLY);
+    fd = open(fn_passwd, O_RDWR);
     if(fd > 0) {
 	struct stat st;
 	
@@ -50,7 +50,7 @@ int passwd_mmap() {
 	    union semun s;
 	    
 	    s.val = 1;
-	    if(semctl(semid, 0, IPC_SET, s) == -1) {
+	    if(semctl(semid, 0, SETVAL, s) == -1) {
 		perror("semctl");
 		exit(1);
 	    }

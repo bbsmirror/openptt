@@ -183,8 +183,8 @@
 #define STR_UNCUR       "  "
 
 #if USE_MPROTECT
-#define MPROTECT_UTMP_R  mprotect(utmpshm, sizeof(*utmpshm), PROT_READ)
-#define MPROTECT_UTMP_RW mprotect(utmpshm, sizeof(*utmpshm), PROT_READ | PROT_WRITE)
+#define MPROTECT_UTMP_R  mprotect_utmp(1)
+#define MPROTECT_UTMP_RW mprotect_utmp(0)
 #else
 #define MPROTECT_UTMP_R
 #define MPROTECT_UTMP_RW

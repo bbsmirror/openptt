@@ -437,6 +437,7 @@ int Goodbye();
 /* toolkit */
 unsigned StringHash(unsigned char *s);
 int IsNum(char *a, int n);
+void mprotect_utmp(int lock);
 
 /* passwd */
 int passwd_mmap();

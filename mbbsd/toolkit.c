@@ -1,6 +1,7 @@
 /* $Id$ */
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 
@@ -20,4 +21,19 @@ int IsNum(char *a, int n) {
 	if (a[i] > '9' || a[i] < '0' )
 	    return 0;
     return 1;
+}
+
+void mprotect_utmp(int lock) {
+    static int count = 0;
+    extern struct utmpfile_t *utmpshm;
+    
+    if(lock) {
+	count++;
+	if(count == 1)
+	    mprotect(utmpshm, sizeof(*utmpshm), PROT_READ);
+    } else {
+	count--;
+	if(count == 0)
+	    mprotect(utmpshm, sizeof(*utmpshm), PROT_READ | PROT_WRITE);
+    }
 }

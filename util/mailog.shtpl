@@ -1,9 +1,0 @@
-#!/bin/sh
-# $Id$
-#
-# 整理出廣告信名單
-
-%BBSHOME%/bin/antispam 
-%BBSHOME%/bin/post Record 今日違法廣告信名單 [Ptt警察局] %BBSHOME%/etc/spam
-%BBSHOME%/bin/post Security 站外來信紀錄mailog [系統安全局] %BBSHOME%/etc/mailog
-rm %BBSHOME%/etc/mailog

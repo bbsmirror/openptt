@@ -35,6 +35,8 @@ union semun {
 };
 #endif
 
+struct utmpfile_t *utmpshm=NULL;
+
 int fcache_semid;
 
 /* the reason for "safe_sleep" is that we may call sleep during
@@ -287,8 +289,6 @@ char *u_namearray(char buf[][IDLEN + 1], int *pnum, char *tag) {
 /*-------------------------------------------------------*/
 /* .UTMP cache                                           */
 /*-------------------------------------------------------*/
-struct utmpfile_t *utmpshm=NULL;
-
 void resolve_utmp() {
     if(utmpshm == NULL) {
 	utmpshm = attach_shm(UTMPSHM_KEY, sizeof(*utmpshm));

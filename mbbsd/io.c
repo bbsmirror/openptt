@@ -444,12 +444,6 @@ int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo) {
     }
     if((echo == LCECHO) && ((ch = buf[0]) >= 'A') && (ch <= 'Z'))
 	buf[0] = ch | 32;
-#ifdef SUPPORT_GB    
-    if(echo == DOECHO &&  current_font_type == TYPE_GB)
-    {
-	strcpy(buf,hc_convert_str(buf, HC_GBtoBIG, HC_DO_SINGLE));
-    }
-#endif
     return clen;
 }
 

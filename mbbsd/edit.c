@@ -736,13 +736,7 @@ void write_header(FILE *fp) {
     time_t now = time(0);
 
     if(curredit & EDIT_MAIL || curredit & EDIT_LIST) {
-	fprintf(fp, "%s %s (%s)\n", str_author1, cuser.userid,
-#if defined(REALINFO) && defined(MAIL_REALNAMES)
-		cuser.realname
-#else
-		cuser.username
-#endif
-	    );
+	fprintf(fp, "%s %s (%s)\n", str_author1, cuser.userid, cuser.username);
     } else {
 	char *ptr;
 	struct {
@@ -797,20 +791,12 @@ void write_header(FILE *fp) {
 		    local_article ? str_post2 : str_post1, currboard);
 	} else {
 	    fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
-#if defined(REALINFO) && defined(POSTS_REALNAMES)
-		    cuser.realname,
-#else
 		    cuser.username,
-#endif
 		    local_article ? str_post2 : str_post1, currboard);
 	}
 #else   /* HAVE_ANONYMOUS */
 	fprintf(fp, "%s %s (%s) %s %s\n", str_author1, cuser.userid,
-#if defined(REALINFO) && defined(POSTS_REALNAMES)
-		cuser.realname,
-#else
 		cuser.username,
-#endif
 		local_article ? str_post2 : str_post1, currboard);
 #endif  /* HAVE_ANONYMOUS */
 
@@ -971,13 +957,6 @@ write_file(char *fpath, int saveheader, int *islocal) {
 			}
 		    }
 		}
-#ifdef SUPPORT_GB
-		if(current_font_type == TYPE_GB)
-                 {
-		  fprintf(fp, "%s\n", hc_convert_str(msg, HC_GBtoBIG, HC_DO_SINGLE));
-                 }     
-		else
-#endif
  		  fprintf(fp, "%s\n", msg);
 	    }
 	}

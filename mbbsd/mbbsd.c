@@ -1123,9 +1123,6 @@ static int bad_host(char *name) {
 static void shell_login(int argc, char *argv[], char *envp[]);
 static void daemon_login(int argc, char *argv[], char *envp[]);
 static int check_ban_and_load(int fd);
-#ifdef SUPPORT_GB    
-extern int current_font_type;
-#endif
 
 int main(int argc, char *argv[], char *envp[]) {
     /* avoid SIGPIPE */

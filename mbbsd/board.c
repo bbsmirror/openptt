@@ -653,9 +653,6 @@ static void choose_board(int newflag) {
     static int num = 0;
     boardstat_t *ptr;
     int head = -1, ch = 0, tmp,tmp1, uidtmp, classtmp;
-#if HAVE_SEARCH_ALL
-    char genbuf[200];
-#endif
     extern time_t board_visit_time;
     
     setutmpmode(newflag ? READNEW : READBRD);
@@ -723,6 +720,7 @@ static void choose_board(int newflag) {
 	    break;
 #if HAVE_SEARCH_ALL
 	case 'a': {
+	    char genbuf[200];
 	    if(yank_flag != 2 ) {
 		if(getdata_str(1, 0, "§@ªÌ ", genbuf, IDLEN + 2, DOECHO,
 			   currauthor))
@@ -991,49 +989,3 @@ int New() {
     return 0;
 }
 
-/*
-int v_favorite(){
-    char fname[256];
-    char inbuf[2048];
-    FILE* fp;
-    int nGroup;
-    char* strtmp;
-    
-    setuserfile(fname,str_favorite);
-    
-    if (!(fp=fopen(fname,"r")))
-        return -1;
-    move(0,0);
-    clrtobot();
-    fgets(inbuf,sizeof(inbuf),fp);
-    nGroup=atoi(inbuf);
-    
-    currutmp->nGroup=0;
-    currutmp->ninRoot=0;
-    
-    while(nGroup!=currutmp->nGroup+1){
-        fgets(inbuf,sizeof(inbuf),fp);
-        prints("%s\n",strtmp=strtok(inbuf," \n"));
-        strcpy(currutmp->gfavorite[currutmp->nGroup++],strtmp);
-        while((strtmp=strtok(NULL, " \n"))){
-            prints("     %s %d\n",strtmp,getbnum(strtmp));
-        }
-        currutmp->nGroup++;
-    }
-    prints("+++%d+++\n",currutmp->nGroup);
-    
-    fgets(inbuf,sizeof(inbuf),fp);
-    
-    for(strtmp=strtok(inbuf, " \n");strtmp;strtmp=strtok(NULL, " \n")){
-        if (strtmp[0]!='#')
-            prints("*** %s %d\n",strtmp, getbnum(strtmp));
-        else
-            prints("*** %s %d\n",strtmp+1, -1);
-        currutmp->ninRoot++;
-    }
-    
-    fclose(fp);
-    pressanykey();
-    return 0;
-} 
-*/

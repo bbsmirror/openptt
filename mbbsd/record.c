@@ -134,9 +134,6 @@ int delete_record(char fpath[], int size, int id) {
     flock(fd, LOCK_EX);
 
     if((fdr = open(fpath, O_RDONLY, 0)) == -1) {
-#ifdef HAVE_REPORT
-	report("delete_record failed!!! (open)");
-#endif
 	flock(fd, LOCK_UN);
 	close(fd);
 	return -1;
@@ -144,9 +141,6 @@ int delete_record(char fpath[], int size, int id) {
 
     if((fdw = open(my.newfn, O_WRONLY | O_CREAT | O_EXCL, 0644)) == -1) {
 	flock(fd, LOCK_UN);
-#ifdef HAVE_REPORT
-	report("delete_record failed!!! (open tmpfile)");
-#endif
 	close(fd);
 	close(fdr);
 	return -1;
@@ -154,9 +148,6 @@ int delete_record(char fpath[], int size, int id) {
     count = 1;
     while(read(fdr, abuf, size) == size) {
 	if(id != count++ && (safewrite(fdw, abuf, size) == -1)) {
-#ifdef HAVE_REPORT
-	    report("delete_record failed!!! (safewrite)");
-#endif	  
 	    unlink(my.newfn);
 	    close(fdr);
 	    close(fdw);
@@ -168,9 +159,6 @@ int delete_record(char fpath[], int size, int id) {
     close(fdr);
     close(fdw);
     if(Rename(fpath, my.oldfn) == -1 || Rename(my.newfn, fpath) == -1) {
-#ifdef  HAVE_REPORT
-	report("delete_record failed!!! (Rename)");
-#endif
 	flock(fd, LOCK_UN);
 	close(fd);
 	return -1;

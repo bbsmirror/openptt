@@ -25,10 +25,6 @@ extern int scrollrevlen;
 extern int strtstandoutlen;
 extern int endstandoutlen;
 extern int automargins;
-#ifdef SUPPORT_GB    
-static int current_font_type=TYPE_BIG5;
-static int gbinited=0;
-#endif
 #define SCR_WIDTH       80 
 #define o_clear()     output(clearbuf,clearbuflen)
 #define o_cleol()     output(cleolbuf,cleolbuflen)
@@ -412,28 +408,10 @@ static void do_outs(char *str) {
         outc(*str++);
     }
 }          
-#ifdef SUPPORT_GB    
-static void gb_init()
-{
-    if(current_font_type == TYPE_GB)
-    {
-	hc_readtab(BBSHOME"/etc/hc.tab");
-    }
-    gbinited = 1;
-}
 
-static void gb_outs(char *str)
-{
-    do_outs(hc_convert_str(str, HC_BIGtoGB, HC_DO_SINGLE));
-}             
-#endif
 int edit_outs(char *text) {
     register int column = 0;
     register char ch;
-#ifdef SUPPORT_GB    
-    if(current_font_type == TYPE_GB) 
-	text = hc_convert_str(text, HC_BIGtoGB, HC_DO_SINGLE);
-#endif
     while((ch = *text++) && (++column < SCR_WIDTH))
         outch(ch == 27 ? '*' : ch);
 
@@ -441,26 +419,12 @@ int edit_outs(char *text) {
 }                  
 
 void outs(char *str) {
-#ifdef SUPPORT_GB    
-    if(current_font_type == TYPE_BIG5)
-#endif
 	do_outs(str);
-#ifdef SUPPORT_GB    
-    else
-    {
-	if(!gbinited) gb_init();
-	gb_outs(str);
-    }
-#endif
 }
 
 
 /* Jaky */
 void  Jaky_outs(char *str, int line) {
-#ifdef SUPPORT_GB    
-    if(current_font_type == TYPE_GB)
-	str = hc_convert_str(str, HC_BIGtoGB, HC_DO_SINGLE);    
-#endif
     while(*str && line) {
 	outc(*str);
 	if(*str=='\n')
@@ -472,10 +436,6 @@ void  Jaky_outs(char *str, int line) {
 void outmsg(char *msg) {
     move(b_lines, 0);
     clrtoeol();
-#ifdef SUPPORT_GB    
-    if(current_font_type == TYPE_GB)
-	msg = hc_convert_str(msg, HC_BIGtoGB, HC_DO_SINGLE);    
-#endif
     while(*msg)
 	outc(*msg++);
 }

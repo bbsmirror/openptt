@@ -725,8 +725,7 @@ static void reload_fcache() {
 		    while(*po == ' ')
 			po++;
 		    strncpy(fcache->replace[fcache->top],po,49);
-		    fcache->replace[fcache->top]
-			[strlen(fcache->replace[fcache->top])-1] = 0;
+		    fcache->replace[fcache->top][49]=0;
 		    (fcache->top)++;
 		    if(fcache->top == MAX_FROM)
 			break;

@@ -169,18 +169,18 @@ char **argv;
 	exit(0);
     }
     
-    for(i = 1, j = 0; i <= MAX_USERS; i++) {
-	passwd_query(i, &aman);
+    for(i = 0, j = 1; j <= MAX_USERS; j++) {
+	passwd_query(j, &aman);
 	if((aman.userlevel & PERM_NOTOP) || bad_user_id(aman.userid) ||
 	   strchr(aman.userid, '.'))
 	    continue;
 	else {
-	    strcpy(allman[j].userid, aman.userid);
-	    strncpy(allman[j].username, aman.username, 23);
-	    allman[j].numlogins = aman.numlogins;
-	    allman[j].numposts = aman.numposts;
-	    allman[j].money = aman.money;
-	    j++;
+	    strcpy(allman[i].userid, aman.userid);
+	    strncpy(allman[i].username, aman.username, 23);
+	    allman[i].numlogins = aman.numlogins;
+	    allman[i].numposts = aman.numposts;
+	    allman[i].money = aman.money;
+	    i++;
 	}
     }
     

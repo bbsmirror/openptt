@@ -137,11 +137,11 @@ typedef struct fileheader_t {
 
 /* uhash is a userid->uid hash table -- jochang */
 
-#define UHASH_BITS 16
+#define HASH_BITS 16
 typedef struct uhash_t {
     char userid[MAX_USERS][IDLEN + 1];
     int next_in_hash[MAX_USERS];
-    int hash_head[1<<UHASH_BITS];
+    int hash_head[1 << HASH_BITS];
     int number;				/* # of users total */
     int loaded;				/* .PASSWD has been loaded? */
 } uhash_t;

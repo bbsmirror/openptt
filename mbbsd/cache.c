@@ -149,18 +149,8 @@ void attach_uhash() {
 	exit(1);
 }
 
-
-static unsigned string_hash(unsigned char *s) {
-    unsigned int v=0;
-    while(*s) {
-	v = (v << 8) | (v >> 24);
-	v ^= toupper(*s++);	/* note this is case insensitive */
-    }
-    return (v * 2654435769UL) >> (32 - UHASH_BITS);
-}
-
 void add_to_uhash(int n, char *id) {
-    int *p, h = string_hash(id);
+    int *p, h = StringHash(id);
     strcpy(uhash->userid[n], id);
     
     p = &(uhash->hash_head[h]);
@@ -174,7 +164,7 @@ void add_to_uhash(int n, char *id) {
 /* note: after remove_from_uhash(), you should add_to_uhash()
    (likely with a different name) */
 void remove_from_uhash(int n) {
-    int h = string_hash(uhash->userid[n]);
+    int h = StringHash(uhash->userid[n]);
     int *p = &(uhash->hash_head[h]);
     
     while(*p != -1 && *p != n)
@@ -189,7 +179,7 @@ int searchuser(char *userid) {
     if(uhash == NULL)
 	attach_uhash();	/* for sloopy util programs */
     
-    h = string_hash(userid);
+    h = StringHash(userid);
     p = uhash->hash_head[h];
 	
     while(p != -1) {

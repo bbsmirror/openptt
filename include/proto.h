@@ -477,4 +477,7 @@ int x_stock();
 int note();
 int Goodbye();
 
+/* toolkit */
+unsigned StringHash(unsigned char *s);
+
 #endif

@@ -12,12 +12,15 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "proto.h"
 #include "perm.h"
 #include "modes.h"
 #include "common.h"
+
+extern struct utmpfile_t *utmpshm;
 
 #if defined(linux)
 #define OBUFSIZE  2048
@@ -113,8 +116,11 @@ static int dogetch() {
 	icurrchar = 0;
     }
 
-    if(currutmp) 
+    if(currutmp) {
+	MPROTECT_UTMP_RW;
 	currutmp->lastact = time(0);
+	MPROTECT_UTMP_R;
+    }
     return inbuf[icurrchar++];
 }
 

@@ -23,7 +23,7 @@ OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o card.o\
 	dice.o edit.o friend.o gamble.o gomo.o gomo1.o guess.o indict.o\
 	kaede.o lovepaper.o mail.o mbbsd.o ui.o more.o name.o osdep.o\
 	othello.o page.o read.o record.o register.o stuff.o\
-	talk.o term.o topsong.o user.o vice.o vote.o xyz.o\
+	talk.o term.o topsong.o user.o vote.o xyz.o\
 	tmpjack.o voteboard.o syspost.o var.o descrypt.o toolkit.o passwd.o\
 	calendar.o
 

@@ -19,7 +19,6 @@ extern char *fn_note_ans;
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern char *BBSName;
 extern char fromhost[];
-extern userinfo_t *currutmp;
 extern int curr_idle_timeout;
 extern userec_t cuser;
 

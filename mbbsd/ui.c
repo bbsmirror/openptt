@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
@@ -10,6 +11,7 @@
 #include "modes.h"
 #include "proto.h"
 
+extern struct utmpfile_t *utmpshm;
 extern int talkrequest;
 extern char *fn_register;
 extern char currboard[];        /* name of currently selected board */
@@ -249,7 +251,9 @@ void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]) {
                 if((err = (*cmdtable[lastcmdptr].cmdfunc) ()) == QUIT)
                     return;
 
-                currutmp->mode = currstat = cmdmode;
+		MPROTECT_UTMP_RW;
+		currutmp->mode = currstat = cmdmode;
+		MPROTECT_UTMP_R;
 
                 if(err == XEASY) {
                     refresh();
@@ -497,7 +501,6 @@ static commands_t plist[] = {
     {guess_main, PERM_LOGINOK,   "22Guess number【 猜數字   】"},
     {othello_main, PERM_LOGINOK, "33Othello     【 黑白棋   】"},
 //    {dice_main, PERM_LOGINOK,    "44Dice        【 玩骰子   】"},
-    {vice_main, PERM_LOGINOK,    "44Vice        【 發票對獎 】"},
     {g_card_jack, PERM_LOGINOK,  "55Jack        【 黑傑克 】"},
     {g_ten_helf, PERM_LOGINOK,   "66Tenhalf     【 十點半 】"},
     {card_99, PERM_LOGINOK,      "77Nine        【 九十九 】"},

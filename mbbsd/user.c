@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include "config.h"
 #include "pttstruct.h"
 #include "common.h"
@@ -13,6 +14,7 @@
 #include "modes.h"
 #include "proto.h"
 
+extern struct utmpfile_t *utmpshm;
 extern int numboards;
 extern boardheader_t *bcache;
 extern char *loginview_file[NUMVIEWFILE][2];
@@ -552,8 +554,10 @@ int u_info() {
     move(2, 0);
     user_display(&cuser, 0);
     uinfo_query(&cuser, 0, usernum);
+    MPROTECT_UTMP_RW;
     strcpy(currutmp->realname, cuser.realname);
     strcpy(currutmp->username, cuser.username);
+    MPROTECT_UTMP_R;
     return 0;
 }
 
@@ -565,7 +569,10 @@ int u_ansi() {
 }
 
 int u_cloak() {
-    outs((currutmp->invisible ^= 1) ? MSG_CLOAKED : MSG_UNCLOAK);
+    MPROTECT_UTMP_RW;
+    currutmp->invisible ^= 1;
+    MPROTECT_UTMP_R;
+    outs(currutmp->invisible ? MSG_CLOAKED : MSG_UNCLOAK);
     return XEASY;
 }
 

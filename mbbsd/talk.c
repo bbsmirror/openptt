@@ -1376,7 +1376,6 @@ static void pickup_user() {
     int isfri, isrej;
     int badman = 0;
     int savemode = currstat;
-    int i, j;			/* ¥u¬Oloop¦³¥Î¨ì */
     time_t diff, freshtime;
     pickup_t pklist[USHM_SIZE];	/* parameter Pttµù */
 /* num : ²{¦bªº´å¼Ð¦ì */
@@ -1396,14 +1395,7 @@ static void pickup_user() {
 	"¬G¶m",
 	"¦n¤Í´y­z"
     };
-    char mbuf[16], tmp[32],	/* 36 */
-	*Mind[] =
-    {":) ", ":( ", ":~ ", ":Q ", ":X ", ":} ", "@@ ", ":$ ",
-     "¥Y ", "¥W ", "\\/", ">< ", "Oo ", "OO ", ":< ", ":> ",
-     "^^ ", ":D ", ":O ", ":P ", "^-^", "^_^", "Q_Q", "@_@",
-     "/_\\", "=_=", "-.-", ">.<", ">_<", "-_+", "!_!", "o_o",
-     "z_Z", NULL
-    };
+
     while (1)
     {
 	if (utmpshm->uptime > freshtime || state == US_PICKUP)
@@ -1557,7 +1549,6 @@ static void pickup_user() {
 
 	    hate = is_rejected(uentp);
 	    diff = uentp->pager & !(hate & HRM);
-	    snprintf(mbuf, sizeof(mbuf), "\33[33m%-4s\33[m", Mind[uentp->mind]);
 	    prints("%5d %c%c%s%-13s%-17.16s\033[m%-17.16s%-13.13s%s%s\n",
 #ifdef SHOWUID
 		   show_uid ? uentp->uid :
@@ -1587,12 +1578,9 @@ static void pickup_user() {
 #endif
 		   /* %-13.13s */
 		   modestring(uentp, 0),
-#ifdef SHOWMIND
-		   show_mind ? mbuf :
-#endif
 		   /* %4s ³Æµù */
 		   ((uentp->userlevel & PERM_VIOLATELAW) ? "³q½r" : (uentp->birth ? "¹Ø¬P"
-								     : mbuf)),
+								     : "    ")),
 		   /* %s µo§b */
 		   buf);
 	}
@@ -1831,9 +1819,6 @@ static void pickup_user() {
 		    continue;
 		state = US_ACTION;
 		break;
-	    case 'i':
-		state = US_ACTION;
-		break;
 	    case Ctrl('S'):
 		state = US_ACTION;
 		break;
@@ -1955,61 +1940,6 @@ static void pickup_user() {
 		refresh();
 		sleep(1);
 		break;
-#ifdef SHOWMIND
-	    case 'i':
-		clear();
-		strcpy(genbuf, "");
-		strcpy(tmp, "");
-		for (i = 0, j = 3; i < 36; i++)
-		{
-		    if (!(i % 5) && i)
-		    {
-			move(j, 5);
-			j++;
-			prints("%s", genbuf);
-			strcpy(genbuf, "");
-		    }
-		    sprintf(tmp, "[33m%2d[37m:[36m%-8s[m", i + 1, Mind[i]);
-		    strcat(genbuf, tmp);
-		}
-		move(j, 5);
-		prints("%s", genbuf);
-		getdata_str(b_lines - 1, 0, "§A²{¦bªº¤ß±¡ 0:´¶³q q¤£ÅÜ<0-36>[q]:", genbuf, 3,
-			    LCECHO, "q");
-		if (*genbuf && genbuf[0] != 'q')
-		{
-		    currutmp->mind = (genbuf[0] == '0' || !IsNum(genbuf, strlen(genbuf))) ?
-			0 : atoi(genbuf) - 1;
-		}
-		refresh();
-		break;
-	    case Ctrl('S'):
-		clear();
-		strcpy(genbuf, "");
-		strcpy(tmp, "");
-		for (i = 0, j = 3; i < 36; i++)
-		{
-		    if (!(i % 5) && i)
-		    {
-			move(j, 5);
-			j++;
-			prints("%s", genbuf);
-			strcpy(genbuf, "");
-		    }
-		    sprintf(tmp, "[33m%2d[37m:[36m%-8s[m", i + 1, Mind[i]);
-		    strcat(genbuf, tmp);
-		}
-		move(j, 5);
-		prints("%s", genbuf);
-		getdata(b_lines - 1, 0, "·j´M¤ß±¡<1-36>[q]:",
-			genbuf, 3, LCECHO);
-		if (genbuf[0] > '0' && genbuf[0] <= '9')
-		    bmind = atoi(genbuf) - 1;
-		else
-		    bmind = -1;
-		state = US_PICKUP;
-		break;
-#endif
 	    case 'a':
 		friend_add(uentp->userid, FRIEND_OVERRIDE);
 		friend_load();

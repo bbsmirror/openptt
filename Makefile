@@ -1,4 +1,4 @@
-SUBDIR=	mbbsd util innbbsd
+SUBDIR=libptt mbbsd util innbbsd
 BBSHOME?=$(HOME)
 
 all install clean depend:

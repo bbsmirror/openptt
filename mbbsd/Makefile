@@ -39,7 +39,7 @@ SRCS=	admin.c announce.c args.c bbcall.c bbs.c board.c cache.c cal.c card.c\
 .SUFFIXES: .c .o
 
 .c.o:
-	$(CC) $(CFLAGS) -c $?
+	$(CC) $(CFLAGS) -c $*.c
 
 all: $(PROG)
 

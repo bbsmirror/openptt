@@ -4,6 +4,9 @@
 # 每天 12:00 17:00 20:00 00:00 開獎。 
 0 2,11,16,21 * * * bin/openticket.sh > /dev/null
 
+# 每天早上清除過期使用者
+10 7 * * * bin/reaper > /dev/null 2> /dev/null
+
 # 每個小時 1 分執行上站人次統計
 1 * * * * bin/account > /dev/null 2> /dev/null
 

@@ -2,16 +2,12 @@
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
-CPROGS=	bbsmail post account birth deluserfile expire mandex\
-	horoscope parse_news topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam webgrep bbsrf\
-	createbbs outmail userlist tunepasswd buildir reaper shmsweep\
-	merge_passwd merge_board
+CPROGS=	bbsmail post account deluserfile expire mandex topusr uhash_loader\
+	poststat bbsrf createbbs outmail tunepasswd buildir reaper shmsweep
 
-SCRIPTS=backpasswd.sh cvslog.sh mailog.sh\
-	stock.sh topsong.sh weather.sh
+SCRIPTS=backpasswd.sh mailog.sh
 
-PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
+PROGS=	$(CPROGS) $(SCRIPTS)
 
 JUNK=	$(CPROGS) $(SCRIPTS) $(OBJS) sed.tmp
 
@@ -54,17 +50,11 @@ sed.tmp: Makefile
 bbsmail: bbsmail.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ bbsmail.c $(OBJS)
 
-BM_money: BM_money.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ BM_money.c $(OBJS)
-
 post: post.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ post.c $(OBJS)
 
 account: account.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ account.c $(OBJS)
-
-birth: birth.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ birth.c $(OBJS)
 
 deluserfile: deluserfile.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ deluserfile.c $(OBJS)
@@ -75,17 +65,8 @@ expire: expire.c $(OBJS)
 mandex: mandex.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ mandex.c $(OBJS)
 
-horoscope: horoscope.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ horoscope.c $(OBJS)
-
-parse_news: parse_news.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ parse_news.c $(OBJS)
-
 topusr: topusr.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ topusr.c $(OBJS)
-
-yearsold: yearsold.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ yearsold.c $(OBJS)
 
 reaper: reaper.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ reaper.c $(OBJS)

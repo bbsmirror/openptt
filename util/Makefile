@@ -27,13 +27,13 @@ OBJS=	util_cache.o util_record.o util_passwd.o
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope parse_news topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam webgrep bbsrf\
-	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
+	createbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
 SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
 	mandex.c horoscope.c parse_news.c topusr.c\
 	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
-	webgrep.c bbsrf.c initbbs.c outmail.c xchatd.c\
+	webgrep.c bbsrf.c createbbs.c outmail.c xchatd.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
 	merge_board.c
 

@@ -27,7 +27,7 @@
 11. 執行 make OSTYPE=FreeBSD BBSHOME=/home/bbs depend all install
     (Linux使用者請把 "FreeBSD" 改成 "linux")
 12. 如果是新架起來的站, 請執行 cd sample; make install
-12. 執行 cd /home/bbs; bin/initbbs
+12. 執行 cd /home/bbs; bin/createbbs
 
 假如一切都很順利的話,這樣子大概就安裝完了
 接下來是啟動 bbs 的部份

@@ -20,7 +20,6 @@
 #define RELAYSERVERIP     "127.0.0.1"
 #endif
 
-
 /* 临ゼ俱瞶 */
 #define MAX_FRIEND        (256)          /* 更 cache ぇ程狟ね计ヘ */
 #define MAX_REJECT        (32)           /* 更 cache ぇ程胊计ヘ */

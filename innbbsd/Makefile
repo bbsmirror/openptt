@@ -197,7 +197,7 @@ innbbsd: $(OBJS)
 #	mv tnrpd.exe tnrpd.exe.old
 	$(CC) -o innbbsd $(OBJS) $(OPT) $(LDFLAGS)
 
-install:
+install: $(EXES)
 	install -d $(BBSHOME)/innd/
 	install -c -m 755 $(EXES) $(BBSHOME)/innd/
 

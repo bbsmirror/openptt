@@ -22,6 +22,7 @@ void gethid(char *hid, char *tty)
     struct utmp data;
 
     gethostname(hid, MAXHOSTNAMELEN);
+    hid[MAXHOSTNAMELEN] = '\0';
     tp = strrchr(tty, '/') + 1;
     if (tp && strlen(tp) == 5)
     {
@@ -33,14 +34,20 @@ void gethid(char *hid, char *tty)
 	    while (read(fd, &data, sizeof(data)) == sizeof(data))
 		if (strcmp(data.ut_line, tp) == 0)
 		{
-		    if (data.ut_host[0])
+		    if (data.ut_host[0]) {
+#if MAXHOSTNAMELEN < UT_HOSTSIZE
 			strncpy(hid, data.ut_host, MAXHOSTNAMELEN);
+			hid[MAXHOSTNAMELEN] = '\0';
+#else
+			strncpy(hid, data.ut_host, UT_HOSTSIZE);
+			hid[UT_HOSTSIZE] = '\0';
+#endif
+		    }
 		    break;
 		}
 	    close(fd);
 	}
     }
-    hid[MAXHOSTNAMELEN] = '\0';
 }
 
 /*

@@ -12,31 +12,47 @@
 
 boardheader_t allbrd[MAX_BOARD];
 
-int
-board_cmp(a, b)
-    boardheader_t *a, *b;
+int board_cmp(const void *va, const void *vb)
 {
-    return (strcasecmp(a->brdname, b->brdname));
+  boardheader_t *a=(boardheader_t *)va, *b=(boardheader_t *)vb;
+  return (strcasecmp(a->brdname,b->brdname));
 }
 
 
-int main(argc, argv)
-    int argc;
-    char *argv[];
+void usage(char *cmdname)
+{
+  printf("This will print all board information.\n");
+  printf("Usage: %s [-bc] _.BOARDS_file ", cmdname);
+}
+
+int main(int argc, char *argv[])
 {
     int inf, i, count;
+    int optch, f_complete=0, f_bad_board_also=0;
 
     if (argc < 2)
     {
-	printf("Usage:\t%s .BOARDS [MAXUSERS]\n", argv[0]);
-	exit(1);
+      usage(argv[0]);
+      exit(1);
     }
 
+    while( (optch=getopt(argc, argv, "")) != -1) {
+      switch(optch) {
+        case 'b':
+          f_bad_board_also = 1;
+        case 'c':
+          f_complete = 1;
+          break;
+        default:
+         usage(argv[0]);
+      }
+    }
+    
 
     inf = open(argv[1], O_RDONLY);
     if (inf == -1)
     {
-	printf("error open file\n");
+	printf("Error open file %s\n", argv[1]);
 	exit(1);
     }
 
@@ -44,12 +60,9 @@ int main(argc, argv)
 
     i = 0;
     memset(allbrd, 0, MAX_BOARD * sizeof(boardheader_t));
-    while (read(inf, &allbrd[i], sizeof(boardheader_t)) == sizeof(boardheader_t))
-    {
-	if (allbrd[i].brdname[0])
-	{
+    while (read(inf, &allbrd[i], sizeof(boardheader_t)) == sizeof(boardheader_t)) {
+	if (f_bad_board_also || allbrd[i].brdname[0])
 	    i++;
-	}
     }
     close(inf);
 
@@ -59,12 +72,27 @@ int main(argc, argv)
 
 /* write out the target file */
 
-    printf(
-	"看板名稱     板主                     類別   中文敘述\n"
-	"----------------------------------------------------------------------\n");
-    for (i = 0; i < count; i++)
-    {
-	printf("%-13s%-25.25s%s\n", allbrd[i].brdname, allbrd[i].BM, allbrd[i].title);
+    if(f_complete) {
+      for (i = 0; i < count; i++) {
+        printf("%s %s %s %c %d %d\n",
+                                     allbrd[i].brdname, 
+                                     allbrd[i].title, 
+                                     allbrd[i].BM, 
+                                     allbrd[i].bvote, 
+                                     allbrd[i].uid, 
+                                     allbrd[i].gid);
+      }
     }
+    else {
+      printf(
+        "看板名稱     板主                     類別   中文敘述\n"
+        "----------------------------------------------------------------------\n");
+        for (i = 0; i < count; i++) {
+          printf("%-13s%-25.25s%s\n", allbrd[i].brdname, allbrd[i].BM, allbrd[i].title);
+        }
+    }
+        
+    
+    printf("Total %d boards.\n", count);
     return 0;
 }

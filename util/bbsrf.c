@@ -35,7 +35,7 @@ void gethid(char *hid, char *tty)
 		if (strcmp(data.ut_line, tp) == 0)
 		{
 		    if (data.ut_host[0]) {
-#if MAXHOSTNAMELEN > UT_HOSTSIZE
+#if MAXHOSTNAMELEN < UT_HOSTSIZE
 			strncpy(hid, data.ut_host, MAXHOSTNAMELEN);
 			hid[MAXHOSTNAMELEN] = '\0';
 #else

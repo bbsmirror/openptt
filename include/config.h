@@ -95,7 +95,6 @@
 #define LOGINATTEMPTS     (3)            /* 最大進站失誤次數 */
 #define WHERE                            /* 是否有故鄉功能 */
 #undef  LOG_BOARD  			 /* 看版是否log */
-#undef SUPPORT_GB      			 /* 是否支援gb */
 
 
 #undef  INITIAL_SETUP           /* 剛開站，還沒建立預設看板[SYSOP] */
@@ -108,17 +107,12 @@
 #define INTERNET_EMAIL          /* 支援 InterNet Email 功能(含 Forward) */
 #define HAVE_ORIGIN             /* 顯示 author 來自何處 */
 #undef  HAVE_MAILCLEAN          /* 清理所有使用者個人信箱 */
-#undef  HAVE_SUICIDE            /* 提供使用者自殺功能 */
-#undef  HAVE_REPORT             /* 系統追蹤報告 */
 #undef  HAVE_INFO               /* 顯示程式版本說明 */
 #undef  HAVE_LICENSE            /* 顯示 GNU 版權畫面 */
-#define HAVE_CAL                /* 提功計算機 */
-#undef  HAVE_ARCHIE             /* have arche */
+#define HAVE_CAL                /* 提供計算機 */
 #undef  POSTBUG                 /* board/mail post 沒有 bug 了 */
-#undef  HAVE_REPORT             /* 系統追蹤報告 */
 #undef  EMAIL_JUSTIFY           /* 發出 InterNet Email 身份認證信函 */
 #undef  NEWUSER_LIMIT           /* 新手上路的三天限制 */
-#undef  HAVE_X_BOARDS
 
 #define USE_LYNX   	        /* 使用外部lynx dump ? */
 #undef  USE_PROXY
@@ -137,11 +131,6 @@
 #define SHOWPID                 /* 看見使用者 PID */
 
 #define REALINFO                /* 真實姓名 */
-#ifdef  REALINFO
-#undef  ACTS_REALNAMES          /* 主目錄的 (U)ser 顯示真實姓名 */
-#undef  POST_REALNAMES          /* 貼文件時附上真實姓名 */
-#undef  MAIL_REALNAMES          /* 寄站內信件時附上真實姓名 */
-#endif
 
 #define DOTIMEOUT
 #ifdef  DOTIMEOUT

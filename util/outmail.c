@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/param.h>
+#include <sys/file.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "config.h"
@@ -113,7 +114,9 @@ int connectMailServer() {
     }
     
     memset(&addr, 0, sizeof(addr));
+#ifdef FreeBSD
     addr.sin_len = sizeof(addr);
+#endif
     addr.sin_family = AF_INET;
     addr.sin_port = htons(SMTPPORT);
     addr.sin_addr.s_addr = inet_addr(RELAYSERVERIP);

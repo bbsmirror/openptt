@@ -5,13 +5,14 @@ CC_FreeBSD=	gcc
 CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_FreeBSD=
 LIBMAIL_FreeBSD=-lutil
+LIBCHAT_FreeBSD=
 
 # Linux
 CC_linux=	gcc
 CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_linux=	-lresolv
 LIBMAIL_linux=	
-
+LIBCHAT_linux=	-lcrypt
 
 CC=	$(CC_$(OSTYPE))
 CFLAGS=	$(CFLAGS_$(OSTYPE))

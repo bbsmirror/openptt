@@ -513,7 +513,7 @@ int x_file() {
     default:
 	return FULLUPDATE;
     }
-    aborted = vedit(fpath, NA);
+    aborted = vedit(fpath, NA, NULL);
     prints("\n\n系統檔案[%s]：%s", fpath,
 	   (aborted == -1) ? "未改變" : "更新完畢");
     pressanykey();
@@ -1062,7 +1062,7 @@ int give_money() {
 	    return 1;
 	}
     } else {
-	if(vedit("etc/givemoney.txt", NA) < 0)
+	if(vedit("etc/givemoney.txt", NA, NULL) < 0)
 	    return 1;
     }
     
@@ -1081,7 +1081,7 @@ int give_money() {
     
     prints("編紅包袋內容");
     pressanykey();
-    if(vedit("etc/givemoney.why", NA) < 0)
+    if(vedit("etc/givemoney.why", NA, NULL) < 0)
 	return 1;
     
     stand_title("發錢中...");

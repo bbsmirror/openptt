@@ -163,7 +163,7 @@ int dice_main();
 int IsNum(char *a, int n);
 
 /* edit */
-int vedit(char *fpath, int saveheader);
+int vedit(char *fpath, int saveheader, int *islocal);
 void write_header(FILE *fp);
 void addsignature(FILE *fp, int ifuseanony);
 void auto_backup();

@@ -362,6 +362,7 @@ static int do_general() {
     int aborted, defanony, ifuseanony;
     char genbuf[200],*owner;
     boardheader_t *bp;
+    int islocal;
     
     ifuseanony = 0;
     bp = getbcache(currbid);
@@ -421,7 +422,7 @@ static int do_general() {
     setbpath(fpath, currboard);
     stampfile(fpath, &postfile);
     
-    aborted = vedit(fpath, YEA);
+    aborted = vedit(fpath, YEA, &islocal);
     if(aborted == -1) {
 	unlink(fpath);
 	pressanykey();
@@ -450,7 +451,7 @@ static int do_general() {
     postfile.money = aborted;
     strcpy(postfile.owner, owner);
     strcpy(postfile.title, save_title);
-    if(aborted == 1) {            /* local save */
+    if(islocal) {            /* local save */
 	postfile.savemode = 'L';
 	postfile.filemode = FILE_LOCAL;
     } else
@@ -462,7 +463,7 @@ static int do_general() {
 
 	if(currmode & MODE_SELECT)
 	    append_record(currdirect,&postfile,sizeof(postfile));
-	if(aborted != 1 && !(bp->brdattr & BRD_NOTRAN))
+	if(!islocal && !(bp->brdattr & BRD_NOTRAN))
 	    outgo_post(&postfile, currboard);
 	brc_addlist(postfile.filename);
 
@@ -637,7 +638,7 @@ static int edit_post(int ent, fileheader_t *fhdr, char *direct) {
     local_article = fhdr->filemode & FILE_LOCAL;
     strcpy(save_title, fhdr->title);
 
-    if(vedit(genbuf, 0) != -1) {
+    if(vedit(genbuf, 0, NULL) != -1) {
 	setbpath(fpath, currboard);
 	stampfile(fpath, &postfile);
 	unlink(fpath);
@@ -1233,7 +1234,7 @@ int b_note_edit_bname(int bid) {
     boardheader_t *fh=getbcache(bid);
 
     setbfile(buf, fh->brdname, fn_notes);
-    aborted = vedit(buf, NA);
+    aborted = vedit(buf, NA, NULL);
     if(aborted == -1) {
 	clear();
 	outs(msg_cancel);
@@ -1292,7 +1293,7 @@ static int b_post_note() {
 	if(more(buf,NA) == -1)  more("etc/"FN_POST_NOTE , NA);
 	getdata(b_lines - 2, 0, "是否要用自訂post注意事項?", yn, 3, LCECHO);
 	if(yn[0] == 'y')
-	    vedit(buf, NA);
+	    vedit(buf, NA, NULL);
 	else
 	    unlink(buf);
 	return FULLUPDATE;
@@ -1305,7 +1306,7 @@ static int b_application() {
 
     if(currmode & MODE_BOARD) {
 	setbfile(buf, currboard,  FN_APPLICATION);
-	vedit(buf, NA);
+	vedit(buf, NA, NULL);
 	return FULLUPDATE;
     }
     return 0;

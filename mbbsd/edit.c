@@ -876,7 +876,7 @@ void addsignature(FILE *fp, int ifuseanony) {
 }
 
 static int
-write_file(char *fpath, int saveheader) {
+write_file(char *fpath, int saveheader, int *islocal) {
     FILE *fp = NULL;
     textline_t *p, *v;
     char ans[TTLEN], *msg;
@@ -993,6 +993,8 @@ write_file(char *fpath, int saveheader) {
 	postrecord.times  =0;
     }
     if(!aborted) {
+	if(islocal)
+	    *islocal = (local_article == 1);
 	if(currstat == POSTING || currstat == SMAIL)
 	    addsignature(fp,ifuseanony);
 	fclose(fp);
@@ -1521,7 +1523,7 @@ static void block_color() {
 }
 
 /* 編輯處理：主程式、鍵盤處理 */
-int vedit(char *fpath, int saveheader) {
+int vedit(char *fpath, int saveheader, int *islocal) {
     FILE *fp1;
     char last = 0, buf[200];   /* the last key you press */
     int ch, foo;
@@ -1663,7 +1665,7 @@ int vedit(char *fpath, int saveheader) {
 
 	    switch(ch) {
 	    case Ctrl('X'):           /* Save and exit */
-		foo = write_file(fpath, saveheader);
+		foo = write_file(fpath, saveheader, islocal);
 		if(foo != KEEP_EDITING) {
 		    currutmp->mode = mode0;
 		    currutmp->destuid = destuid0;

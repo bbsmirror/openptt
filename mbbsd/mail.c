@@ -260,7 +260,7 @@ int do_send(char *userid, char *title) {
     if(internet_mail) {
 	int res, ch;
 
-	if(vedit(fpath, NA) == -1) {
+	if(vedit(fpath, NA, NULL) == -1) {
 	    unlink(fpath);
 	    clear();
 	    return -2;
@@ -294,7 +294,7 @@ int do_send(char *userid, char *title) {
 	strcpy(mhdr.owner, cuser.userid);
 	strncpy(mhdr.title, save_title, TTLEN);
 	mhdr.savemode = '\0';
-	if(vedit(genbuf, YEA) == -1) {
+	if(vedit(genbuf, YEA, NULL) == -1) {
 	    unlink(genbuf);
 	    clear();
 	    return -2;
@@ -486,7 +486,7 @@ static void multi_send(char *title) {
 	
 	curredit |= EDIT_LIST;
 
-	if(vedit(fpath, YEA) == -1) {
+	if(vedit(fpath, YEA, NULL) == -1) {
 	    unlink(fpath);
 	    curredit = 0;
 	    outs(msg_cancel);
@@ -576,7 +576,7 @@ int mail_all() {
     
     curredit |= EDIT_MAIL;
     curredit &= ~EDIT_ITEM;
-    if(vedit(fpath, YEA) == -1) {
+    if(vedit(fpath, YEA, NULL) == -1) {
 	curredit = 0;
 	unlink(fpath);
 	outs(msg_cancel);
@@ -1027,7 +1027,7 @@ static int mail_edit(int ent, fileheader_t *fhdr, char *direct) {
 	return DONOTHING;
 
     setdirpath(genbuf, direct, fhdr->filename);
-    vedit(genbuf, NA);
+    vedit(genbuf, NA, NULL);
     return FULLUPDATE;
 }
 

@@ -480,7 +480,7 @@ int more(char *fpath, int promptend) {
 		case 'E':
 		    if(HAS_PERM(PERM_SYSOP) && strcmp(fpath, "etc/ve.hlp")) {
 			fclose(fp);
-			vedit(fpath, NA);
+			vedit(fpath, NA, NULL);
 			return 0;
 		    }
 		    break;

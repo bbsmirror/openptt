@@ -2,7 +2,7 @@
 #ifndef INCLUDE_CONFIG_H
 #define INCLUDE_CONFIG_H
 
-#include "pttbbs.conf"
+#include "../pttbbs.conf"
 
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 主程式 */
 #define BAN_FILE        "BAN"                        /* 關站通告 */

@@ -595,25 +595,18 @@ void del_distinct(char *fname, char *line) {
 
 #ifdef WHERE
 static int where(char *from) {
-    register int i = 0, count = 0, j;
+    register int j;
     
     for (j = 0; j < fcache->top; j++) {
 	char *token = strtok(fcache->domain[j], "&");
 	
-	i = 0;
-	count = 0;
-	while(token) {
-	    if(strstr(from, token))
-		count++;
-	    token = strtok(NULL, "&");
-	    i++;
-	}
-	if(i == count)
-	    break;
+	for(;token;token=strtok(NULL,"&"))
+	    if(!strstr(from,token))
+		break;
+	if(!token)
+	    return j;
     }
-    if(i != count)
-	return 0;
-    return j;
+    return 0;
 }
 #endif
 

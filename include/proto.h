@@ -4,7 +4,7 @@
 
 /* admin */
 int m_mod_board(char *bname);
-int m_newbrd();
+int m_newbrd(int recover);
 int scan_register_form(char *regfile, int automode, int neednum);
 int m_user();
 int search_user_bypwd();

@@ -17,6 +17,14 @@
 #define MAX_USERS          (120000)
 #endif
 
+#ifndef MAX_ACTIVE
+#define MAX_ACTIVE        (1024)         /* 程计 */
+#endif
+
+#ifndef MAX_CPULOAD
+#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
+#endif
+
 #ifndef MAX_POST_MONEY                      /* 祇ゅ彻絑禣 */
 #define MAX_POST_MONEY     100
 #endif
@@ -33,6 +41,10 @@
 #define MAX_LIFE           (120 * 24 * 60 * 60)
 #endif
 
+#ifndef MAX_FROM
+#define MAX_FROM           (300)            /* 程珿秏计 */
+#endif
+
 #ifndef HAVE_SEARCH_ALL                     /* 穓碝琘ㄏノ┮Τ狾ゅ彻 */
 #define HAVE_SEARCH_ALL    0
 #endif
@@ -42,7 +54,11 @@
 #endif
 
 #ifndef HAVE_FREECLOAK
-#define HAVE_FREECLOAK    0
+#define HAVE_FREECLOAK     0
+#endif
+
+#ifndef FORCE_PROCESS_REGISTER_FORM
+#define FORCE_PROCESS_REGISTER_FORM 0
 #endif
 
 #ifndef TITLE_COLOR
@@ -53,6 +69,10 @@
 #define SYSLOG_FACILITY   LOG_LOCAL0
 #endif
 
+#ifndef TAR_PATH
+#define TAR_PATH "tar"
+#endif
+
 /* 临ゼ俱瞶 */
 #define MAX_FRIEND        (256)          /* 更 cache ぇ程狟ね计ヘ */
 #define MAX_REJECT        (32)           /* 更 cache ぇ程胊计ヘ */
@@ -60,8 +80,6 @@
 #define MAX_BOARD         (4096)         /* 程秨计 */
 #define MAX_MOVIE         (999)          /* 程笆篈计 */
 #define MAX_MOVIE_SECTION (10)		 /* 程笆篈狾摸 */
-#define MAX_FROM          (300)          /* 程珿秏计 */
-#define MAX_ACTIVE        (1024)         /* 程计 */
 #define MAX_ITEMS         (1000)         /* ヘ魁程Τ碭兜 */
 #define MAX_HISTORY       (12)           /* 笆篈狾玂 12 掸菌癘魁 */
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
@@ -77,7 +95,6 @@
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
 #define MAX_REVIEW        (7)		 /* 程瞴臮 */
 #define NUMVIEWFILE       (14)           /* 秈礶程计 */
-#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
 #define MAX_SWAPUSED      (0.7)          /* SWAP程蔼ㄏノ瞯 */
 #define LOGINATTEMPTS     (3)            /* 程秈ア粇Ω计 */
 #define WHERE                            /* 琌Τ珿秏 */

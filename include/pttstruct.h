@@ -273,17 +273,6 @@ struct pttcache_t {
     int busystate;
 };
 
-typedef struct fromcache_t {
-    char domain[MAX_FROM][50];
-    char replace[MAX_FROM][50];
-    int top;
-    int max_user;
-    time_t max_time;
-    time_t uptime;
-    time_t touchtime;
-    int busystate;
-} fromcache_t;
-
 typedef struct {
     unsigned char oldlen;                /* previous line length */
     unsigned char len;                   /* current length of line */

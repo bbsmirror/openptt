@@ -42,9 +42,7 @@ int talkrequest = NA;
 
 static char remoteusername[40] = "?";
 
-extern struct fromcache_t *fcache;
 extern struct utmpfile_t *utmpshm;
-extern int fcache_semid;
 
 static unsigned char enter_uflag;
 static int use_shell_login_mode=0;
@@ -591,23 +589,6 @@ void del_distinct(char *fname, char *line) {
     }
 }
 
-#ifdef WHERE
-static int where(char *from) {
-    register int j;
-    
-    for (j = 0; j < fcache->top; j++) {
-	char *token = strtok(fcache->domain[j], "&");
-	
-	for(;token;token=strtok(NULL,"&"))
-	    if(!strstr(from,token))
-		break;
-	if(!token)
-	    return j;
-    }
-    return 0;
-}
-#endif
-
 static void check_BM() {
     int i;
     boardheader_t *bhdr;
@@ -650,11 +631,7 @@ static void setup_utmp(int mode) {
     uinfo.pager = cuser.pager % 5;
     
     uinfo.brc_id = 0;
-#ifdef WHERE
-    uinfo.from_alias = where(fromhost);
-#else
     uinfo.from_alias = 0;
-#endif
     setuserfile(buf, "remoteuser");
     
     strcpy(remotebuf, getenv("RFC931"));
@@ -710,7 +687,6 @@ static void user_login() {
     
     /* resolve all cache */
     resolve_garbage();	/* get ptt cache */
-    resolve_fcache();
     resolve_boards();
     
     /* 初始化 uinfo、flag、mode */
@@ -724,13 +700,6 @@ static void user_login() {
     ptime = localtime(&now);
     tmp = localtime(&cuser.lastlogin);
     
-    if((a = utmpshm->number) > fcache->max_user) {
-	sem_init(FROMSEM_KEY, &fcache_semid);
-	sem_lock(SEM_ENTER, fcache_semid);
-	fcache->max_user = a;
-	fcache->max_time = now;
-	sem_lock(SEM_LEAVE, fcache_semid);
-    }
 #ifdef INITIAL_SETUP
     if(!getbnum(DEFAULT_BOARD)) {
 	strcpy(currboard, "尚未選定");

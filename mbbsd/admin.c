@@ -449,7 +449,7 @@ int x_file() {
     outs("設定 (1)身份確認信 (4)post注意事項 (5)錯誤登入訊息\n");
     outs("     (6)註冊範例 (7)通過確認通知 (8)email post通知 (9)系統功\能精靈 (A)茶樓\n");
     outs("     (B)站長名單 (C)email通過確認 (D)新使用者需知 (E)身份確認方法 (F)歡迎畫面\n");
-    getdata(b_lines - 1, 0, "     (G)進站畫面 (H)看板期限 (I)故鄉 (J)出站畫面 (K)生日卡 (L)節日 [Q]取消？", ans, 3, LCECHO);
+    getdata(b_lines - 1, 0, "     (G)進站畫面 (H)看板期限 (J)出站畫面 (K)生日卡 (L)節日 [Q]取消？", ans, 3, LCECHO);
     
     switch(ans[0]) {
     case '1':
@@ -496,9 +496,6 @@ int x_file() {
 	break;
     case 'h':
 	fpath = "etc/expire.conf";
-	break;
-    case 'i':
-	fpath = "etc/domain_name_query";
 	break;
     case 'j':
 	fpath = "etc/Logout";

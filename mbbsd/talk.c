@@ -1284,22 +1284,14 @@ static char *friend_descript(char *uident) {
 	return space_buf;
 }
 
-static char *descript(int show_mode, userinfo_t * uentp, time_t diff,
-		      fromcache_t * fcache) {
+static char *descript(int show_mode, userinfo_t * uentp, time_t diff) {
     switch (show_mode)
     {
     case 1:
 	return friend_descript(uentp->userid);
     case 0:
 	return (((uentp->pager != 2 && uentp->pager != 3 && diff) ||
-		 HAS_PERM(PERM_SYSOP)) ?
-#ifdef WHERE
-		uentp->from_alias ? fcache->replace[uentp->from_alias] :
-		uentp->from
-#else
-		uentp->from
-#endif
-		: "*");
+		 HAS_PERM(PERM_SYSOP)) ? uentp->from : "*");
     default:
 	return "";
     }
@@ -1316,10 +1308,6 @@ static void pickup_user() {
     static int show_mind = 0;
 #endif
     char genbuf[200];
-
-#ifdef WHERE
-    extern struct fromcache_t *fcache;
-#endif
 
     register userinfo_t *uentp;
     register pid_t pid0 = 0;	/* Ptt ©w¦ì */
@@ -1522,11 +1510,7 @@ static void pickup_user() {
 #endif
 		   uentp->username,
 		   /* %-17.16s ¬G¶m */
-#if 0
-		   descript(show_mode, uentp, diff, fcache),
-#else
-		   "*",
-#endif
+		   descript(show_mode, uentp, diff),
 
 		   /* %-17.16s ¬ÝªO */
 #ifdef SHOWBOARD

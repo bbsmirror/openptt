@@ -26,8 +26,6 @@
 #include "modes.h"
 #include "proto.h"
 
-int fcache_semid;
-
 /* the reason for "safe_sleep" is that we may call sleep during
    SIGALRM handler routine, while SIGALRM is blocked.
    if we use the original sleep, we'll never wake up. */
@@ -423,55 +421,4 @@ void resolve_garbage() {
 	    ptt->busystate = 0;
 	}
     }
-}
-
-/*-------------------------------------------------------*/
-/* PTT's cache                                           */
-/*-------------------------------------------------------*/
-/* cachefor from host 與最多上線人數 */
-struct fromcache_t *fcache;
-
-static void reload_fcache() {
-    if(fcache->busystate)
-	safe_sleep(1);
-    else {
-	FILE *fp;
-
-	fcache->busystate = 1;
-	bzero(fcache->domain, sizeof fcache->domain);
-	if((fp = fopen("etc/domain_name_query","r"))) {
-	    char buf[101],*po;
-
-	    fcache->top=0;
-	    while(fgets(buf,100,fp)) {
-		if(buf[0] && buf[0] != '#' && buf[0] != ' ' &&
-		   buf[0] != '\n') {
-		    sscanf(buf,"%s",fcache->domain[fcache->top]);
-		    po = buf + strlen(fcache->domain[fcache->top]);
-		    while(*po == ' ')
-			po++;
-		    strncpy(fcache->replace[fcache->top],po,49);
-		    fcache->replace[fcache->top]
-			[strlen(fcache->replace[fcache->top])-1] = 0;
-		    (fcache->top)++;
-		}	
-	    }
-	}
-
-	fcache->max_user=0;
-
-	/* 等所有資料更新後再設定 uptime */
-	fcache->uptime = fcache->touchtime;
-	fcache->busystate = 0;
-    }
-}
-
-void resolve_fcache() {
-    if(fcache == NULL) {
-	fcache = attach_shm(FROMSHM_KEY, sizeof(*fcache));
-	if(fcache->touchtime == 0)
-	    fcache->touchtime = 1;
-    }
-    while(fcache->uptime < fcache->touchtime)
-	reload_fcache();
 }

@@ -40,10 +40,6 @@
 #define MAX_LIFE           (120 * 24 * 60 * 60)
 #endif
 
-#ifndef MAX_FROM
-#define MAX_FROM           (300)            /* 程珿秏计 */
-#endif
-
 #ifndef HAVE_SEARCH_ALL                     /* 穓碝琘ㄏノ┮Τ狾ゅ彻 */
 #define HAVE_SEARCH_ALL    0
 #endif
@@ -92,7 +88,6 @@
 #define NUMVIEWFILE       (14)           /* 秈礶程计 */
 #define MAX_SWAPUSED      (0.7)          /* SWAP程蔼ㄏノ瞯 */
 #define LOGINATTEMPTS     (3)            /* 程秈ア粇Ω计 */
-#define WHERE                            /* 琌Τ珿秏 */
 #undef  LOG_BOARD  			 /* 琌log */
 
 
@@ -148,11 +143,9 @@
 #define UHASH_KEY       1219	/* userid->uid hash */
 #define UTMPSHM_KEY     2219
 #define PTTSHM_KEY      1220    /* 笆篈 , 竊ら */
-#define FROMSHM_KEY     1223    /* whereis, 程ㄏノ */
 
 #define BRDSEM_KEY      2005    /* semaphore key */
 #define PTTSEM_KEY      2000    /* semaphore key */
-#define FROMSEM_KEY     2003    /* semaphore key */
 #define PASSWDSEM_KEY   2010
 
 #define NEW_CHATPORT    3838

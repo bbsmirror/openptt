@@ -3,7 +3,7 @@ BBSHOME=@prefix@
 
 TARGET=	$(BBSHOME)/etc/
 FILES=	Welcome Welcome_login goodbye register registered ve.hlp Logout\
-	Welcome_birth domain_name_query
+	Welcome_birth
 
 all:
 

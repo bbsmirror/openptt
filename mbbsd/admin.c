@@ -239,8 +239,8 @@ int m_mod_board(char *bname) {
 	if(HAS_PERM(PERM_SYSOP)) {
 	    char actionbuf[512];
 	    
-	    sprintf(actionbuf, BBSHOME "/bin/buildir boards/%s &",
-		    bh.brdname);
+	    sprintf(actionbuf, BBSHOME "/bin/buildir boards/%c/%s &",
+		    *(bh.brdname), bh.brdname);
 	    system(actionbuf);
 	}
 	break;
@@ -315,7 +315,7 @@ int m_mod_board(char *bname) {
 	    outs(MSG_DEL_CANCEL);
 	else {
 	    strcpy(bname, bh.brdname);
-	    sprintf(genbuf, "/bin/rm -fr boards/%s man/%s", bname, bname);
+	    sprintf(genbuf, "/bin/rm -fr boards/%c/%s man/boards/%c/%s", *bname, bname, *bname, bname);
 	    system(genbuf);
 	    memset(&bh, 0, sizeof(bh));
 	    sprintf(bh.title, "[%s] deleted by %s", bname, cuser.userid);

@@ -813,20 +813,17 @@ static void a_newitem(menu_t *pm, int mode) {
 	for(d = 0; d <= 3; d++) {
 	    switch(d) {
 	    case 0:
-		sprintf(lpath, "%s%s%s/%s",
-			BBSHOME, "/man/boards/",currboard , buf);
+		sprintf(lpath, "%s/man/boards/%c/%s/%s",
+			BBSHOME, *currboard, currboard , buf);
 		break;
 	    case 1:
-		sprintf(lpath, "%s%s%s",
-			BBSHOME, "/man/boards/" , buf);
+		sprintf(lpath, "%s/man/boards/%c/%s", BBSHOME, *buf, buf);
 		break;
 	    case 2:
-		sprintf(lpath, "%s%s%s",
-			BBSHOME, "/" , buf);
+		sprintf(lpath, "%s/%s", BBSHOME, buf);
 		break;
 	    case 3:
-		sprintf(lpath, "%s%s%s",
-			BBSHOME, "/etc/" , buf);
+		sprintf(lpath, "%s/etc/%s", BBSHOME, buf);
 		break;
 	    }
 	    if(dashf(lpath)) {

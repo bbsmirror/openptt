@@ -37,19 +37,8 @@ char *post_article ARG((char *, char *, char *, int (*) (), char *, char *));
 int cancel_article ARG((char *, char *, char *));
 
 
-#ifdef  MapleBBS
-
 #define _BBS_UTIL_C_
 #include "record.c"
-
-#else
-report()
-{
-  /* Function called from record.o */
-  /* Please leave this function empty */
-}
-#endif
-
 
 #if defined(PalmBBS)
 
@@ -82,13 +71,6 @@ bbspost_write_post(fh, board, filename)
   fprintf(fhfd, "標  題: %.70s\n", SUBJECT);
   fprintf(fhfd, "發信站: %.43s (%s)\n", SITE, DATE);
   fprintf(fhfd, "轉信站: %.70s\n", PATH);
-
-#ifndef MapleBBS
-  if (POSTHOST != NULL)
-  {
-    fprintf(fhfd, "Origin: %.70s\n", POSTHOST);
-  }
-#endif
 
   fprintf(fhfd, "\n");
   for (fptr = BODY, ptr = strchr(fptr, '\r'); ptr != NULL && *ptr != '\0'; fptr = ptr + 1, ptr = strchr(fptr, '\r'))
@@ -399,28 +381,6 @@ receive_article()
     DATE = xdate;
   }
 
-#ifndef MapleBBS
-  if (SITE == NULL || *SITE == '\0')
-  {
-    if (nameptrleft != NULL && nameptrright != NULL)
-    {
-      char savech = *nameptrright;
-      *nameptrright = '\0';
-      strncpy(sitebuf, nameptrleft, sizeof sitebuf);
-      *nameptrright = savech;
-      SITE = sitebuf;
-    }
-    else
-      /* SITE = "(Unknown)"; */
-      SITE = "";
-  }
-  if (strlen(MYBBSID) > 70)
-  {
-    bbslog(" :Err: your bbsid %s too long\n", MYBBSID);
-    return 0;
-  }
-#endif
-
   sprintf(xpath, "%s!%.*s", MYBBSID, sizeof(xpath) - strlen(MYBBSID) - 2, PATH);
   PATH = xpath;
   for (pathptr = PATH; pathptr != NULL && (pathptr = strstr(pathptr, ".edu.tw")) != NULL;)
@@ -431,10 +391,6 @@ receive_article()
     }
   }
   xpath[71] = '\0';
-
-#ifndef MapleBBS
-  echomaillog();
-#endif
 
   *hispaths = '\0';
   splitptr = (char **) BNGsplit(GROUPS);
@@ -467,7 +423,7 @@ receive_article()
       {
         goto boardcont;
       }
-      boardhome = (char *) fileglue("%s/boards/%s", BBSHOME, boardptr);
+      boardhome = (char *) fileglue("%s/boards/%c/%s", BBSHOME, *boardptr, boardptr);
       if (!isdir(boardhome))
       {
         bbslog(":Err: unable to write %s\n", boardhome);
@@ -486,8 +442,8 @@ receive_article()
           fname = (char *) fileglue("%s/%s", boardptr, fname);
           if (firstpath[0] == '\0')
           {
-            sprintf(firstpath, "%s/boards/%s", BBSHOME, fname);
-            firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/");
+            sprintf(firstpath, "%s/boards/%c/%s", BBSHOME, *fname, fname);
+            firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/x/");
           }
           if (strlen(fname) + strlen(hispaths) + 1 < sizeof(hispaths))
           {
@@ -541,7 +497,7 @@ receive_control()
   newsfeeds_t *nf;
 
   bbslog("control post %s\n", HEADER[CONTROL_H]);
-  boardhome = (char *) fileglue("%s/boards/control", BBSHOME);
+  boardhome = (char *) fileglue("%s/boards/c/control", BBSHOME);
   testandmkdir(boardhome);
   *firstpath = '\0';
   if (isdir(boardhome))
@@ -550,12 +506,12 @@ receive_control()
     if (fname != NULL)
     {
       if (firstpath[0] == '\0')
-        sprintf(firstpath, "%s/boards/control/%s", BBSHOME, fname);
+        sprintf(firstpath, "%s/boards/c/control/%s", BBSHOME, fname);
       if (storeDB(HEADER[MID_H], (char *) fileglue("control/%s", fname)) < 0)
       {
       }
       bbsfeedslog(fileglue("control/%s", fname), 'C');
-      firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/");
+      firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/x/");
       splitptr = (char **) BNGsplit(GROUPS);
       for (ngptr = *splitptr; ngptr != NULL; ngptr = *(++splitptr))
       {
@@ -612,7 +568,7 @@ cancel_article_front(msgid)
     {
       *ptr++ = '\0';
     }
-    sprintf(filename, "%s/boards/%s", BBSHOME, file);
+    sprintf(filename, "%s/boards/%c/%s", BBSHOME, *file, file);
     bbslog("cancel post %s\n", filename);
     if (isfile(filename))
     {
@@ -654,7 +610,7 @@ cancel_article_front(msgid)
 
 #ifdef  KEEP_NETWORK_CANCEL
       bbslog("cancel post %s\n", filename);
-      boardhome = (char *) fileglue("%s/boards/deleted", BBSHOME);
+      boardhome = (char *) fileglue("%s/boards/d/deleted", BBSHOME);
       testandmkdir(boardhome);
       if (isdir(boardhome))
       {
@@ -686,8 +642,8 @@ cancel_article_front(msgid)
         {
           if (firstpath[0] == '\0')
           {
-            sprintf(firstpath, "%s/boards/deleted/%s", BBSHOME, fname);
-            firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/");
+            sprintf(firstpath, "%s/boards/d/deleted/%s", BBSHOME, fname);
+            firstpathbase = firstpath + strlen(BBSHOME) + strlen("/boards/x/");
           }
           if (storeDB(HEADER[MID_H], (char *) fileglue("deleted/%s", fname)) < 0)
           {
@@ -701,7 +657,7 @@ cancel_article_front(msgid)
           {
             char board[256];
             newsfeeds_t *nf;
-            char *filebase = filename + strlen(BBSHOME) + strlen("/boards/");
+            char *filebase = filename + strlen(BBSHOME) + strlen("/boards/x/");
             char *filetail = strrchr(filename, '/');
             if (filetail != NULL)
             {
@@ -762,7 +718,6 @@ cancel_article_front(msgid)
 }
 
 
-#if defined(PhoenixBBS) || defined(SecretBBS) || defined(PivotBBS) || defined(MapleBBS)
 /* for PhoenixBBS's post article and cancel article */
 #include "config.h"
 
@@ -851,13 +806,6 @@ char *pathname, *firstpath;
 
   bzero((void *) &header, sizeof(header));
 
-#ifndef MapleBBS
-  strcpy(header.filename, name);
-  strncpy(header.owner, userid, IDLEN);
-  strncpy(header.title, subject, STRLEN);
-  header.filename[STRLEN - 1] = 'M';
-#else
-
   strcpy(header.filename, name);
   if (userid[IDLEN])
     strcpy(&userid[IDLEN], ".");
@@ -869,7 +817,6 @@ char *pathname, *firstpath;
     ptime = localtime(&datevalue);
     sprintf(header.date, "%2d/%02d", ptime->tm_mon + 1, ptime->tm_mday);
   }
-#endif
 
   append_record(index, &header, sizeof(header));
   return name;
@@ -898,10 +845,10 @@ cancelpost(fileheader_t *fhdr, char* boardname)
   int fd;
   char fpath[MAXPATHLEN];
 
-  sprintf(fpath, BBSHOME "/boards/%s/%s", boardname, fhdr->filename);
+  sprintf(fpath, BBSHOME "/boards/%c/%s/%s", *boardname, boardname, fhdr->filename);
   if ((fd = open(fpath, O_RDONLY)) >= 0) {
     fileheader_t postfile;
-    char fn2[MAXPATHLEN] = BBSHOME "/boards/deleted", *junkdir;
+    char fn2[MAXPATHLEN] = BBSHOME "/boards/d/deleted", *junkdir;
 
     stampfile(fn2, &postfile);
     memcpy(postfile.owner, fhdr->owner, IDLEN + TTLEN + 10);
@@ -1037,7 +984,7 @@ cancel_article(homepath, board, file)
     return 0;
   }
   size = sizeof(header);
-  sprintf(dirname, "%s/boards/%s/.DIR", homepath, board);
+  sprintf(dirname, "%s/boards/%c/%s/.DIR", homepath, *board, board);
   if ((fd = open(dirname, O_RDONLY)) == -1) {
     bbslog("cancel_article: open `%s` error\n", dirname);
     return 0;
@@ -1079,115 +1026,6 @@ cancel_article(homepath, board, file)
   close(fd);
   return 0;
 }
-
-#elif defined(PalmBBS)
-# undef PATH XPATH
-# undef HEADER XHEADER
-#include "server.h"
-
-char *
-post_article(homepath, userid, board, writebody, pathname, firstpath)
-  char *homepath;
-  char *userid, *board;
-  int (*writebody) ();
-char *pathname, *firstpath;
-{
-  PATH msgdir, msgfile;
-  static PATH name;
-
-  READINFO readinfo;
-  SHORT fileid;
-  char buf[MAXPATHLEN];
-  struct stat stbuf;
-  int fh;
-
-  strcpy(msgdir, homepath);
-  if (stat(msgdir, &stbuf) == -1 || !S_ISDIR(stbuf.st_mode))
-  {
-    /* A directory is missing! */
-    bbslog(":Err: Unable to post in %s.\n", msgdir);
-    return NULL;
-  }
-  get_filelist_ids(msgdir, &readinfo);
-
-  for (fileid = 1; fileid <= BBS_MAX_FILES; fileid++)
-  {
-    int oumask;
-    if (test_readbit(&readinfo, fileid))
-      continue;
-    fileid_to_fname(msgdir, fileid, msgfile);
-    sprintf(name, "%04x", fileid);
-
-#ifdef DEBUG
-    printf("post to %s\n", msgfile);
-#endif
-
-    if (firstpath && *firstpath)
-    {
-
-#ifdef DEBUGLINK
-      bbslog("try to link %s to %s", firstpath, msgfile);
-#endif
-
-      if (link(firstpath, msgfile) == 0)
-        break;
-    }
-    oumask = umask(0);
-    fh = open(msgfile, O_CREAT | O_EXCL | O_WRONLY, 0664);
-    umask(oumask);
-    if (writebody)
-    {
-      if ((*writebody) (fh, board, pathname) < 0)
-        return NULL;
-    }
-    else
-    {
-      if (bbspost_write_post(fh, board, pathname) < 0)
-        return NULL;
-    }
-    close(fh);
-    break;
-  }
-
-#ifdef CACHED_OPENBOARD
-  {
-    char *bname;
-    bname = strrchr(msgdir, '/');
-    if (bname)
-      notify_new_post(++bname, 1, fileid, stbuf.st_mtime);
-  }
-#endif
-
-  return name;
-}
-
-cancel_article(homepath, board, file)
-  char *homepath;
-  char *board, *file;
-{
-  PATH fname;
-
-#ifdef  CACHED_OPENBOARD
-  PATH bdir;
-  struct stat stbuf;
-
-  sprintf(bdir, "%s/boards/%s", homepath, board);
-  stat(bdir, &stbuf);
-#endif
-
-  sprintf(fname, "%s/boards/%s/%s", homepath, board, file);
-  unlink(fname);
-  /* kill it now! the function is far small then original..  :) */
-  /* because it won't make system load heavy like before */
-
-#ifdef CACHED_OPENBOARD
-  notify_new_post(board, -1, hex2SHORT(file), stbuf.st_mtime);
-#endif
-}
-
-#else
-error("You should choose one of the systems: PhoenixBBS, PowerBBS, or PalmBBS")
-#endif
 
 #else
 

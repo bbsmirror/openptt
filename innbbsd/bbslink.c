@@ -95,11 +95,6 @@ extern char *DATE;
 char FROM_BUF[MAXBUFLEN];
 extern char *FROM;
 
-#ifndef MapleBBS
-char POSTER_BUF[MAXBUFLEN];
-char *POSTER;
-#endif
-
 char MYADDR[MAXBUFLEN];
 char MYSITE[MAXBUFLEN];
 
@@ -332,34 +327,6 @@ read_article(lover, filename, userid)
     if (*buffer == '\0')
       break;
 
-#ifndef MapleBBS
-    if (strstr(buffer, userid) != NULL)
-    {
-      m = strchr(buffer, '(');
-      n = strrchr(buffer, ')');
-      if (m != NULL && n != NULL)
-      {
-        strncpy(lover->nickname, m + 1, n - m - 1);
-        lover->nickname[n - m - 1] = '\0';
-      }
-      else
-      {
-        *lover->nickname = '\0';
-      }
-    }
-    else if (strncmp(buffer, "Date:      ", 11) == 0)
-    {
-      strcpy(lover->date, buffer + 11);
-    }
-    else if (strncmp(buffer, "發信站: ", 8) == 0)
-    {
-      m = strchr(buffer, '(');
-      n = strrchr(buffer, ')');
-      strncpy(lover->date, m + 1, n - m - 1);
-      lover->date[n - m - 1] = '\0';
-    }
-#endif
-
     if (artback != NULL)
     {
       *artback = '\n';
@@ -450,47 +417,6 @@ save_outgoing(sover, filename, userid, poster, mtime)
   }
 }
 
-
-#ifndef MapleBBS
-save_article(board, filename, sover)
-  char *board, *filename;
-  soverview_t *sover;
-{
-  FILE *FN;
-
-  if (Verbose)
-    printf("<save_article> %s %s\n", board, filename);
-  FN = fopen(fileglue("%s/boards/%s/%s", BBSHOME, board, filename), "w");
-  if (FN == NULL)
-  {
-    bbslog("<save_article> err: %s %s\n", board, filename);
-    if (Verbose)
-      printf("<save_article> err: %s %s\n", board, filename);
-    return 0;
-  }
-  flock(fileno(FN), LOCK_EX);
-  fprintf(FN, "發信人: %s, 信區: %s\n", POSTER, sover->board);
-  fprintf(FN, "標  題: %s\n", sover->subject);
-  fprintf(FN, "發信站: %s (%s)\n", MYSITE, sover->date);
-  fprintf(FN, "轉信站: %s\n", sover->path);
-  fprintf(FN, "\n");
-  fputs(BODY, FN);
-  flock(fileno(FN), LOCK_UN);
-  fclose(FN);
-
-#if defined(PalmBBS)
-  {
-    struct utimbuf times;
-
-    times.actime = sover->mtime;
-    times.modtime = sover->mtime;
-    utime(fileglue("%s/boards/%s/%s", BBSHOME, board, filename), &times);
-    utime(fileglue("%s/.bcache/%s", BBSHOME, board), NULL);
-  }
-#endif
-}
-#endif
-
 /* process_article() read_article() save_outgoing() save_article() */
 
 process_article(board, filename, userid, nickname, subject)
@@ -508,18 +434,13 @@ process_article(board, filename, userid, nickname, subject)
   {
     subject = "無題";
   }
-  filepath = fileglue("%s/boards/%s/%s", BBSHOME, board, filename);
+  filepath = fileglue("%s/boards/%c/%s/%s", BBSHOME, *board, board, filename);
   if (isfile(filepath))
   {
     linkoverview_t lover;
 
     if (read_article(&lover, filepath, userid))
     {
-
-#ifndef MapleBBS
-      strncpy(POSTER_BUF, fileglue("%s@%s (%s)", userid, MYBBSID, nickname), sizeof POSTER_BUF);
-      POSTER = POSTER_BUF;
-#endif
 
       strncpy(FROM_BUF, fileglue("%s.bbs@%s (%s)", userid, MYADDR, nickname), sizeof FROM_BUF);
       FROM = FROM_BUF;
@@ -534,9 +455,6 @@ process_article(board, filename, userid, nickname, subject)
       {
         save_outgoing(&sover, filename, userid, poster, lover.mtime);
 
-#ifndef MapleBBS
-        save_article(board, filename, &sover);
-#endif
       }
     }
   }
@@ -677,22 +595,19 @@ read_outgoing(sover)
       PATH = MYBBSID;
       GROUPS = group;
 
-#ifndef MapleBBS
-      echomaillog();
-#endif
     }
     BODY = "";
-    FD = open(fileglue("%s/boards/%s/%s", BBSHOME, board, filename), O_RDONLY);
+    FD = open(fileglue("%s/boards/%c/%s/%s", BBSHOME, *board, board, filename), O_RDONLY);
     if (FD < 0)
     {
       if (Verbose)
-        printf(" !! can't open %s/boards/%s/%s\n", BBSHOME, board, filename);
+        printf(" !! can't open %s/boards/%c/%s/%s\n", BBSHOME, *board, board, filename);
       else
-        fprintf(stderr, "can't open %s/boards/%s/%s\n", BBSHOME, board, filename);
+        fprintf(stderr, "can't open %s/boards/%c/%s/%s\n", BBSHOME, *board, board, filename);
       return -1;
     }
 
-    FD_SIZE = filesize(fileglue("%s/boards/%s/%s", BBSHOME, board, filename));
+    FD_SIZE = filesize(fileglue("%s/boards/%c/%s/%s", BBSHOME, *board, board, filename));
     if (FD_BUF == NULL)
     {
       FD_BUF = (char *) mymalloc(FD_SIZE + 1 + strlen(COMMENT));
@@ -709,7 +624,7 @@ read_outgoing(sover)
     FD_END += strlen(COMMENT);
     if (Verbose)
     {
-      printf("<read in> %s/boards/%s/%s\n", BBSHOME, board, filename);
+      printf("<read in> %s/boards/%c/%s/%s\n", BBSHOME, *board, board, filename);
     }
 
     *ORGANIZATION = '\0';
@@ -1301,7 +1216,7 @@ cancel_outgoing(board, filename, from, subject)
   bbslog("<cancel_outgoing> Try to move moderated post from %s to deleted\n", board);
   if (Verbose)
     printf("Try to move moderated post from %s to deleted\n", board);
-  FN = popen(fileglue("%s/bbspost post %s/boards/deleted > %s",
+  FN = popen(fileglue("%s/bbspost post %s/boards/d/deleted > %s",
       INNDHOME, BBSHOME, TMPFILE), "w");
   if (FN == NULL)
   {
@@ -1323,7 +1238,7 @@ cancel_outgoing(board, filename, from, subject)
   if (strncmp(result, "post to ", 8) == 0)
   {
     /* try to remove it */
-    strncpy(filepath, fileglue("%s/boards/%s/%s", BBSHOME, board, filename), sizeof filepath);
+    strncpy(filepath, fileglue("%s/boards/%c/%s/%s", BBSHOME, *board, board, filename), sizeof filepath);
     if (isfile(filepath))
     {
       Rename(filepath, fileglue("%s.cancel", filepath));

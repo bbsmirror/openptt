@@ -1,9 +1,6 @@
 20 7 * * * bin/mailog.sh > /dev/null
 20 6 * * * rm -f out/*; rm -f out/.DIR
 
-# 每天 12:00 17:00 20:00 00:00 開獎。 
-0 2,11,16,21 * * * bin/openticket.sh > /dev/null
-
 # 每天早上清除過期使用者
 10 7 * * * bin/reaper > /dev/null 2> /dev/null
 
@@ -40,7 +37,6 @@
 # 每天精華區index一次 index前砍掉deleted的精華區
 15 6 * * * rm -rf man/boards/deleted
 20 6 * * * bin/mandex > /dev/null
-30 6 * * * bin/openvice > /dev/null
 
 # 每天砍掉點歌超過5天檔案
 40 6 * * * ( find /home/bbs/etc/SONGO/M* -mtime +5 -exec rm -f {} ';' )

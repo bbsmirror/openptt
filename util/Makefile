@@ -23,11 +23,11 @@ LIBMAIL=$(LIBMAIL_$(OSTYPE))
 LIBCHAT=$(LIBCHAT_$(OSTYPE))
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
-	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
+	horoscope parse_news topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf\
 	initbbs outmail xchatd userlist tunepasswd buildir reaper
-PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
-	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\
+PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh\
+	stock.sh topsong.sh weather.sh stock.perl weather.perl\
 	cvslog.sh
 
 all: $(PROGS)
@@ -59,13 +59,7 @@ mandex: mandex.c util_cache.c util_record.c util_passwd.c
 horoscope: horoscope.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
-openvice: openvice.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
-
 parse_news: parse_news.c util_cache.c util_record.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
-
-openticket: openticket.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 topusr: topusr.c util_cache.c util_record.c util_passwd.c

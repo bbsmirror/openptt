@@ -866,7 +866,10 @@ extern int showansi;
 
 static void start_client() {
     extern struct commands_t cmdlist[];
+
+#if FORCE_PROCESS_REGISTER_FORM    
     int nreg;
+#endif
     
     /* system init */
     currmode = 0;

@@ -17,9 +17,12 @@
 #include <ctype.h>
 #include <errno.h>
 #include <time.h>
+#include <stdlib.h>
+/*
 #ifndef BSD44
 # include <malloc.h>
 #endif
+*/
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/file.h>

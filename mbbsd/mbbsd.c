@@ -34,8 +34,6 @@ extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern userinfo_t *currutmp;
 extern int curr_idle_timeout;
 
-static void do_aloha(char *hello);
-
 static jmp_buf byebye;
 
 int talkrequest = NA;
@@ -174,15 +172,9 @@ void u_exit(char *mode) {
     xuser.invisible = currutmp->invisible % 2;
     xuser.pager = currutmp->pager % 5;
     
-    if(!(HAS_PERM(PERM_SYSOP) && HAS_PERM(PERM_DENYPOST)))
-	do_aloha("<<下站通知>> -- 我走囉！");
-    
     purge_utmp(currutmp);
     if((cuser.uflag != enter_uflag) || (currmode & MODE_DIRTY) || !diff) {
 	xuser.uflag = cuser.uflag;
-	xuser.numposts = cuser.numposts;
-	if(!diff && cuser.numlogins)
-	    xuser.numlogins = --cuser.numlogins; /* Leeym 上站停留時間限制式 */
 	passwd_update(usernum, &xuser);
     }
     log_usies(mode, NULL);
@@ -616,9 +608,6 @@ static void setup_utmp(int mode) {
     uinfo.uid = usernum;
     uinfo.mode = currstat = mode;
     uinfo.msgcount = 0;
-    if(!(cuser.numlogins % 20) &&
-       cuser.userlevel & PERM_BM)
-	check_BM();	/* Ptt 自動取下離職板主權力 */
     
     uinfo.userlevel = cuser.userlevel;
     uinfo.lastact = time(NULL);
@@ -644,9 +633,6 @@ static void setup_utmp(int mode) {
     if(enter_uflag & CLOAK_FLAG)
 	uinfo.invisible = YEA;
     getnewutmpent(&uinfo);
-#ifndef _BBS_UTIL_C_
-    friend_load();
-#endif
 }
 
 extern char margs[];
@@ -688,24 +674,11 @@ static void user_login() {
     }
 
     /* 畫面處理開始 */
-    if(!(HAS_PERM(PERM_SYSOP) && HAS_PERM(PERM_DENYPOST)))
-	do_aloha("<<上站通知>> -- 我來啦！");
-    if(ptime->tm_mday == cuser.day && ptime->tm_mon + 1 == cuser.month) {
-	more("etc/Welcome_birth", NA);
-	currutmp->birth = 1;
-    } else {
-	more("etc/Welcome_login", NA);
-//	pressanykey();
-//    more("etc/CSIE_Week", NA);
-	currutmp->birth = 0;
-    }
+    more("etc/Welcome_login", NA);
+    currutmp->birth = 0;
     
     if(cuser.userlevel) {	/* not guest */
 	move(t_lines - 4, 0);
-	prints("      歡迎您第 \033[1;33m%d\033[0;37m 度拜訪本站，"
-	       "上次您是從 \033[1;33m%s\033[0;37m 連往本站，\n"
-	       "     我記得那天是 \033[1;33m%s\033[0;37m。\n",
-	       ++cuser.numlogins, cuser.lasthost, Cdate(&cuser.lastlogin));
 	currutmp->mind=rand()%8;  /* 初始心情 */
 	pressanykey();
  	
@@ -723,8 +696,6 @@ static void user_login() {
 		unlink(genbuf);
 	}
 	check_register();
-	strncpy(cuser.lasthost, fromhost, 16);
-	cuser.lasthost[15] = '\0';
 	restore_backup();
     } else if(!strcmp(cuser.userid, STR_GUEST)) {
 	char *nick[13] = {
@@ -735,17 +706,11 @@ static void user_login() {
 	    "大王椰子", "鸚鵡螺", "比基尼", "可口可樂", "仰泳的魚",
 	    "憶", "高岡屋", "AIR Jordon", "紅色十月號", "批踢踢",
 	    "SASAYA椰奶", "鴨蛋", "布魯克鱈魚香絲"};
-	char *addr[13] = {
-	    "天堂樂園", "大海", "綠島小夜曲", "美國", "綠色珊瑚礁",
-	    "遠方", "原本海", "NIKE", "蘇聯", "男八618室",
-	    "愛之味", "天上", "藍色珊瑚礁"};
 	i = login_start_time % 13;
 	sprintf(cuser.username, "海邊漂來的%s", nick[(int)i]);
 	sprintf(currutmp->username, cuser.username);
 	sprintf(cuser.realname, name[(int)i]);
 	sprintf(currutmp->realname, cuser.realname);
-	sprintf(cuser.address, addr[(int)i]);
-	cuser.sex = i % 8;
 	currutmp->pager = 2;
 	pressanykey();
     } else
@@ -761,31 +726,6 @@ static void user_login() {
 	    more(loginview_file[(int)i][0], YEA);
 	
 	
-}
-
-static void do_aloha(char *hello) {
-    FILE *fp;
-    char userid[80];
-    char genbuf[200];
-    
-    setuserfile(genbuf, "aloha");
-    if((fp = fopen(genbuf, "r"))) {
-	sprintf(genbuf, hello);
-	while(fgets(userid, 80, fp)) {
-	    userinfo_t *uentp;
-	    int tuid;
-	    
-	    if((tuid = searchuser(userid)) && tuid != usernum &&
-	       (uentp = (userinfo_t *)search_ulistn(cmpuids, tuid, 1)) &&
-	       ((uentp->userlevel & PERM_SYSOP) ||
-		((!currutmp->invisible ||
-		  uentp->userlevel & PERM_SEECLOAK) &&
-		 !(is_rejected(uentp) & 1)))) {
-		my_write(uentp->pid, genbuf, uentp->userid, 2);
-	    }
-	}
-	fclose(fp);
-    }
 }
 
 static void do_term_init() {

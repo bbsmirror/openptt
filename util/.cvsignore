@@ -32,4 +32,14 @@ reaper
 shmsweep
 merge_passwd
 merge_board
+BM_money.sh
+backpasswd.sh
+cvslog.sh
+mailog.sh
+opendice.sh
+openticket.sh
+stock.sh
+topsong.sh
+weather.sh
+sed.tmp
 .depend

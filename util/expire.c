@@ -36,10 +36,7 @@ struct life
 typedef struct life life;
 
 
-void
- expire(brd)
-life *brd;
-{
+void expire(life *brd) {
     fileheader_t head;
     struct stat state;
     char lockfile[128], tmpfile[128], bakfile[128];
@@ -63,7 +60,7 @@ life *brd;
     }
 #endif
 
-    sprintf(index, "%s/%s/.DIR", bpath, brd->bname);
+    sprintf(index, "%s/%c/%s/.DIR", bpath, *(brd->bname), brd->bname);
     sprintf(lockfile, "%s.lock", index);
     if ((fd = open(lockfile, O_RDWR | O_CREAT | O_APPEND, 0644)) == -1)
 	return;
@@ -127,16 +124,15 @@ life *brd;
 }
 
 
-int main(argc, argv)
-char *argv[];
-{
+int main(int argc, char **argv) {
     FILE *fin;
     int number, count;
     life db, table[MAX_BOARD], *key;
     struct dirent *de;
     DIR *dirp;
     char *ptr, *bname, buf[256];
-
+    int i;
+    
     db.days = ((argc > 1) && (number = atoi(argv[1])) > 0) ? number : DEF_DAYS;
     db.maxp = ((argc > 2) && (number = atoi(argv[2])) > 0) ? number : DEF_MAXP;
     db.minp = ((argc > 3) && (number = atoi(argv[3])) > 0) ? number : DEF_MINP;
@@ -146,33 +142,27 @@ char *argv[];
 /* --------------- */
 
     count = 0;
-    if((fin = fopen(EXPIRE_CONF, "r")))
-    {
-	while (fgets(buf, 256, fin))
-	{
-	    if (buf[0] == '#')
+    if((fin = fopen(EXPIRE_CONF, "r"))) {
+	while(fgets(buf, 256, fin)) {
+	    if(buf[0] == '#')
 		continue;
-
-	    bname = (char *) strtok(buf, " \t\r\n");
-	    if (bname && *bname)
-	    {
-		ptr = (char *) strtok(NULL, " \t\r\n");
-		if (ptr && (number = atoi(ptr)) > 0)
-		{
+	    
+	    bname = strtok(buf, " \t\r\n");
+	    if(bname && *bname) {
+		ptr = strtok(NULL, " \t\r\n");
+		if(ptr && (number = atoi(ptr)) > 0) {
 		    key = &(table[count++]);
 		    strcpy(key->bname, bname);
 		    key->days = number;
 		    key->maxp = db.maxp;
 		    key->minp = db.minp;
-
-		    ptr = (char *) strtok(NULL, " \t\r\n");
-		    if (ptr && (number = atoi(ptr)) > 0)
-		    {
+		    
+		    ptr = strtok(NULL, " \t\r\n");
+		    if(ptr && (number = atoi(ptr)) > 0) {
 			key->maxp = number;
-
-			ptr = (char *) strtok(NULL, " \t\r\n");
-			if (ptr && (number = atoi(ptr)) > 0)
-			{
+			
+			ptr = strtok(NULL, " \t\r\n");
+			if(ptr && (number = atoi(ptr)) > 0) {
 			    key->minp = number;
 			}
 		    }
@@ -181,37 +171,38 @@ char *argv[];
 	}
 	fclose(fin);
     }
-
-    if (count > 1)
-    {
+    
+    if(count > 1)
 	qsort(table, count, sizeof(life), (QCAST)strcasecmp);
-    }
-
+    
 /* ---------------- */
 /* visit all boards */
 /* ---------------- */
-
-    if (!(dirp = opendir(bpath)))
-    {
-	printf(":Err: unable to open %s\n", bpath);
-	return -1;
-    }
-
-    while((de = readdir(dirp)))
-    {
-	ptr = de->d_name;
-	if (ptr[0] > ' ' && ptr[0] != '.')
-	{
-	    if (count)
-		key = (life *) bsearch(ptr, table, count, sizeof(life), (QCAST)strcasecmp);
-	    else
-		key = NULL;
-	    if (!key)
-		key = &db;
-	    strcpy(key->bname, ptr);
-	    expire(key);
+    
+    for(i = 0; i < 52; i++) {
+	char bpathc[256];
+	
+	sprintf(bpathc, "%s/%c", bpath, (i < 26 ? 'A' + i : 'a' + i - 26));
+	
+	if(!(dirp = opendir(bpathc))) {
+	    printf(":Err: unable to open %s\n", bpathc);
+	    return -1;
 	}
+	
+	while((de = readdir(dirp))) {
+	    ptr = de->d_name;
+	    if(ptr[0] > ' ' && ptr[0] != '.') {
+		if(count)
+		    key = (life *)bsearch(ptr, table, count, sizeof(life), (QCAST)strcasecmp);
+		else
+		    key = NULL;
+		if(!key)
+		    key = &db;
+		strcpy(key->bname, ptr);
+		expire(key);
+	    }
+	}
+	closedir(dirp);
     }
-    closedir(dirp);
     return 0;
 }

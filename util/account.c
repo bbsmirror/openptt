@@ -53,7 +53,7 @@ keeplog(fpath, board, title)
 	board = "Record";
 
 
-    sprintf(genbuf, "boards/%s", board);
+    sprintf(genbuf, "boards/%c/%s", *board, board);
     stampfile(genbuf, &fhdr);
     sprintf(buf, "mv %s %s", fpath, genbuf);
     system(buf);
@@ -62,7 +62,7 @@ keeplog(fpath, board, title)
 */
     strcpy(fhdr.title, title);
     strcpy(fhdr.owner, "[¾ú¥v¦Ñ®v]");
-    sprintf(genbuf, "boards/%s/.DIR", board);
+    sprintf(genbuf, "boards/%c/%s/.DIR", *board, board);
     append_record(genbuf, &fhdr, sizeof(fhdr));
 }
 

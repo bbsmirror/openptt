@@ -50,7 +50,7 @@ unsigned int safe_sleep(unsigned int seconds) {
 }
 
 void setapath(char *buf, char *boardname) {
-    sprintf(buf, "man/boards/%s", boardname);
+    sprintf(buf, "man/boards/%c/%s", *boardname, boardname);
 }
 
 static char *str_dotdir = ".DIR";

@@ -13,7 +13,7 @@ void keeplog(FILE *fin, char *fpath, char *board, char *title, char *owner) {
     FILE *fout;
     int bid;
     
-    sprintf(genbuf, BBSHOME "/boards/%s", board);
+    sprintf(genbuf, BBSHOME "/boards/%c/%s", *board, board);
     stampfile(genbuf, &fhdr);
     
     if(!(fout = fopen(genbuf, "w"))) {
@@ -31,7 +31,7 @@ void keeplog(FILE *fin, char *fpath, char *board, char *title, char *owner) {
     fhdr.title[sizeof(fhdr.title) - 1] = '\0';
     
     strcpy(fhdr.owner, owner);
-    sprintf(genbuf, BBSHOME "/boards/%s/.DIR", board);
+    sprintf(genbuf, BBSHOME "/boards/%c/%s/.DIR", *board, board);
     append_record(genbuf, &fhdr, sizeof(fhdr));
     if((bid = getbnum(board)) > 0)
 	inbtotal(bid, 1);

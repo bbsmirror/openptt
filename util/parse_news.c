@@ -10,7 +10,7 @@
 #include "pttstruct.h"
 #include "util.h"
 
-#define NEWSDIRECT  BBSHOME "/boards/newspaper"
+#define NEWSDIRECT  BBSHOME "/boards/n/newspaper"
 #define MOVIEDIRECT BBSHOME "/etc/NEWS"
 
 int main() {

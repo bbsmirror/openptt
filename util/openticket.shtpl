@@ -1,0 +1,10 @@
+#!/bin/sh
+# $Id$
+
+%BBSHOME%/bin/openticket > %BBSHOME%/etc/jackpot
+%BBSHOME%/bin/post Record "彩券中獎名單" "[賭場報告]" %BBSHOME%/etc/jackpot
+%BBSHOME%/bin/post Record "猜數字中獎名單" "[猜數字報告]" %BBSHOME%/etc/winguess.log
+%BBSHOME%/bin/post Record "黑白棋對戰記錄" "[猜數字報告]" %BBSHOME%/etc/othello.log
+rm -f %BBSHOME%/etc/winguess.log
+rm -f %BBSHOME%/etc/loseguess.log
+rm -f %BBSHOME%/etc/othello.log

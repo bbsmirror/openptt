@@ -1,0 +1,10 @@
+#!/bin/sh
+# $Id$
+
+%BBSHOME%/bin/countalldice > %BBSHOME%/etc/dice.dis
+%BBSHOME%/bin/post  Record   "骰子中獎名單"  "[骰子報告]"   %BBSHOME%/etc/windice.log
+%BBSHOME%/bin/post  Security   "骰子失敗名單"  "[骰子報告]"   %BBSHOME%/etc/lostdice.log
+%BBSHOME%/bin/post  Security "骰子期望值"    "[骰子報告]"   %BBSHOME%/etc/dice.dis
+rm -f %BBSHOME%/etc/windice.log
+rm -f %BBSHOME%/etc/lostdice.log
+rm -f %BBSHOME%/etc/dice.dis

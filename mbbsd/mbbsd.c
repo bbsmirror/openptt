@@ -206,10 +206,15 @@ void abort_bbs(int sig) {
 }
 
 static void abort_bbs_debug(int sig) {
-    if(currmode)
-	u_exit("AXXED");
-    // printpt("debug me!(%d)",sig);
-    // sleep(3600);	/* wait 60 mins for debug */
+    static int reentrant = 0;
+    
+    if(!reentrant) {
+	reentrant = 1;
+	if(currmode)
+	    u_exit("AXXED");
+	// printpt("debug me!(%d)",sig);
+	// sleep(3600);	/* wait 60 mins for debug */
+    }
     exit(0);
 }
 

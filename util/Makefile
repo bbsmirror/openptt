@@ -26,7 +26,7 @@ CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf\
 	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
-	merge_passwd
+	merge_passwd merge_board
 
 SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
 	mandex.c horoscope.c openvice.c parse_news.c openticket.c topusr.c\
@@ -131,6 +131,9 @@ buildir: buildir.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 merge_passwd: merge_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+merge_board: merge_board.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)

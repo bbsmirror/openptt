@@ -5,13 +5,10 @@
 /* admin */
 int m_mod_board(char *bname);
 int m_newbrd(int recover);
-int scan_register_form(char *regfile, int automode, int neednum);
 int m_user();
 int search_user_bypwd();
 int search_user_bybakpwd();
 int m_board();
-int m_register();
-int cat_register();
 unsigned int setperms(unsigned int pbits, char *pstring[]);
 
 /* announce */
@@ -100,14 +97,6 @@ void addsignature(FILE *fp, int ifuseanony);
 void auto_backup();
 void restore_backup();
 char *ask_tmpbuf(int y);
-
-/* friend */
-void friend_edit(int type);
-void friend_load();
-int t_override();
-int t_reject();
-void friend_add(char *uident, int type);
-void friend_delete(char *uident, int type);
 
 /* io */
 int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
@@ -290,9 +279,6 @@ int is_uBM(char *list, char *id);
 /* talk */
 int t_idle();
 char *modestring(userinfo_t * uentp, int simple);
-int is_friend(userinfo_t * ui);
-int is_rejected(userinfo_t * ui);
-int isvisible(userinfo_t * uentp, int isfri, int isrej);
 int t_users();
 int cmpuids(int uid, userinfo_t * urec);
 int my_write(pid_t pid, char *hint, char *id, int flag);
@@ -326,10 +312,7 @@ int u_loginview();
 int u_ansi();
 int u_editplan();
 int u_editsig();
-int u_switchproverb();
-int u_editproverb();
 int u_cloak();
-int u_register();
 int u_list();
 
 /* xyz */

@@ -4,15 +4,19 @@ BBSHOME?=$(HOME)
 CC_FreeBSD=	gcc
 CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_FreeBSD=
+LIBMAIL_FreeBSD=-lutil
 
 # Linux
 CC_linux=	gcc
 CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
 LIBS_linux=	-lresolv
+LIBMAIL_linux=	
+
 
 CC=	$(CC_$(OSTYPE))
 CFLAGS=	$(CFLAGS_$(OSTYPE))
 LDFLAGS=$(LDFLAGS_$(OSTYPE))
+LIBMAIL=$(LIBMAIL_$(OSTYPE))
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
@@ -96,7 +100,7 @@ initbbs: initbbs.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 outmail: outmail.c
-	$(CC) $(CFLAGS) -o $@ $@.c
+	$(CC) $(CFLAGS) -o $@ $@.c $(LIBMAIL)
 
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/

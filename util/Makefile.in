@@ -19,7 +19,7 @@ BBSHOME=@prefix@
 
 CC=	@CC@
 CFLAGS=	-DBBSHOME=\"$(BBSHOME)\" -DBBSUID=@bbsuid@ -DBBSGID=@bbsgid@
-CFLAGS+=-DBBSNAME=\"@bbsname@\" -DMYHOSTNAME=\"@myhostname@\"\
+CFLAGS+=-DBBSNAME=\""@bbsname@"\" -DMYHOSTNAME=\"@myhostname@\"\
 	-DMAX_USERS=@max_users@
 CFLAGS+=@CFLAGS@ @OSDEFS@ @DEFS@ -I../include
 LDFLAGS=@LDFLAGS@

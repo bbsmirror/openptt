@@ -32,7 +32,8 @@ SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
 	mandex.c horoscope.c openvice.c parse_news.c openticket.c topusr.c\
 	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
 	countalldice.c webgrep.c bbsrf.c initbbs.c outmail.c xchatd.c\
-	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c
+	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
+	merge_board.c
 
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\

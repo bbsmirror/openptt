@@ -487,7 +487,7 @@ int p_sysinfo() {
     
     p = swapused(&total,&used);
     sprintf(buf, " 虛擬記憶體使用率: %.3f  (全部:%ldMB 用掉:%ldMB)\n",
-	    p, total / 1000000, used / 1000000);
+	    p, total >> 20, used >> 20);
     outs(buf);
     pressanykey();
     return 0;

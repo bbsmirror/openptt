@@ -65,6 +65,10 @@
 #define SYSLOG_FACILITY   LOG_LOCAL0
 #endif
 
+#ifndef TAR_PATH
+#define TAR_PATH  "tar"
+#endif
+
 /* 临ゼ俱瞶 */
 #define MAX_FRIEND        (256)          /* 更 cache ぇ程狟ね计ヘ */
 #define MAX_REJECT        (32)           /* 更 cache ぇ程胊计ヘ */

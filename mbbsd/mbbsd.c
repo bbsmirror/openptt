@@ -1229,7 +1229,7 @@ static void daemon_login(int argc, char *argv[], char *envp[]) {
     if(passwd_mmap())
 	exit(1);
     
-    sprintf(buf, "/var/run/mbbsd.%d.pid", listen_port);
+    sprintf(buf, BBSHOME "/run/mbbsd.%d.pid", listen_port);
     if((fp = fopen(buf, "w"))) {
 	fprintf(fp, "%d\n", getpid());
 	fclose(fp);

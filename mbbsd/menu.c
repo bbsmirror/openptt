@@ -139,7 +139,6 @@ void movie(int i) {
 static int show_menu(commands_t *p) {
     register int n = 0;
     register char *s;
-    const char *state[4]={"用功\型", "安逸型", "自定型", "SHUTUP"};
     char buf[80];
 
     movie(currstat);
@@ -147,7 +146,7 @@ static int show_menu(commands_t *p) {
     move(menu_row, 0);
     while((s = p[n].desc)) {
         if(HAS_PERM(p[n].level)) {
-            sprintf(buf, s + 2, state[cuser.proverb % 4]);
+            sprintf(buf, s + 2, "");
             prints("%*s  (\033[1;36m%c\033[0m)%s\n", menu_column, "", s[1],
                    buf);
         }
@@ -295,8 +294,6 @@ static commands_t adminlist[] = {
     {search_user_bypwd, PERM_SYSOP,   "SSearch User   特殊搜尋使用者"},
     {search_user_bybakpwd,PERM_SYSOP, "OOld User data 查閱\備份使用者資料"},
     {m_board, PERM_SYSOP,             "BBoard         設定看板"},
-    {m_register, PERM_SYSOP,          "RRegister      審核註冊表單"},
-    {cat_register, PERM_SYSOP,        "CCatregister   無法審核時用的"},
     {NULL, 0, NULL}
 };
 
@@ -327,28 +324,6 @@ static commands_t talklist[] = {
     {NULL, 0, NULL}
 };
 
-/* name menu */
-static int t_aloha() {
-    friend_edit(FRIEND_ALOHA);
-    return 0;
-}
-
-static int t_special() {
-    friend_edit(FRIEND_SPECIAL);
-    return 0;
-}
-
-static commands_t namelist[] = {
-    {t_override, PERM_LOGINOK,"OOverRide      好友名單"},
-    {t_reject, PERM_LOGINOK,  "BBlack         壞人名單"},
-    {t_aloha,PERM_LOGINOK,    "AALOHA         上站通知名單"},
-#ifdef POSTNOTIFY
-    {t_post,PERM_LOGINOK,     "NNewPost       新文章通知名單"},
-#endif
-    {t_special,PERM_LOGINOK,  "SSpecial       其他特別名單"},
-    {NULL, 0, NULL}
-};
-
 /* User menu */
 static commands_t userlist[] = {
     {u_info, PERM_LOGINOK,          "IInfo          設定個人資料與密碼"},
@@ -366,7 +341,6 @@ static commands_t userlist[] = {
 #else
     {u_cloak, PERM_CLOAK,           "CCloak         隱身術"},
 #endif
-    {u_register, PERM_BASIC,        "RRegister      填寫《註冊申請單》"},
     {u_list, PERM_BASIC,            "UUsers         列出註冊名單"},
     {NULL, 0, NULL}
 };
@@ -419,11 +393,6 @@ static int Xyz() {
     return 0;
 }
 
-static int Name_Menu() {
-    domenu(NMENU, "白色恐怖", 'O', namelist);
-    return 0;
-}
-
 commands_t cmdlist[] = {
     {admin,PERM_SYSOP|PERM_VIEWSYSOP, "00Admin       【 系統維護區 】"},
     {Announce, 0,                     "AAnnounce     【 精華公佈欄 】"},
@@ -433,7 +402,6 @@ commands_t cmdlist[] = {
     {Talk, 0,                         "TTalk         【 休閒聊天區 】"},
     {User, 0,                         "UUser         【 個人設定區 】"},
     {Xyz, 0,                          "XXyz          【 系統工具區 】"},
-    {Name_Menu,PERM_LOGINOK,          "NNamelist     【 編特別名單 】"},
     {Goodbye, 0,                      "GGoodbye       離開，再見……"},
     {NULL, 0, NULL}
 };

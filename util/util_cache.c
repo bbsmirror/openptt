@@ -103,9 +103,7 @@ void *attach_shm(int shmkey, int shmsize) {
     return shmptr;
 }
 
-#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
-/* union semun is defined by including <sys/sem.h> */
-#else
+#ifndef __FreeBSD__
 /* according to X/OPEN we have to define it ourselves */
 union semun {
     int val;                    /* value for SETVAL */

@@ -26,9 +26,7 @@ static int semid = -1;
 #define SEM_A 0200
 #endif
 
-#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
-/* union semun is defined by including <sys/sem.h> */
-#else
+#ifndef __FreeBSD__
 union semun {
         int     val;            /* value for SETVAL */
         struct  semid_ds *buf;  /* buffer for IPC_STAT & IPC_SET */

@@ -1,12 +1,12 @@
 # FreeBSD
-#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
-#LDFLAGS=-pipe -Wall -g -O3
-#LIBS=	-ltermcap -lutil -lkvm
+CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
+LDFLAGS=-pipe -Wall -g -O3
+LIBS=	-ltermcap -lutil -lkvm
 
 # Linux
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
-LDFLAGS=-pipe -Wall -g -O3
-LIBS=	-lncurses -lcrypt
+#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
+#LDFLAGS=-pipe -Wall -g -O3
+#LIBS=	-lncurses -lcrypt
 
 
 CC=	gcc

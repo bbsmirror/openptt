@@ -93,10 +93,9 @@ void user_display(userec_t *u, int real) {
     
     sethomedir(genbuf, u->userid);
     prints("                私人信箱: %d 封  (購買信箱: %d 封)\n"
-	   "                生    日: %02i/%02i/%02i\n"
-	   "                小雞名字: %s\n",
+	   "                生    日: %02i/%02i/%02i\n",
 	   get_num_records(genbuf, sizeof(fileheader_t)),
-	   u->exmailbox, u->month, u->day, u->year % 100, u->mychicken.name);
+	   u->exmailbox, u->month, u->day, u->year % 100);
     prints("                註冊日期: %s", ctime(&u->firstlogin));
     prints("                前次光臨: %s", ctime(&u->lastlogin));
     prints("                前次點歌: %s", ctime(&u->lastsong));
@@ -244,7 +243,7 @@ void uinfo_query(userec_t *u, int real, int unum) {
     memcpy(&x, u, sizeof(userec_t));
     getdata(b_lines - 1, 0, real ?
 	    "(1)改資料(2)設密碼(3)設權限(4)砍帳號(5)改ID"
-	    "(6)殺/復活寵物(7)審判 [0]結束 " :
+	    "(7)審判 [0]結束 " :
 	    "請選擇 (1)修改資料 (2)設定密碼 ==> [0]結束 ",
 	    ans, 3, DOECHO);
     
@@ -430,12 +429,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    } else
 		strcpy(x.userid, genbuf);
 	}
-	break;
-    case '6':
-	if(x.mychicken.name[0])
-	    x.mychicken.name[0] = 0;
-	else
-	    strcpy(x.mychicken.name,"[死]");
 	break;
     default:
 	return;

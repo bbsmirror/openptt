@@ -2,34 +2,6 @@
 #ifndef INCLUDE_STRUCT_H
 #define INCLUDE_STRUCT_H
 
-/* 小雞的資料 */
-typedef struct chicken_t {
-    char name[20];
-    char type;              /* 物種 */
-    unsigned char tech[16]; /* 技能 */
-    time_t birthday;        /* 生日 */
-    time_t lastvisit;       /* 上次照顧時間 */
-    int oo;                 /* 補品 */
-    int food;               /* 食物 */
-    int medicine;           /* 藥品 */
-    int weight;             /* 體重 */
-    int clean;              /* 乾淨 */
-    int run;                /* 敏捷度 */
-    int attack;             /* 攻擊力 */
-    int book;               /* 知識 */
-    int happy;              /* 快樂 */
-    int satis;              /* 滿意度 */
-    int temperament;        /* 氣質 */
-    int tiredstrong;        /* 疲勞度 */
-    int sick;               /* 病氣指數 */
-    int hp;                 /* 血量 */
-    int hp_max;             /* 滿血量 */
-    int mm;                 /* 法力 */
-    int mm_max;             /* 滿法力 */
-    time_t cbirth;          /* 實際計算用的生日 */
-    int pad[2];             /* 留著以後用 */
-} chicken_t;
-
 #define IDLEN      12             /* Length of bid/uid */
 #define PASSLEN    14             /* Length of encrypted passwd field */
 #define REGLEN     38             /* Length of registration data */
@@ -60,7 +32,7 @@ typedef struct userec_t {
     unsigned char pager;
     unsigned char invisible;
     unsigned int  exmailbox;
-    chicken_t mychicken;
+    char pad2[128];
     time_t lastsong;
     unsigned int  loginview;
     unsigned char channel;        /* 動態看板 */

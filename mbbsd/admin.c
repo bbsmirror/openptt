@@ -64,8 +64,7 @@ static int search_key_user(char *passwdfile, int mode) {
 	   (mode && (
 	       strstr(user.realname, key) || strstr(user.username, key) ||
 	       strstr(user.lasthost, key) || strstr(user.email, key) ||
-	       strstr(user.address, key) || strstr(user.justify, key) ||
-	       strstr(user.mychicken.name, key)))) {
+	       strstr(user.address, key) || strstr(user.justify, key)))) {
 	    move(1, 0);
 	    sprintf(buf, "²Ä [%d] µ§¸ê®Æ\n", coun);
 	    outs(buf);

@@ -49,6 +49,10 @@
 #define HAVE_FREECLOAK    0
 #endif
 
+#ifndef FORCE_PROCESS_REGISTER_FORM
+#define FORCE_PROCESS_REGISTER_FORM 0
+#endif
+
 #ifndef TITLE_COLOR
 #define TITLE_COLOR       "\033[0;1;37;46m"
 #endif

@@ -1120,10 +1120,6 @@ int main(int argc, char *argv[], char *envp[]) {
     signal(SIGUSR1,SIG_IGN);
     signal(SIGUSR2,SIG_IGN);
     
-    /* mmap passwd file */
-    if(passwd_mmap())
-	exit(1);
-    
     /* check if invoked as "bbs" */
     if(argc < 2)
 	shell_login(argc,argv,envp);
@@ -1143,6 +1139,10 @@ static void shell_login(int argc, char *argv[], char *envp[]) {
     setuid(BBSUID);
     chdir(BBSHOME);
 
+    /* mmap passwd file */
+    if(passwd_mmap())
+	exit(1);
+    
     use_shell_login_mode=1;
     initsetproctitle(argc, argv, envp);
 	
@@ -1208,6 +1208,10 @@ static void daemon_login(int argc, char *argv[], char *envp[]) {
     setgid(BBSGID);
     setuid(BBSUID);
     chdir(BBSHOME);
+    
+    /* mmap passwd file */
+    if(passwd_mmap())
+	exit(1);
     
     sprintf(buf, "/var/run/mbbsd.%d.pid", listen_port);
     if((fp = fopen(buf, "w"))) {

@@ -48,7 +48,6 @@
 #undef SUPPORT_GB      			 /* 是否支援gb */
 
 
-#define HAVE_CHKLOAD            /* check cpu load */
 #undef  INITIAL_SETUP           /* 剛開站，還沒建立預設看板[SYSOP] */
 #define DEFAULTBOARD   "SYSOP"  /* 預設看板 */
 #define LOGINASNEW              /* 採用上站申請帳號制度 */

@@ -1288,11 +1288,11 @@ static int check_ban_and_load(int fd)
     static time_t chkload_time;
     static int overload;	/* overload or banned, update every 1 sec  */
     static int banned;
-	
-#ifdef HAVE_CHKLOAD
+    
     if((time(0) - chkload_time) > 1) {
 	overload = chkload(buf);
-	banned = !access(BBSHOME "/BAN",R_OK);
+	banned = !access(BBSHOME "/BAN",R_OK) &&
+	    strcmp(fromhost, "localhost") != 0;
 	chkload_time = time(0);
     }
 
@@ -1304,15 +1304,7 @@ static int check_ban_and_load(int fd)
 	fclose(fp);
     }
 
-    if(banned || overload) return -1;
-#else
-    write(fd, BANNER, strlen(BANNER));
-    if((fp = fopen(BBSHOME "/BAN", "r"))) {
-	while(fgets(buf, 256, fp))
-	    write(fd, buf, strlen(buf));
-	fclose(fp);
+    if(banned || overload)
 	return -1;
-    }
-#endif
     return 0;
 }

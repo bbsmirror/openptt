@@ -17,7 +17,7 @@ LDFLAGS=$(LDFLAGS_$(OSTYPE))
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf bmda\
-	initbbs outmail
+	initbbs outmail xchatd
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl
 
@@ -67,6 +67,9 @@ topusr: topusr.c util_cache.c util_record.c util_passwd.c
 
 yearsold: yearsold.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
+
+xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c
 
 uhash_loader: uhash_loader.c
 	$(CC) $(CFLAGS) -o $@ $@.c

@@ -212,8 +212,10 @@ extern userec_t xuser;
 int getuser(char *userid) {
     int uid;
     
+    MPROTECT_UTMP_RW;
     if((uid = searchuser(userid)))
 	passwd_query(uid, &xuser);
+    MPROTECT_UTMP_R;
     return uid;
 }
 

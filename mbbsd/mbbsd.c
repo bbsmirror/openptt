@@ -211,9 +211,8 @@ void abort_bbs(int sig) {
 static void abort_bbs_debug(int sig) {
     if(currmode)
 	u_exit("AXXED");
-    // printpt("debug me!(%d)",sig);
-
 #ifdef DEBUG
+    setproctitle("debug me!! (%d)", sig);
     sleep(3600 * 6);
 #endif
     exit(0);

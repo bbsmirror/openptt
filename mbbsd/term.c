@@ -30,11 +30,8 @@ void init_tty() {
 	return;
     }
     memcpy(&tty_new, &tty_state, sizeof(tty_new));
-    tty_new.c_lflag &= ~(ICANON | ECHO | ISIG);
-/*    tty_new.c_cc[VTIME] = 0;
-    tty_new.c_cc[VMIN] = 1; */
+    cfmakeraw(&tty_new);
     tcsetattr(1, TCSANOW, &tty_new);
-    system("stty raw -echo");
 }
 
 /* ----------------------------------------------------- */

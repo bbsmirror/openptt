@@ -511,7 +511,6 @@ static void read_tmpbuf(int n) {
 	    curr_window_line--;
 	    top_of_win = top_of_win->next;
 	}
-	fclose(fp);
     }
 }
 

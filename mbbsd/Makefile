@@ -20,7 +20,7 @@ CC=	gcc
 PROG=	mbbsd
 OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o\
 	chat.o chicken.o\
-	edit.o friend.o gomo.o gomo1.o io.o\
+	edit.o friend.o io.o\
 	kaede.o mail.o mbbsd.o menu.o more.o name.o osdep.o\
 	read.o record.o register.o screen.o stuff.o\
 	talk.o term.o topsong.o user.o vote.o xyz.o\
@@ -28,7 +28,7 @@ OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o\
 
 SRCS=	admin.c announce.c args.c bbs.c board.c cache.c cal.c\
 	chat.c chicken.c\
-	edit.c friend.c gomo.c gomo1.c io.c\
+	edit.c friend.c io.c\
 	kaede.c mail.c mbbsd.c menu.c more.c name.c osdep.c\
 	read.c record.c register.c screen.c stuff.c\
 	talk.c term.c topsong.c user.c vote.c xyz.c\

@@ -230,7 +230,7 @@ extern char* str_permid[];
 void uinfo_query(userec_t *u, int real, int unum) {
     userec_t x;
     register int i = 0, fail, mail_changed;
-    char ans[4], buf[STRLEN], *p;
+    char ans[4], buf[STRLEN];
     char genbuf[200], reason[50];
     unsigned long int money = 0;
     fileheader_t fhdr;
@@ -348,22 +348,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 		if ((fail = atoi(buf)) >= 0)
 		    x.vl_count = fail;
 	    
-	    sprintf(genbuf, "%d/%d/%d", u->five_win, u->five_lose,
-		    u->five_tie);
-	    if(getdata_str(i++, 0, "五子棋戰績 勝/敗/和：", buf, 16, DOECHO,
-			   genbuf))
-		while(1) {
-		    p = strtok(buf, "/\r\n");
-		    if(!p) break;
-		    x.five_win = atoi(p);
-		    p = strtok(NULL, "/\r\n");
-		    if(!p) break;
-		    x.five_lose = atoi(p);
-		    p = strtok(NULL, "/\r\n");
-		    if(!p) break;
-		    x.five_tie = atoi(p);
-		    break;
-		}
 	    fail = 0;
 	}
 	break;

@@ -84,12 +84,6 @@
 #define VICE            66
 #define BBCALL          67
 #define VIOLATELAW      68
-#define M_FIVE          69
-#define JACK_CARD       70
-#define TENHALF         71
-#define CARD_99         72
-#define RAIL_WAY        73
-#define SREG            74
 
 /* menu.c ¤¤ªº¼Ò¦¡ */
 #define QUIT    0x666           /* Return value to abort recursive functions */

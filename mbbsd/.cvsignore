@@ -11,8 +11,6 @@ chicken.o
 descrypt.o
 edit.o
 friend.o
-gomo.o
-gomo1.o
 io.o
 kaede.o
 mail.o

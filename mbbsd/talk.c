@@ -56,7 +56,7 @@ static char *sig_des[] = {
     "鬥雞", "聊天", "", "下棋"
 };
 
-#define MAX_SHOW_MODE 3
+#define MAX_SHOW_MODE 2
 #define M_INT 15		/* monitor mode update interval */
 #define P_INT 20		/* interval to check for page req. in
 				 * talk/chat */
@@ -90,7 +90,7 @@ extern msgque_t oldmsg[MAX_REVIEW];
 extern char *friend_file[8];
 
 /* 記錄 friend 的 user number */
-#define PICKUP_WAYS     6
+#define PICKUP_WAYS     5
 
 static int pickup_way = 0;
 int friendcount;
@@ -105,7 +105,6 @@ static char *fcolor[11] = {
 };
 static char save_page_requestor[40];
 static char page_requestor[40];
-static char description[30];
 static FILE *flog;
 
 static int is_hidden(char *user) {
@@ -185,13 +184,6 @@ char *modestring(userinfo_t * uentp, int simple) {
     {
 	if (is_hidden(getuserid(uentp->destuid)))	/* Leeym 對方(紫色)隱形 */
 	    sprintf(modestr, "%s", "交談 空氣");	/* Leeym 大家自己發揮吧！ */
-	else
-	    sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
-    }
-    else if (mode == M_FIVE)
-    {
-	if (is_hidden(getuserid(uentp->destuid)))
-	    sprintf(modestr, "%s", "五子棋");
 	else
 	    sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
     }
@@ -405,8 +397,6 @@ int my_query(char *uident) {
 		   sex[muser.sex % 8],
 		   muser.money);
 	}
-	prints("《五子棋戰績》%3d 勝 %3d 敗 %3d 和",
-	       muser.five_win, muser.five_lose, muser.five_tie);
 	showplans(uident);
 	pressanykey();
 	return FULLUPDATE;
@@ -961,9 +951,8 @@ static void my_talk(userinfo_t * uin) {
     strcpy(currauthor, uin->userid);
 
     if (ch == EDITING || ch == TALK || ch == CHATING || ch == PAGE ||
-	ch == MAILALL || ch == MONITOR || ch == M_FIVE ||
-	(!ch && (uin->chatid[0] == 1 || uin->chatid[0] == 3)) ||
-	uin->lockmode == M_FIVE)
+	ch == MAILALL || ch == MONITOR ||
+	(!ch && (uin->chatid[0] == 1 || uin->chatid[0] == 3)))
     {
 	outs("人家在忙啦");
     }
@@ -998,17 +987,13 @@ static void my_talk(userinfo_t * uin) {
     else
     {
 	showplans(uin->userid);
-	getdata(2, 0, "要和他(她) (T)談天(F)下五子棋(P)鬥寵物"
+	getdata(2, 0, "要和他(她) (T)談天(P)鬥寵物"
 		"(N)沒事找錯人了?[N] ", genbuf, 4, LCECHO);
 	switch (*genbuf)
 	{
 	case 'y':
 	case 't':
 	    uin->sig = SIG_TALK;
-	    break;
-	case 'f':
-	    lockreturn(M_FIVE, LOCK_THIS);
-	    uin->sig = SIG_GOMO;
 	    break;
 	case 'p':
 	    reload_chicken();
@@ -1088,7 +1073,6 @@ static void my_talk(userinfo_t * uin) {
 		}
 		else if (ch == EDITING || ch == TALK || ch == CHATING ||
 			 ch == PAGE || ch == MAILALL || ch == MONITOR ||
-			 ch == M_FIVE ||
 			 (!ch && (uin->chatid[0] == 1 ||
 				  uin->chatid[0] == 3)))
 		{
@@ -1154,14 +1138,10 @@ static void my_talk(userinfo_t * uin) {
 	{
 	    sprintf(save_page_requestor, "%s (%s)",
 		    uin->userid, uin->username);
-	    /* gomo */
 	    switch (uin->sig)
 	    {
 	    case SIG_PK:
 		chickenpk(msgsock);
-		break;
-	    case SIG_GOMO:
-		gomoku(msgsock);
 		break;
 	    case SIG_TALK:
 	    default:
@@ -1308,12 +1288,6 @@ static int pickup_cmp(pickup_t * i, pickup_t * j) {
 	return (i->idle - j->idle);
     case 4:
 	return strcasecmp(i->ui->from, j->ui->from);
-    case 5:
-	if (j->ui->five_win - i->ui->five_win)
-	    return (j->ui->five_win - i->ui->five_win);
-	if (j->ui->five_lose - i->ui->five_lose)
-	    return (i->ui->five_lose - j->ui->five_lose);
-	return (j->ui->five_tie - i->ui->five_tie);
     }
     return 0;
 }
@@ -1373,14 +1347,7 @@ static char *descript(int show_mode, userinfo_t * uentp, time_t diff,
 		uentp->from
 #endif
 		: "*");
-    case 2:
-	sprintf(description, "%3d/%3d/%3d", uentp->five_win,
-		uentp->five_lose, uentp->five_tie);
-	description[20] = 0;
-	return description;
     default:
-	syslog(LOG_WARNING, "damn!!! what's wrong?? show_mode = %d",
-	       show_mode);
 	return "";
     }
 }
@@ -1422,14 +1389,12 @@ static void pickup_user() {
 	"網友代號",
 	"網友動態",
 	"發呆時間",
-	"來自何方",
-	"五子棋  "
+	"來自何方"
     };
     char *MODE_STRING[MAX_SHOW_MODE] =
     {
 	"故鄉",
-	"好友描述",
-	"五子棋戰績"
+	"好友描述"
     };
     char mbuf[16], tmp[32],	/* 36 */
 	*Mind[] =
@@ -1437,7 +1402,7 @@ static void pickup_user() {
      "凸 ", "凹 ", "\\/", ">< ", "Oo ", "OO ", ":< ", ":> ",
      "^^ ", ":D ", ":O ", ":P ", "^-^", "^_^", "Q_Q", "@_@",
      "/_\\", "=_=", "-.-", ">.<", ">_<", "-_+", "!_!", "o_o",
-     "z_Z", "暗 ", "象 ", "五 ", NULL
+     "z_Z", NULL
     };
     while (1)
     {
@@ -2337,9 +2302,6 @@ void talkreply() {
 	{
 	case SIG_PK:
 	    chickenpk(a);
-	    break;
-	case SIG_GOMO:
-	    gomoku(a);
 	    break;
 	case SIG_TALK:
 	default:

@@ -655,10 +655,6 @@ static void setup_utmp(int mode) {
     strcpy(uinfo.username, cuser.username);
     strncpy(uinfo.from, fromhost, 23);
     
-    uinfo.five_win = cuser.five_win;
-    uinfo.five_lose = cuser.five_lose;
-    uinfo.five_tie = cuser.five_tie;
-    
     uinfo.invisible = cuser.invisible % 2;
     uinfo.pager = cuser.pager % 5;
     

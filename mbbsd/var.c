@@ -254,10 +254,4 @@ char *ModeTypeTable[MAX_MODES] = {
     "發票對獎",                   /* VICE */  
     "逼逼摳ing",                  /* BBCALL */
     "繳罰單",                     /* CROSSPOST */
-    "五子棋",                     /* M_FIVE */
-    "21點ing",                    /* JACK_CARD */
-    "10點半ing",                  /* TENHALF */ 
-    "超級九十九",                 /* CARD_99 */
-    "火車查詢",                   /* RAIL_WAY */
-    "搜尋選單"                    /* SREG */
 };

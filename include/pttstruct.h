@@ -65,10 +65,7 @@ typedef struct userec_t {
     unsigned int  loginview;
     unsigned char channel;        /* 動態看板 */
     unsigned short vl_count;      /* ViolateLaw counter */
-    unsigned short five_win;
-    unsigned short five_lose;
-    unsigned short five_tie;
-    char pad[101];
+    char pad[107];
 } userec_t;
 /* these are flags in userec_t.uflag */
 #define SIG_FLAG        0x3     /* signature number, 2 bits */
@@ -210,15 +207,11 @@ typedef struct userinfo_t {
     unsigned char lockmode;       /* 不准 multi_login 玩的東西 */
     char turn;                    /* for gomo */
     char mateid[IDLEN + 1];       /* for gomo */
-    unsigned short int five_win;
-    unsigned short int five_lose;
-    unsigned short int five_tie;
     int myfavorite[FAVMAX];
     char gfavorite[FAVGMAX][FAVGSLEN+1];
     int ninGroup[FAVGMAX];
     int nGroup;
     int ninRoot;
-    char pad[344];
     char color;
     int mind;
 } userinfo_t;

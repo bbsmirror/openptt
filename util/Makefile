@@ -18,6 +18,7 @@ CC=	$(CC_$(OSTYPE))
 CFLAGS=	$(CFLAGS_$(OSTYPE))
 LDFLAGS=$(LDFLAGS_$(OSTYPE))
 LIBMAIL=$(LIBMAIL_$(OSTYPE))
+LIBCHAT=$(LIBCHAT_$(OSTYPE))
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
@@ -71,7 +72,7 @@ yearsold: yearsold.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
 
 xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c $(LIBCHAT)
 
 uhash_loader: uhash_loader.c
 	$(CC) $(CFLAGS) -o $@ $@.c

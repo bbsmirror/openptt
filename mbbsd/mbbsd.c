@@ -291,8 +291,8 @@ void show_last_call_in(int save) {
 	if(fp_writelog) {
 	    time(&now);
 	    fprintf(fp_writelog, 
-		    "\033[1;33;46m¡¹ %s \033[37;45m %s \033[0m[%s]\n",
-		    cuser.userid, buf, Cdatelite(&now));
+		    "%s \033[0m[%s]\n",
+		    buf, Cdatelite(&now));
 	}
     }
 }

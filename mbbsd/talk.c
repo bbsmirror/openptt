@@ -913,7 +913,7 @@ static void do_talk(int fd) {
 #define lockreturn(unmode, state) if(lockutmpmode(unmode, state)) return 
 
 static void my_talk(userinfo_t * uin) {
-    int sock, msgsock, length, ch, error = 0;
+    int sock, msgsock, length, ch;
     struct sockaddr_in server;
     pid_t pid;
     char c;

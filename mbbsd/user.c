@@ -98,10 +98,9 @@ void user_display(userec_t *u, int real) {
 	   u->exmailbox, u->month, u->day, u->year % 100);
     prints("                註冊日期: %s", ctime(&u->firstlogin));
     prints("                前次光臨: %s", ctime(&u->lastlogin));
-    prints("                前次點歌: %s", ctime(&u->lastsong));
     prints("                上站文章: %d 次 / %d 篇\n",
 	   u->numlogins, u->numposts);
-
+    
     if(real) {
 	strcpy(genbuf, "bTCPRp#@XWBA#VSM0123456789ABCDEF");
 	for(diff = 0; diff < 32; diff++)

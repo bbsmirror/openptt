@@ -609,7 +609,7 @@ static void reload_pttcache() {
 	safe_sleep(1);
     else {				/* jochang: temporary workaround */
 	fileheader_t item, subitem;
-	char pbuf[256], buf[256], *chr;
+	char pbuf[256], buf[256];
 	FILE *fp, *fp1, *fp2;
 	int id, section = 0;
 

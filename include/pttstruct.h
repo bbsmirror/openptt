@@ -32,8 +32,7 @@ typedef struct userec_t {
     unsigned char pager;
     unsigned char invisible;
     unsigned int  exmailbox;
-    char pad2[128];
-    time_t lastsong;
+    char pad2[132];
     unsigned int  loginview;
     unsigned char channel;        /* °ÊºA¬ÝªO */
     unsigned short vl_count;      /* ViolateLaw counter */

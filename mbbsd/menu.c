@@ -403,35 +403,6 @@ static commands_t xyzlist[] = {
     {NULL, 0, NULL}
 };
 
-/* Ptt money menu */
-static commands_t moneylist[] = {
-    {p_give, 0,         "00Give        給其他人錢"},
-    {save_violatelaw, 0,"11ViolateLaw  繳罰單"},
-#if !HAVE_FREECLOAK
-    {p_cloak, 0,        "22Cloak       切換 隱身/現身   $19  /次"},
-#endif
-    {p_from, 0,         "33From        暫時修改故鄉     $49  /次"},
-    {ordersong,0,       "44OSong       歐桑動態點歌機   $200 /次"},
-    {p_exmail, 0,       "55Exmail      購買信箱         $1000/封"},
-    {NULL, 0, NULL}
-};
-
-static int p_money() {
-    domenu(PSALE, "Ｐtt量販店", '0', moneylist);
-    return 0;
-}
-
-/* Ptt Play menu */
-static commands_t playlist[] = {
-    {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
-    {x_history, 0,           "HHistory     【 我們的成長 】"},
-    {x_weather,0 ,           "WWeather     【 氣象預報 】"},
-    {x_stock,0 ,             "SStock       【 股市行情 】"},
-    {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
-    {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
-    {NULL, 0, NULL}
-};
-
 /* main menu */
 
 static int admin() {
@@ -459,11 +430,6 @@ static int Xyz() {
     return 0;
 }
 
-static int Play_Play() {
-    domenu(PMENU, "網路遊樂場", 'H', playlist);
-    return 0;
-}
-
 static int Name_Menu() {
     domenu(NMENU, "白色恐怖", 'O', namelist);
     return 0;
@@ -478,7 +444,6 @@ commands_t cmdlist[] = {
     {Talk, 0,                         "TTalk         【 休閒聊天區 】"},
     {User, 0,                         "UUser         【 個人設定區 】"},
     {Xyz, 0,                          "XXyz          【 系統工具區 】"},
-    {Play_Play,0,                     "PPlay         【 網路遊樂場 】"},
     {Name_Menu,PERM_LOGINOK,          "NNamelist     【 編特別名單 】"},
     {Goodbye, 0,                      "GGoodbye       離開，再見……"},
     {NULL, 0, NULL}

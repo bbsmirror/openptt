@@ -355,7 +355,7 @@ int igetch() {
 		/* 如果正在 talk 的話先不處理對方送過來的封包 (不去select) */
 		my_newfd = i_newfd;
 		i_newfd = 0;
-		show_last_call_in();
+		show_last_call_in(0);
 		watermode = 0;
 		my_write(currutmp->msgs[0].last_pid, "水球丟過去 ： ", currutmp->msgs[0].last_userid, 0);
 		i_newfd = my_newfd;

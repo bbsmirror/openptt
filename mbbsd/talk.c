@@ -46,6 +46,8 @@ extern int curr_idle_timeout;
 extern userec_t cuser;
 extern userec_t xuser;
 
+FILE *fp_writelog = NULL;
+
 static char *IdleTypeTable[] = {
     "偶在花呆啦", "情人來電", "覓食中", "拜見周公", "假死狀態", "我在思考"
 };
@@ -435,7 +437,6 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     char msg[80], destid[IDLEN + 1];
     char genbuf[200], buf[200], c0 = currutmp->chatid[0];
     unsigned char mode0 = currutmp->mode;
-    FILE *fp;
     time_t now;
     struct tm *ptime;
     userinfo_t *uin;
@@ -515,22 +516,15 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     
     time(&now);
     if(flag != 2) { /* aloha 的水球不用存下來 */
-	/* 存到對方的水球檔 */
-	sethomefile(genbuf, uin->userid, fn_writelog);
-	if((fp = fopen(genbuf, "a"))) {
-	    fprintf(fp, "\033[1;33;46m★ %s %s\033[37;45m %s \033[0m[%s]\n",
-		    cuser.userid,
-		    (flag == 3) ? "\033[33;41m廣播" : "",
-		    msg,
-		    Cdatelite(&now));
-	    fclose(fp);
-	}
 	/* 存到自己的水球檔 */
-	sethomefile(genbuf, cuser.userid, fn_writelog);
-	if((fp = fopen(genbuf, "a"))) {
-	    fprintf(fp, "To %s: %s [%s]\n", uin->userid, msg, Cdatelite(&now));
+	if(fp_writelog == NULL) {
+	    sethomefile(genbuf, cuser.userid, fn_writelog);
+	    fp_writelog = fopen(genbuf, "a");
+	}
+	if(fp_writelog) {
+	    fprintf(fp_writelog, "To %s: %s [%s]\n", 
+		    uin->userid, msg, Cdatelite(&now));
 	    sprintf(t_last_write, "To %s: %s\n", uin->userid, msg);
-	    fclose(fp);
 	}
     }
     
@@ -624,6 +618,10 @@ void t_display_new() {
 int t_display() {
     char genbuf[200], ans[4];
 
+    if(fp_writelog) {
+	fclose(fp_writelog);
+	fp_writelog = NULL;
+    }
     setuserfile(genbuf, fn_writelog);
     if (more(genbuf, YEA) != -1)
     {
@@ -2307,7 +2305,7 @@ void talkreply() {
     prints("對方來自 [%s]，共上站 %d 次，文章 %d 篇\n",
 	   uip->from, xuser.numlogins, xuser.numposts);
     showplans(uip->userid);
-    show_last_call_in();
+    show_last_call_in(0);
 
     sprintf(genbuf, "你想跟 %s %s啊？請選擇(Y/N/A/B/C/D/E/F/1/2)[N] ",
 	    page_requestor, sig_des[sig]);

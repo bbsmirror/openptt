@@ -266,7 +266,9 @@ static void talk_request() {
     }
 }
 
-void show_last_call_in() {
+extern char *fn_writelog;
+
+void show_last_call_in(int save) {
     char buf[200];
 
     sprintf(buf, "\033[1;33;46m¡¹%s\033[37;45m %s \033[m",
@@ -276,6 +278,23 @@ void show_last_call_in() {
     clrtoeol();
     refresh();
     outmsg(buf);
+    
+    if(save) {
+	char genbuf[200];
+	time_t now;
+	extern FILE *fp_writelog;
+	
+	if(fp_writelog == NULL) {
+	    sethomefile(genbuf, cuser.userid, fn_writelog);
+	    fp_writelog = fopen(genbuf, "a");
+	}
+	if(fp_writelog) {
+	    time(&now);
+	    fprintf(fp_writelog, 
+		    "\033[1;33;46m¡¹ %s \033[37;45m %s \033[0m[%s]\n",
+		    cuser.userid, buf, Cdatelite(&now));
+	}
+    }
 }
 
 extern unsigned int currstat;
@@ -290,10 +309,15 @@ static void write_request(int sig) {
     time(&now);
     ptime = localtime(&now);
     
-    if(currutmp->pager && cuser.userlevel && currutmp->msgcount	&&
-       currutmp->mode != TALK && currutmp->mode != EDITING &&
-       currutmp->mode != CHATING && currutmp->mode != PAGE &&
-       currutmp->mode != IDLE && currutmp->mode != MAILALL &&
+    if(currutmp->pager != 0 &&
+       cuser.userlevel != 0 &&
+       currutmp->msgcount != 0 &&
+       currutmp->mode != TALK &&
+       currutmp->mode != EDITING &&
+       currutmp->mode != CHATING &&
+       currutmp->mode != PAGE &&
+       currutmp->mode != IDLE &&
+       currutmp->mode != MAILALL &&
        currutmp->mode != MONITOR) {
 	int i;
 	char c0 = currutmp->chatid[0];
@@ -306,7 +330,7 @@ static void write_request(int sig) {
 	
 	do {
 	    bell();
-	    show_last_call_in();
+	    show_last_call_in(1);
 	    igetch();
 	    currutmp->msgcount--;
 	    if(currutmp->msgcount>=MAX_MSGS)
@@ -329,7 +353,7 @@ static void write_request(int sig) {
 	currstat = currstat0;
     } else {
 	bell();
-	show_last_call_in();
+	show_last_call_in(1);
 	memcpy(&oldmsg[(int)no_oldmsg], &currutmp->msgs[0], sizeof(msgque_t));
 	no_oldmsg++;
 	no_oldmsg %= MAX_REVIEW;

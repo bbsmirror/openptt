@@ -1,7 +1,6 @@
 admin.o
 announce.o
 args.o
-bbcall.o
 bbs.o
 board.o
 cache.o

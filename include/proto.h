@@ -24,9 +24,6 @@ void gem(char* maintitle, item_t* path, int update);
 void initsetproctitle(int argc, char **argv, char **envp);
 void setproctitle(const char* format, ...);
 
-/* bbcall */
-int main_bbcall();
-
 /* bbs */
 void make_blist();
 int invalid_brdname(char *brd);

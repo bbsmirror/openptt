@@ -18,7 +18,7 @@ LIBS=	$(LIBS_$(OSTYPE))
 
 CC=	gcc
 PROG=	mbbsd
-OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o\
+OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o\
 	chat.o chc_draw.o chc_net.o chc_play.o chc_rule.o chicken.o dark.o\
 	edit.o friend.o gomo.o gomo1.o io.o\
 	kaede.o lovepaper.o mail.o mbbsd.o menu.o more.o name.o osdep.o\
@@ -27,7 +27,7 @@ OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o\
 	tmpjack.o voteboard.o syspost.o var.o descrypt.o toolkit.o passwd.o\
 	calendar.o
 
-SRCS=	admin.c announce.c args.c bbcall.c bbs.c board.c cache.c cal.c\
+SRCS=	admin.c announce.c args.c bbs.c board.c cache.c cal.c\
 	chat.c chc_draw.c chc_net.c chc_play.c chc_rule.c chicken.c dark.c\
 	edit.c friend.c gomo.c gomo1.c io.c\
 	kaede.c lovepaper.c mail.c mbbsd.c menu.c more.c name.c osdep.c\

@@ -151,7 +151,7 @@ int main(argc, argv)
 int argc;
 char **argv;
 {
-    int i;
+    int i, j;
 
     if (argc < 3)
     {
@@ -168,28 +168,22 @@ char **argv;
 	printf("Sorry, the data is not ready.\n");
 	exit(0);
     }
-
-    for (i = 0; passwd_query(i + 1, &aman); i++)
-    {
-	if ((aman.userlevel & PERM_NOTOP)
-	    || bad_user_id(aman.userid)
-	    || strchr(aman.userid, '.'))
-	{
-	    i--;
-	}
-	else
-	{
-	    strcpy(allman[i].userid, aman.userid);
-	    strncpy(allman[i].username, aman.username, 23);
-	    allman[i].numlogins = aman.numlogins;
-	    allman[i].numposts = aman.numposts;
-	    allman[i].money = aman.money;
-#ifdef  HAVE_TIN
-	    allman[i].numposts += post_in_tin(allman[i].userid);
-#endif
+    
+    for(i = 1, j = 0; i <= MAX_USERS; i++) {
+	passwd_query(i, &aman);
+	if((aman.userlevel & PERM_NOTOP) || bad_user_id(aman.userid) ||
+	   strchr(aman.userid, '.'))
+	    continue;
+	else {
+	    strcpy(allman[j].userid, aman.userid);
+	    strncpy(allman[j].username, aman.username, 23);
+	    allman[j].numlogins = aman.numlogins;
+	    allman[j].numposts = aman.numposts;
+	    allman[j].money = aman.money;
+	    j++;
 	}
     }
-
+    
     if ((fp = fopen(argv[2], "w")) == NULL)
     {
 	printf("cann't open topusr\n");

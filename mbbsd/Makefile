@@ -1,8 +1,5 @@
 # $Id$
 
-
-
-
 BBSHOME?=$(HOME)
 
 # FreeBSD

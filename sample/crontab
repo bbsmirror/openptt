@@ -40,7 +40,6 @@
 # 每天精華區index一次 index前砍掉deleted的精華區
 15 6 * * * rm -rf man/boards/deleted
 20 6 * * * bin/mandex > /dev/null
-30 6 * * * bin/openvice > /dev/null
 
 # 每天砍掉點歌超過5天檔案
 40 6 * * * ( find /home/bbs/etc/SONGO/M* -mtime +5 -exec rm -f {} ';' )

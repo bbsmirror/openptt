@@ -25,13 +25,13 @@ LIBCHAT=$(LIBCHAT_$(OSTYPE))
 OBJS=	util_cache.o util_record.o util_passwd.o
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
-	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
+	horoscope parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf\
 	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
 SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
-	mandex.c horoscope.c openvice.c parse_news.c openticket.c topusr.c\
+	mandex.c horoscope.c parse_news.c openticket.c topusr.c\
 	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
 	countalldice.c webgrep.c bbsrf.c initbbs.c outmail.c xchatd.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
@@ -100,9 +100,6 @@ mandex: mandex.c $(OBJS)
 
 horoscope: horoscope.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ horoscope.c $(OBJS)
-
-openvice: openvice.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ openvice.c $(OBJS)
 
 parse_news: parse_news.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ parse_news.c $(OBJS)

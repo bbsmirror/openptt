@@ -395,7 +395,7 @@ static void multi_user_check() {
 		genbuf, 3, LCECHO);
 
 	if(genbuf[0] != 'n') {
-	    kill(pid, SIGHUP);
+	    if(pid > 0) kill(pid, SIGHUP);
 	    log_usies("KICK ", cuser.username);
 	} else {
 	    if(count_multi() >= 3)

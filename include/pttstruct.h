@@ -13,26 +13,14 @@ typedef struct userec_t {
     char passwd[PASSLEN];
     unsigned char uflag;
     unsigned int userlevel;
-    unsigned short numlogins;
-    unsigned short numposts;
     time_t firstlogin;
     time_t lastlogin;
-    char lasthost[16];
-    char remoteuser[3];           /* 保留 目前沒用到的 */
-    char proverb;
     char email[50];
-    char address[50];
-    char justify[REGLEN + 1];
-    unsigned char month;
-    unsigned char day;
-    unsigned char year;
-    unsigned char sex;
     unsigned char state;
     unsigned char pager;
     unsigned char invisible;
     unsigned int  loginview;
     unsigned char channel;        /* 動態看板 */
-    char pad[107];
 } userec_t;
 /* these are flags in userec_t.uflag */
 #define SIG_FLAG        0x3     /* signature number, 2 bits */

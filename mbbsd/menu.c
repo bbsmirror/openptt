@@ -99,7 +99,6 @@ void movie(int i) {
        !ptt->busystate && ptt->max_film > 0) {
         if(currstat == PSALE) {
             i = PSALE;
-            reload_money();
         } else {
             do {
                 if(!i)
@@ -179,11 +178,6 @@ void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]) {
     do {
         i = -1;
         switch(cmd) {
-        case Ctrl('C'):
-            cal();
-            i = lastcmdptr;
-            refscreen = YEA;
-            break;
         case Ctrl('I'):
             t_idle();
             refscreen = YEA;
@@ -303,15 +297,6 @@ static commands_t adminlist[] = {
     {m_board, PERM_SYSOP,             "BBoard         設定看板"},
     {m_register, PERM_SYSOP,          "RRegister      審核註冊表單"},
     {cat_register, PERM_SYSOP,        "CCatregister   無法審核時用的"},
-    {p_touch_boards, PERM_SYSOP,      "TTouch Boards  更新BCACHE"},
-    {x_file, PERM_SYSOP|PERM_VIEWSYSOP,     "XXfile         編輯系統檔案"},
-    {give_money, PERM_SYSOP|PERM_VIEWSYSOP, "GGivemoney     紅包雞"},
-#ifdef  HAVE_MAILCLEAN
-    {m_mclean, PERM_SYSOP,            "MMail Clean    清理使用者個人信箱"},
-#endif
-#ifdef  HAVE_REPORT
-    {m_trace, PERM_SYSOP,             "TTrace         設定是否記錄除錯資訊"},
-#endif
     {NULL, 0, NULL}
 };
 
@@ -337,9 +322,7 @@ static commands_t talklist[] = {
     {t_pager, PERM_BASIC,   "PPager         切換呼叫器"},
     {t_idle, 0,             "IIdle          發呆"},
     {t_query, 0,            "QQuery         查詢網友"},
-    {t_qchicken, 0,         "WWatch Pet     查詢寵物"},
     {t_talk, PERM_PAGE,     "TTalk          找人聊聊"},
-    {t_chat, PERM_CHAT,     "CChat          找家茶坊喫茶去"},
     {t_display, 0,          "DDisplay       顯示上幾次熱訊"},
     {NULL, 0, NULL}
 };
@@ -406,38 +389,6 @@ static commands_t xyzlist[] = {
     {x_yesterday, 0, "YYesterday     《昨日上線人次統計》"},
     {x_user100 ,0,   "UUsers         《使用者百大排行榜》"},
     {x_birth, 0,     "BBirthday      《今日壽星大觀》"},
-    {p_sysinfo, 0,   "XXload         《查看系統負荷》"},
-    {NULL, 0, NULL}
-};
-
-/* Ptt money menu */
-static commands_t moneylist[] = {
-    {p_give, 0,         "00Give        給其他人錢"},
-    {save_violatelaw, 0,"11ViolateLaw  繳罰單"},
-#if !HAVE_FREECLOAK
-    {p_cloak, 0,        "22Cloak       切換 隱身/現身   $19  /次"},
-#endif
-    {p_from, 0,         "33From        暫時修改故鄉     $49  /次"},
-    {ordersong,0,       "44OSong       歐桑動態點歌機   $200 /次"},
-    {p_exmail, 0,       "55Exmail      購買信箱         $1000/封"},
-    {NULL, 0, NULL}
-};
-
-static int p_money() {
-    domenu(PSALE, "Ｐtt量販店", '0', moneylist);
-    return 0;
-}
-
-/* Ptt Play menu */
-static commands_t playlist[] = {
-    {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
-    {x_history, 0,           "HHistory     【 我們的成長 】"},
-    {x_weather,0 ,           "WWeather     【 氣象預報 】"},
-    {x_stock,0 ,             "SStock       【 股市行情 】"},
-    {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
-    {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
-    {chicken_main,PERM_LOGINOK, "CChicken     "
-     "【\033[1;34m Ｐtt養雞場 \033[m】"},
     {NULL, 0, NULL}
 };
 
@@ -468,11 +419,6 @@ static int Xyz() {
     return 0;
 }
 
-static int Play_Play() {
-    domenu(PMENU, "網路遊樂場", 'H', playlist);
-    return 0;
-}
-
 static int Name_Menu() {
     domenu(NMENU, "白色恐怖", 'O', namelist);
     return 0;
@@ -487,7 +433,6 @@ commands_t cmdlist[] = {
     {Talk, 0,                         "TTalk         【 休閒聊天區 】"},
     {User, 0,                         "UUser         【 個人設定區 】"},
     {Xyz, 0,                          "XXyz          【 系統工具區 】"},
-    {Play_Play,0,                     "PPlay         【 網路遊樂場 】"},
     {Name_Menu,PERM_LOGINOK,          "NNamelist     【 編特別名單 】"},
     {Goodbye, 0,                      "GGoodbye       離開，再見……"},
     {NULL, 0, NULL}

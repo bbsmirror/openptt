@@ -21,7 +21,7 @@ LIBMAIL=$(LIBMAIL_$(OSTYPE))
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf bmda\
-	initbbs outmail xchatd
+	initbbs outmail xchatd userlist
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl
 
@@ -101,6 +101,9 @@ initbbs: initbbs.c
 
 outmail: outmail.c
 	$(CC) $(CFLAGS) -o $@ $@.c $(LIBMAIL)
+
+userlist: userlist.c
+	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/

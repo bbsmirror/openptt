@@ -16,6 +16,10 @@ int dirselect(struct dirent *dir) {
     return strchr("MDSGH", dir->d_name[0]) && dir->d_name[1] == '.';
 }
 
+int time_sort(const void *a, const void *b)
+{
+  return atoi((char*)a+2)-atoi((char*)b+2);
+}
 
 int main(int argc, char **argv) {
     int k;
@@ -36,7 +40,7 @@ int main(int argc, char **argv) {
 	    continue;
 	}
 	
-	if((total = scandir(argv[k], &dirlist, dirselect, alphasort)) == -1) {
+	if((total = scandir(argv[k], &dirlist, dirselect, time_sort)) == -1) {
 	    fprintf(stderr, "scandir failed!\n");
 	    close(fdir);
 	    continue;

@@ -92,10 +92,14 @@ int main(int argc, char **argv) {
 		    while(fgets(buf, sizeof(buf), fp))
 			if(strncmp(buf, "標題: ", 6) == 0 ||
 			   strncmp(buf, "標  題: ", 8) == 0) {
+			    char *p;
 			    for(i = 5; buf[i] != ' '; i++);
 			    for(; buf[i] == ' '; i++);
-			    strtok(buf + i, "\n");
+			    if((p=strchr(buf + i, '\n')))
+				*p='\0';
 			    strncpy(fhdr.title, buf + i, TTLEN);
+			    if(p == buf + i)
+				strcpy(fhdr.title, "無標題");
 			    fhdr.title[TTLEN] = '\0';
 			    break;
 			}

@@ -41,14 +41,6 @@
 #define MAX_USERS          (10000)
 #endif
 
-#ifndef MAX_POST_MONEY                      /* 發表文章稿費的上限 */
-#define MAX_POST_MONEY     100
-#endif
-
-#ifndef MAX_CHICKEN_MONEY                   /* 養雞場穫利上限 */
-#define MAX_CHICKEN_MONEY  100
-#endif
-
 #ifndef MAX_GUEST_LIFE                      /* 最長未認證使用者保留時間(秒) */
 #define MAX_GUEST_LIFE     (3 * 24 * 60 * 60)
 #endif
@@ -93,14 +85,6 @@
 
 #ifndef PTTSHM_KEY
 #define PTTSHM_KEY      1220
-#endif
-
-#ifndef FROMSHM_KEY
-#define FROMSHM_KEY     1223
-#endif
-
-#ifndef FROMSEM_KEY
-#define FROMSEM_KEY     2003
 #endif
 
 #ifndef PASSWDSEM_KEY

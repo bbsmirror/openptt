@@ -24,7 +24,7 @@ LIBCHAT=$(LIBCHAT_$(OSTYPE))
 
 CPROGS=	bbsmail post account birth deluserfile expire mandex\
 	parse_news topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam webgrep bbsrf\
+	poststat showboard inndBM antispam bbsrf\
 	initbbs outmail userlist tunepasswd buildir reaper shmsweep
 PROGS=	$(CPROGS) backpasswd.sh mailog.sh cvslog.sh
 
@@ -73,9 +73,6 @@ inndBM: inndBM.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 antispam: antispam.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-webgrep: webgrep.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 bbsrf: bbsrf.c

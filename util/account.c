@@ -93,7 +93,6 @@ void gzip(source, target, stamp)
     system(buf);
 }
 
-extern struct fromcache_t *fcache;
 extern uhash_t *uhash;
 
 int main() {
@@ -217,37 +216,6 @@ int main() {
     now += ADJUST_M * 60;	/* back to future */
 
 
-    printf("¾ú¥v¨Æ¥ó³B²z\n");
-/* Ptt ¾ú¥v¨Æ¥ó³B²z */
-    if((fp = fopen("etc/history.data", "r"))) { /*³Ì¦h¦P®É¤W½u */
-	if (fscanf(fp, "%d %d %d %d", &max_login, &max, &max_reg, &k))
-	{
-	    int a;
-	    resolve_fcache();
-	    printf("¦¹®É¬q³Ì¦h¦P®É¤W½u:%d ¹L¥h:%d\n", a = fcache->max_user, k);
-	    fclose(fp);
-	    if (a > k)
-	    {
-		ptime = localtime(&fcache->max_time);
-		if((fp1 = fopen("etc/history", "a")))
-		{
-		    fprintf(fp1,
-			    "¡· ¡i%02d/%02d/%02d %02d:%02d¡j"
-			    "[32m¦P®É¦b§{¤º¤H¼Æ[m­º¦¸¹F¨ì [1;36m%d[m ¤H¦¸\n",
-			    ptime->tm_mon + 1, ptime->tm_mday, ptime->tm_year % 100,
-			    ptime->tm_hour, ptime->tm_min, a);
-		    fclose(fp1);
-		}
-		if((fp = fopen("etc/history.data", "w")))
-		{
-		    fprintf(fp, "%d %d %d %d", max_login, max, max_reg, a);
-		    fclose(fp);
-		}
-	    }
-	}
-	else
-	    fclose(fp);
-    }
     ptime = localtime(&now);
 
     if (ptime->tm_hour)
@@ -402,10 +370,8 @@ int main() {
 	system(buf);
     }
 /* Ptt reset Ptt's share memory */
-    printf("­«³]Pttcache »Pfcache\n");
+    printf("­«³]Pttcache\n");
 
-    fcache->uptime = 0;
-    resolve_fcache();
     reset_garbage();
     return 0;
 }

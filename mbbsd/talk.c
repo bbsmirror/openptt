@@ -373,7 +373,9 @@ int my_query(char *uident) {
 	clrtobot();
 	move(1, 0);
 	setutmpmode(TQUERY);
+	MPROTECT_UTMP_RW;
 	currutmp->destuid = tuid;
+	MPROTECT_UTMP_R;
 
 	j = muser.money;
 	for (i = 0; i < 10 && j > 10; i++)

@@ -143,9 +143,9 @@ int getnewuserid() {
  	    for(i = 2; i <= MAX_USERS; i++) {
 		passwd_query(i, &utmp);
 		if((val = compute_user_value(&utmp, clock)) < 0) {
-		    sprintf(genbuf, "#%d %-12s %15.15s %d %d %d",
+		    sprintf(genbuf, "#%d %-12s %15.15s %d",
 			    i, utmp.userid, ctime(&(utmp.lastlogin)) + 4,
-			    utmp.numlogins, utmp.numposts, val);
+			    val);
 		    if(val > -1 * 60 * 24 * 365) {
 			log_usies("CLEAN", genbuf);
 			sprintf(genbuf, "home/%c/%s", utmp.userid[0],
@@ -277,9 +277,6 @@ void check_register() {
     while(strlen(cuser.realname) < 4)
 	getdata(4, 0, "真實姓名：", cuser.realname, 20, DOECHO);
     
-    while(strlen(cuser.address) < 8)
-	getdata(6, 0, "聯絡地址：", cuser.address, 50, DOECHO);
-
     if(!strchr(cuser.email, '@')) {
 	bell();
 	move(t_lines - 4, 0);
@@ -302,7 +299,6 @@ void check_register() {
 	move(9,3);
 	prints("請詳填寫\033[32m註冊申請單\033[m，"
 	       "通告站長以獲得進階使用權力。\n\n\n\n");
-	u_register();
     }
 
 #ifdef NEWUSER_LIMIT

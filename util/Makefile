@@ -21,21 +21,13 @@ LIBMAIL=$(LIBMAIL_$(OSTYPE))
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
-CPROGS=	bbsmail post account deluserfile expire mandex\
-	uhash_loader\
-	poststat showboard inndBM antispam bbsrf\
-	createbbs outmail userlist tunepasswd buildir reaper shmsweep\
-	merge_passwd merge_board
+CPROGS=	bbsmail account expire mandex uhash_loader bbsrf\
+	createbbs outmail buildir reaper
 
-SRCS=	bbsmail.c post.c account.c deluserfile.c expire.c\
-	mandex.c horoscope.c\
-	uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
-	bbsrf.c createbbs.c outmail.c\
-	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
-	merge_board.c
+SRCS=	bbsmail.c account.c expire.c mandex.c uhash_loader.c bbsrf.c\
+	createbbs.c outmail.c buildir.c reaper.c
 
-SCRIPTS=backpasswd.sh mailog.sh\
-	upgrade.sh
+SCRIPTS=
 
 PROGS=	$(CPROGS) $(SCRIPTS)
 
@@ -61,7 +53,6 @@ depend:
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/
 	install -c -m 755 $(PROGS) $(BBSHOME)/bin/
-	chmod 4755 $(BBSHOME)/bin/post
 
 clean:
 	rm -f $(JUNK)
@@ -74,29 +65,14 @@ sed.tmp: Makefile
 bbsmail: bbsmail.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ bbsmail.c $(OBJS)
 
-post: post.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ post.c $(OBJS)
-
 account: account.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ account.c $(OBJS)
-
-birth: birth.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ birth.c $(OBJS)
-
-deluserfile: deluserfile.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ deluserfile.c $(OBJS)
 
 expire: expire.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ expire.c $(OBJS)
 
 mandex: mandex.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ mandex.c $(OBJS)
-
-topusr: topusr.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ topusr.c $(OBJS)
-
-yearsold: yearsold.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ yearsold.c $(OBJS)
 
 reaper: reaper.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ reaper.c $(OBJS)

@@ -701,14 +701,14 @@ int u_editcalendar() {
 	int aborted;
 	
 	setutmpmode(EDITPLAN);
-	setcalfile(genbuf, fn_plans);
+	setcalfile(genbuf, cuser.userid);
 	aborted = vedit(genbuf, NA);
 	if(aborted != -1)
 	    outs("行事曆更新完畢");
 	pressanykey();
 	return 0;
     } else if(genbuf[0] == 'd') {
-	setcalfile(genbuf, fn_plans);
+	setcalfile(genbuf, cuser.userid);
 	unlink(genbuf);
 	outmsg("行事曆刪除完畢");
     }

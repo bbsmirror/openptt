@@ -377,7 +377,7 @@ static commands_t namelist[] = {
 static commands_t userlist[] = {
     {u_info, PERM_LOGINOK,          "IInfo          設定個人資料與密碼"},
     {calendar, PERM_SYSOP,          "CCalendar      個人行事曆"},
-    {u_editcalendar, PERM_SYSOP,    "EEditCalendar  編輯個人行事曆"},
+    {u_editcalendar, PERM_SYSOP,    "CCalendarEdit  編輯個人行事曆"},
     {u_loginview, PERM_LOGINOK,     "LLogin View    選擇進站畫面"},
     {u_ansi, 0, "AANSI          切換 ANSI \033[36m彩\033[35m色\033[37m/"
      "\033[30;47m黑\033[1;37m白\033[m模示"},

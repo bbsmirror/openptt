@@ -17,7 +17,7 @@
 
 extern char *fn_note_ans;
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
-extern char *BoardName;
+extern char *BBSName;
 extern char fromhost[];
 extern userinfo_t *currutmp;
 extern int curr_idle_timeout;
@@ -306,7 +306,7 @@ int Goodbye() {
     extern void movie();
     char genbuf[100];
 
-    getdata(b_lines - 1, 0, "您確定要離開【 " BOARDNAME " 】嗎(Y/N)？[N] ",
+    getdata(b_lines - 1, 0, "您確定要離開【 " BBSNAME " 】嗎(Y/N)？[N] ",
 	    genbuf, 3, LCECHO);
 
     if(*genbuf != 'y')
@@ -326,7 +326,7 @@ int Goodbye() {
     clear();
     prints("\033[1;36m親愛的 \033[33m%s(%s)\033[36m，別忘了再度光臨\033[45;33m"
 	   " %s \033[40;36m！\n以下是您在站內的註冊資料:\033[0m\n",
-	   cuser.userid, cuser.username, BoardName);
+	   cuser.userid, cuser.username, BBSName);
     user_display(&cuser, 0);
     pressanykey();
     
@@ -382,7 +382,7 @@ static int x_archie() {
 
     setutmpmode(ARCHIE);
     clear();
-    outs("\n歡迎光臨【\033[1;33;44m批踢踢實業坊\033[m】使用 "
+    outs("\n歡迎光臨【\033[1;33;44m" BBSNAME "\033[m】使用 "
 	 "\033[32mARCHIE\033[m 功\能\n");
     outs("\n本功\能將為您列出在哪個 FTP 站存有您欲尋找的檔案.\n");
     outs("\n請輸入欲搜尋的字串, 或直接按 <ENTER> 取消。\n");

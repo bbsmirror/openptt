@@ -78,7 +78,8 @@ int main()
 	return 1;
     }
 
-    fprintf(fp, "\t\t\t [1;33;45m §å½ð½ð ¦~ÄÖ²Î­p [%02d/%02d/%02d] [40m\n\n",
+    fprintf(fp, "\t\t\t [1;33;45m " BBSNAME
+	    " ¦~ÄÖ²Î­p [%02d/%02d/%02d] [40m\n\n",
 	    ptime->tm_year % 100, ptime->tm_mon, ptime->tm_mday);
     for (i = MAX_LINE + 1; i > 0; i--)
     {

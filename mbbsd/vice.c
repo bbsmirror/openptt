@@ -10,7 +10,7 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *BoardName;
+extern char *BBSName;
 
 #define VICE_PLAY   "/home/bbs/etc/vice/vice.play"
 #define VICE_JAKPOT "/home/bbs/etc/vice/vice.jakpot"
@@ -157,7 +157,7 @@ int vice_main() {
         return 0;
     }
 
-    showtitle("發票對獎", BoardName);
+    showtitle("發票對獎", BBSName);
     rewind(fd);
     vice_load(fb);
     while(fgets(serial, 15, fd)) {

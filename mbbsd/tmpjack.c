@@ -14,7 +14,7 @@ extern userec_t cuser;
 #define p_MAX 5  /* president«J¿ï¤H¼Æ */
 #define j_MAX 4  /* 4ºØ¿ï¶µ */
 
-extern char *BoardName;
+extern char *BBSName;
 
 #define PD_RECORD "etc/Bet/president.data"
 #define PD_USER   "etc/Bet/president.user"
@@ -82,7 +82,7 @@ static void j_show_bet() {
 
 static void p_show_ticket_data() {
     clear();
-    showtitle("Á`²Î½ä½L[§@ªÌ:Heat]", BoardName);
+    showtitle("Á`²Î½ä½L[§@ªÌ:Heat]", BBSName);
     move(1, 0);
     /*outs("
       [[1;31m¢z[[37m¢i[[31m    ¢z[[37m¢i[[31m¢z[[37m¢i¢i¢i¢i[[31m    ¢z[[37m¢i¢i¢i
@@ -115,7 +115,7 @@ static void p_show_ticket_data() {
 
 void j_show_ticket_data() {
     clear();
-    showtitle("NBA½ä½L[§@ªÌ:Heat]", BoardName);
+    showtitle("NBA½ä½L[§@ªÌ:Heat]", BBSName);
     move(1, 0);
     outs("
 [1;31m¢z[37m¢i[31m    ¢z[37m¢i[31m¢z[37m¢i¢i¢i¢i[31m    ¢z[37m¢i¢i¢i

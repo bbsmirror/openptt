@@ -3,11 +3,9 @@
 #define INCLUDE_CONFIG_H
 
 /* 定義 BBS 站名位址 */
-#define BOARDNAME       "新批踢踢"                 /* 中文站名 */
-#define BBSNAME         "NTUCSIE PTT BBS2"           /* 英文站名 */
-#define MYHOSTNAME      "ptt2.twbbs.org"             /* 網路位址 */
-#define MYVERSION       "Ptt BBS 0.90"               /* 程式版本 */
-#define MYBBSID         "Ptt2"                       /* 轉信代碼 */
+#define BBSNAME         "新批踢踢"                   /* 中文站名 */
+#define MYHOSTNAME      "ptt2.twbbs.org.tw"          /* 網路位址 */
+#define MYIP            "140.112.8.192"              /* IP位址 */
 #define BBSHOME         "/home/bbs"                  /* BBS 的家 */
 #define BBSUSER         "bbs"
 #define BBSUID          9999
@@ -61,7 +59,6 @@
 #undef  HAVE_MAILCLEAN          /* 清理所有使用者個人信箱 */
 #undef  HAVE_SUICIDE            /* 提供使用者自殺功能 */
 #undef  HAVE_REPORT             /* 系統追蹤報告 */
-#define INTERNET_PRIVATE_EMAIL  /* 可以寄私人信件到 Internet */
 #undef  HAVE_INFO               /* 顯示程式版本說明 */
 #undef  HAVE_LICENSE            /* 顯示 GNU 版權畫面 */
 #undef  HAVE_TIN                /* 提供 news reader */

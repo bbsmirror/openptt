@@ -8,7 +8,7 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *BoardName;
+extern char *BBSName;
 
 #define LOGPASS "/home/bbs/etc/winguess.log"
 
@@ -217,7 +217,7 @@ int guess_main() {
     FILE *file;
 
     clear();
-    showtitle("²q¼Æ¦r", BoardName);
+    showtitle("²q¼Æ¦r", BBSName);
     lockreturn0(GUESSNUM, LOCK_MULTI);
 
     reload_money();

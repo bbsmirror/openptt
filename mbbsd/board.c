@@ -508,14 +508,14 @@ static void brdlist_foot() {
 }
 
 extern unsigned int currstat;
-extern char *BoardName;
+extern char *BBSName;
 
 static void show_brdlist(int head, int clsflag, int newflag) {
     int myrow = 2;
     if(class_uid == 0) {
 	currstat = CLASS;
 	myrow = 6;
-	showtitle("分類看板", BoardName);
+	showtitle("分類看板", BBSName);
 	movie(0);
 	move(1, 0);
 	prints(
@@ -533,7 +533,7 @@ static void show_brdlist(int head, int clsflag, int newflag) {
 	    "                                                      \033[33m╫"
 	    "——\033[m  ◤      —＋\033[m");
     } else if (clsflag) {
-	showtitle("看板列表", BoardName);
+	showtitle("看板列表", BBSName);
 	prints("[←]主選單 [→]閱\讀 [↑↓]選擇 [y]載入 [S]排序 [/]搜尋 "
 	       "[TAB]文摘‧看板 [h]求助\n"
 	       "\033[7m%-20s 類別 轉信%-31s投票 板    主     \033[m",

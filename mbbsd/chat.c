@@ -191,14 +191,12 @@ static void chat_help(char *arg) {
     }
 }
 
-extern char *BoardName;
-
 static void chat_date() {
     time_t thetime;
     char genbuf[200];
 
     time(&thetime);
-    sprintf(genbuf, "◆ %s標準時間: %s", BoardName, Cdate(&thetime));
+    sprintf(genbuf, "◆ " BBSNAME "標準時間: %s", Cdate(&thetime));
     printchatline(genbuf);
 }
 
@@ -252,7 +250,7 @@ extern char *msg_shortulist;
 
 static void chat_users() {
     printchatline("");
-    printchatline("【 " BOARDNAME "的遊客列表 】");
+    printchatline("【 " BBSNAME "的遊客列表 】");
     printchatline(msg_shortulist);
 
     if(apply_ulist(printuserent) == -1)

@@ -25,7 +25,7 @@ extern char quote_user[80];
 extern char *fn_notes;
 extern char *msg_mailer;
 extern char *msg_sure_ny;
-extern char *BoardName;
+extern char *BBSName;
 extern char currtitle[44];
 extern unsigned char currfmode;               /* current file mode */
 extern char *msg_del_ny;
@@ -125,7 +125,6 @@ int mail_id(char* id, char *title, char *filename, char *owner) {
     return 0;
 }    
           
-#ifdef INTERNET_PRIVATE_EMAIL
 int invalidaddr(char *addr) {
     if(*addr == '\0')
 	return 1;                   /* blank */
@@ -151,7 +150,6 @@ int m_internet() {
     }
     return 0;
 }
-#endif
 
 void m_init() {
     sethomedir(currmaildir, cuser.userid);
@@ -238,15 +236,12 @@ int do_send(char *userid, char *title) {
     char fpath[STRLEN];
     char receiver[IDLEN];
     char genbuf[200];
-    
-#ifdef INTERNET_PRIVATE_EMAIL
     int internet_mail;
     
     if(strchr(userid, '@'))
 	internet_mail = 1;
     else {
 	internet_mail = 0;
-#endif
 	if(!getuser(userid))
 	    return -1;
 	if(!(xuser.userlevel & PERM_READMAIL))
@@ -256,15 +251,12 @@ int do_send(char *userid, char *title) {
 	    getdata(2, 0, "主題：", save_title, TTLEN, DOECHO);
 	curredit |= EDIT_MAIL;
 	curredit &= ~EDIT_ITEM;
-#ifdef INTERNET_PRIVATE_EMAIL
     }
-#endif
     
     setutmpmode(SMAIL);
     
     fpath[0] = '\0';
     
-#ifdef INTERNET_PRIVATE_EMAIL
     if(internet_mail) {
 	int res, ch;
 
@@ -296,7 +288,6 @@ int do_send(char *userid, char *title) {
 	unlink(fpath);
 	return res;
     } else {
-#endif
 	strcpy(receiver, userid);
 	sethomepath(genbuf, userid);
 	stampfile(genbuf, &mhdr);
@@ -315,9 +306,7 @@ int do_send(char *userid, char *title) {
 	
 	hold_mail(genbuf, userid);
 	return 0;
-#ifdef INTERNET_PRIVATE_EMAIL
     }
-#endif
 }
 
 void my_send(char *uident) {
@@ -801,7 +790,7 @@ int m_new() {
 static void mailtitle() {
     char buf[100] = "";
 
-    showtitle("\0郵件選單", BoardName);
+    showtitle("\0郵件選單", BBSName);
     outs("[←]離開  [↑,↓]選擇  [→,r]閱\讀信件  [R]回信   [x]轉達  "
 	 "[y]群組回信  求助[h]\n\033[7m"
 	 "編號   日 期  作 者          信  件  標  題     \033[32m");
@@ -1086,9 +1075,7 @@ static char *mail_help[] = {
     "(c/z)      收入此信件進入私人信件夾/進入私人信件夾",
     "(x/X)      轉達信件/轉錄文章到其他看板",
     "(y)        群組回信",
-#ifdef INTERNET_EMAIL
     "(F)        將信傳送回您的電子信箱",
-#endif
     "(d)        殺掉此信",
     "(D)        殺掉指定範圍的信",
     "(m)        將信標記，以防被清除",
@@ -1317,7 +1304,7 @@ static int send_inner_mail(char *fpath, char *title, char *receiver) {
     sethomepath(genbuf, receiver);
     stampfile(genbuf, &mymail);
     if(!strcmp(receiver, cuser.userid)) {
-	strcpy(mymail.owner, "[批踢踢實業坊]");
+	strcpy(mymail.owner, "[" BBSNAME "]");
 	mymail.filemode = FILE_READ;
     } else
 	strcpy(mymail.owner, cuser.userid);
@@ -1328,7 +1315,6 @@ static int send_inner_mail(char *fpath, char *title, char *receiver) {
     return do_append(genbuf, &mymail, sizeof(mymail));    
 }
 
-#ifdef INTERNET_EMAIL
 #include <netdb.h>
 #include <pwd.h>
 #include <time.h>
@@ -1384,8 +1370,6 @@ static int bbs_sendmail(char *fpath, char *title, char *receiver) {
     }
     
     /* Running the sendmail */
-    
-#ifdef  INTERNET_PRIVATE_EMAIL
     if(fpath == NULL) {
 	sprintf(genbuf, "/usr/sbin/sendmail %s > /dev/null", receiver);
 	fin = fopen("etc/confirm", "r");
@@ -1402,19 +1386,8 @@ static int bbs_sendmail(char *fpath, char *title, char *receiver) {
 	fprintf(fout, "Reply-To: %s%s\nFrom: %s%s\n",
 		cuser.userid, str_mail_address, cuser.userid,
 		str_mail_address);
-#else
-    sprintf(genbuf, "/usr/sbin/sendmail %s > /dev/null", receiver);
-    fout = popen(genbuf, "w");
-    fin = fopen(fpath ? fpath : "etc/confirm", "r");
-    if(fin == NULL || fout == NULL)
-	return -1;
-    if(fpath)
-	fprintf(fout, "From: %s@%s (%s)\n",
-		myusername, myhostname, BBSNAME);
-#endif
     fprintf(fout, "To: %s\nSubject: %s\n", receiver, title);
-    fprintf(fout, "X-Disclaimer: 批踢踢實業坊" BOARDNAME
-            "對本信內容恕不負責。\n\n");
+    fprintf(fout, "X-Disclaimer: " BBSNAME "對本信內容恕不負責。\n\n");
     
     while(fgets(genbuf, 255, fin)) {
 	if(genbuf[0] == '.' && genbuf[1] == '\n')
@@ -1561,7 +1534,6 @@ int doforward(char *direct, fileheader_t *fh, int mode) {
     unlink(fname);
     return (return_no);
 }
-#endif /* INTERNET_MAIL */
 
 int chkmail(int rechk) {
     static time_t lasttime = 0;

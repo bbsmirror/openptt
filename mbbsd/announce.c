@@ -308,7 +308,7 @@ static int g_searchtitle(gmenu_t* pm, int rev) {
 
 static void g_showhelp() {
     clear();
-    outs("\033[36m【 " BOARDNAME "連線精華區使用說明 】\033[m\n\n"
+    outs("\033[36m【 " BBSNAME "連線精華區使用說明 】\033[m\n\n"
 	 "[←][q]         離開到上一層目錄\n"
 	 "[↑][k]         上一個選項\n"
 	 "[↓][j]         下一個選項\n"
@@ -463,7 +463,7 @@ enum {NOBODY, MANAGER, SYSOP};
 
 static void a_showhelp(int level) {
     clear();
-    outs("\033[36m【 " BOARDNAME "公佈欄使用說明 】\033[m\n\n"
+    outs("\033[36m【 " BBSNAME "公佈欄使用說明 】\033[m\n\n"
 	 "[←][q]         離開到上一層目錄\n"
 	 "[↑][k]         上一個選項\n"
 	 "[↓][j]         下一個選項\n"
@@ -1600,7 +1600,7 @@ int a_menu(char *maintitle, char *path, int lastlevel) {
     return returnvalue;
 }
 
-static char *mytitle = BOARDNAME "佈告欄";
+static char *mytitle = BBSNAME "佈告欄";
 
 int Announce() {
     setutmpmode(ANNOUNCE);

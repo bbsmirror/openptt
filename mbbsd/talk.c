@@ -35,7 +35,7 @@ extern char *fn_talklog;
 extern char currauthor[IDLEN + 2];
 extern char *msg_usr_left;
 extern char *msg_uid;
-extern char *BoardName;
+extern char *BBSName;
 extern int p_lines;		/* a Page of Screen line numbers: tlines-4 */
 extern char fromhost[];
 extern char *err_uid;
@@ -1542,7 +1542,7 @@ static void pickup_user() {
 	if (state >= US_ACTION)
 	{
 	    showtitle((cuser.uflag & FRIEND_FLAG) ? "好友列表" : "休閒聊天",
-		      BoardName);
+		      BBSName);
 	    prints("  排序：[%s] 上站人數：%-4d\033[1;32m我的朋友：%-3d"
 		   "\033[33m與我為友：%-3d\033[36m板友：%-4d\033[31m壞人："
 		   "%-2d\033[m\n"
@@ -2230,7 +2230,7 @@ int t_talk() {
 
     if (count_ulist() <= 1)
     {
-	outs("目前線上只有您一人，快邀請朋友來光臨【" BOARDNAME "】吧！");
+	outs("目前線上只有您一人，快邀請朋友來光臨【" BBSNAME "】吧！");
 	return XEASY;
     }
     stand_title("打開話匣子");
@@ -2451,7 +2451,7 @@ static int shortulist(userinfo_t * uentp) {
 static void do_list(char *modestr) {
     int count;
 
-    showtitle(modestr, BoardName);
+    showtitle(modestr, BBSName);
     if (currstat == MONITOR)
 	prints("每隔 %d 秒更新一次，請按[Ctrl-C]或[Ctrl-D]離開", M_INT);
 

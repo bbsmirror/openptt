@@ -36,7 +36,7 @@ extern char currboard[];        /* name of currently selected board */
 extern char *str_reply;
 extern char *str_post1;
 extern char *str_post2;
-extern char *BoardName;
+extern char *BBSName;
 extern char fromhost[];
 extern unsigned int currstat;
 extern crosspost_t postrecord;
@@ -830,8 +830,8 @@ void addsignature(FILE *fp, int ifuseanony) {
     char ch;
 
     if(!strcmp(cuser.userid,STR_GUEST)) {
-	fprintf(fp, "\n--\n※ 發信站 :%s(" MYHOSTNAME ") \n◆ From: %s\n",
-		BoardName, getenv("RFC931"));
+	fprintf(fp, "\n--\n※ 發信站 :" BBSNAME "(" MYHOSTNAME
+		") \n◆ From: %s\n", getenv("RFC931"));
 	return;
     }
     if(!ifuseanony) {
@@ -858,20 +858,20 @@ void addsignature(FILE *fp, int ifuseanony) {
 #ifdef HAVE_ORIGIN
 #ifdef HAVE_ANONYMOUS
     if(ifuseanony)
-	fprintf(fp, "\n--\n※ 發信站: %s(" MYHOSTNAME ") \n◆ From: %s\n",
-		BoardName, "暱名天使的家");
+	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
+		") \n◆ From: %s\n", "暱名天使的家");
     else {
 	char temp[32];
 	
 	strncpy(temp, fromhost, 31);
 	temp[32] = '\0';
-	fprintf(fp, "\n--\n※ 發信站: %s(" MYHOSTNAME ") \n◆ From: %s\n",
-		BoardName, temp);
+	fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
+		") \n◆ From: %s\n", temp);
     }
 #else
     strncpy (temp,fromhost,15);
-    fprintf(fp, "\n--\n※ 發信站: %s(" MYHOSTNAME ") \n◆ From: %s\n",
-	    BoardName, temp); 
+    fprintf(fp, "\n--\n※ 發信站: " BBSNAME "(" MYHOSTNAME
+	    ") \n◆ From: %s\n", temp);
 #endif
 #endif
 }

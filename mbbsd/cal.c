@@ -111,7 +111,7 @@ static int vice(int money, char* item) {
    
     sprintf(genbuf, BBSHOME "/home/%c/%s", cuser.userid[0], cuser.userid);
     stampfile(genbuf, &mymail);
-    strcpy(mymail.owner, "у金金竒蕾场");
+    strcpy(mymail.owner, BBSNAME "竒蕾场");
     sprintf(mymail.title, "%s %d$ \033[1;37m絪腹[\033[1;33m%08d\033[m]",
 	    item, money, viceserial);
     mymail.savemode = 0;

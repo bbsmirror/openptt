@@ -8,7 +8,7 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *BoardName;
+extern char *BBSName;
 
 #define LOGFILE "etc/othello.log"
 #define SECRET "etc/othello.secret"
@@ -508,7 +508,7 @@ int othello_main() {
     clear();
     init();
     think = choose();
-    showtitle("¶Â¥Õ´Ñ", BoardName);	
+    showtitle("¶Â¥Õ´Ñ", BBSName);	
     printboard();
     which_table = rand() % NR_TABLE;
     while(true) {

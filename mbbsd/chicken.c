@@ -209,7 +209,7 @@ static void show_chicken_stat(chicken_t *thechicken) {
 }
 
 #define CHICKEN_PIC "etc/chickens"
-extern char *BoardName;
+extern char *BBSName;
 
 void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken) {
     char buf[1024];
@@ -221,7 +221,7 @@ void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken) {
     /*Ptt:debug*/
     thechicken->type %= NUM_KINDS;
     clear();
-    showtitle(pkchicken ? "Ｐtt鬥雞場" : "Ｐtt養雞場", BoardName);
+    showtitle(pkchicken ? "Ｐtt鬥雞場" : "Ｐtt養雞場", BBSName);
     move(1,0);
     
     show_chicken_stat(thechicken);

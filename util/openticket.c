@@ -9,8 +9,6 @@
 #include "common.h"
 #include "util.h"
 
-extern char *BoardName;
-
 #define FN_TICKET_RECORD "etc/ticket.data"
 #define FN_TICKET_USER   "etc/ticket.user"
 
@@ -207,7 +205,7 @@ int main()
 		    continue;
 		sprintf(genbuf, BBSHOME "/home/%c/%s", userid[0], userid);
 		stampfile(genbuf, &mymail);
-		strcpy(mymail.owner, "§å½ð½ð¹ê·~§{");
+		strcpy(mymail.owner, BBSNAME);
 		sprintf(mymail.title, "[%s] ¤¤¼úÅo! $ %d", Cdatelite(&now), money * num);
 		mymail.savemode = 0;
 		unlink(genbuf);

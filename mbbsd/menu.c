@@ -17,7 +17,7 @@ extern int currmode;
 extern unsigned int currstat;
 extern char reset_color[];
 extern userinfo_t *currutmp;
-extern char *BoardName;
+extern char *BBSName;
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 
 /* help & menu processring */
@@ -169,7 +169,7 @@ void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]) {
 
     setutmpmode(cmdmode);
 
-    showtitle(cmdtitle, BoardName);
+    showtitle(cmdtitle, BBSName);
 
     total = show_menu(cmdtable);
 
@@ -275,7 +275,7 @@ void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]) {
             continue;
 
         if(refscreen) {
-            showtitle(cmdtitle, BoardName);
+            showtitle(cmdtitle, BBSName);
 
             show_menu(cmdtable);
 
@@ -325,9 +325,7 @@ static commands_t maillist[] = {
     {mail_list, PERM_BASIC,     "RMail List     群組寄信"},
     {setforward, PERM_LOGINOK,"FForward       \033[32m設定信箱自動轉寄\033[m"},
     {m_sysop, 0,                "YYes, sir!     諂媚站長"},
-#ifdef INTERNET_PRIVATE_EMAIL
     {m_internet, PERM_INTERNET, "RInternet      寄信到 Internet"},
-#endif
     {mail_mbox, PERM_INTERNET,  "RZip UserHome  把所有私人資料打包回去"},
     {built_mail_index, PERM_LOGINOK, "SSavemail      把信件救回來"},
     {mail_all, PERM_SYSOP,      "RAll           寄信給所有使用者"},

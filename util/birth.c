@@ -70,7 +70,7 @@ int main(argc, argv)
 		char genbuf[200];
 		sprintf(genbuf, BBSHOME "/home/%c/%s", cuser.userid[0], cuser.userid);
 		stampfile(genbuf, &mymail);
-		strcpy(mymail.owner, "批踢踢實業坊");
+		strcpy(mymail.owner, BBSNAME);
 		strcpy(mymail.title, "!! 生日快樂 !!");
 		mymail.savemode = 0;
 		unlink(genbuf);

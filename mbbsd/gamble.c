@@ -7,7 +7,7 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *BoardName;
+extern char *BBSName;
 
 #define FN_TICKET_RECORD "etc/ticket.data"
 #define FN_TICKET_USER   "etc/ticket.user"
@@ -41,7 +41,7 @@ extern userec_t cuser;
 
 static void show_ticket_data() {
     clear();
-    showtitle("Ｐtt賭盤", BoardName);
+    showtitle("Ｐtt賭盤", BBSName);
     move(2, 0);
     outs("\033[32m規則:\033[m 1.可購買八種不同類型的彩票。每張要花100元。\n"
 	 "      2.每天 2:00 11:00 16:00 21:00 開獎。\n"

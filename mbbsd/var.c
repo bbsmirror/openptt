@@ -179,7 +179,7 @@ char *str_author1 = STR_AUTHOR1;
 char *str_author2 = STR_AUTHOR2;
 char *str_post1 = STR_POST1;
 char *str_post2 = STR_POST2;
-char *BoardName = BOARDNAME;
+char *BBSName = BBSNAME;
 
 /* #define MAX_MODES 78 */
 /* MAX_MODES is defined in common.h */

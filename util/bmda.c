@@ -1155,7 +1155,7 @@ MailQueue *mq;
 /* --------------------------------------------------- */
 
     sprintf(data, "From: %s\r\nTo: %s\r\nSubject: %s\r\nX-Forwarded-By: %s (%s)\r\nX-Disclaimer: [%s] 對本信內容恕不負責\r\n\r\n",
-	ptr, mq->rcpt, mq->subject, mq->sender, mq->username, BOARDNAME);
+	ptr, mq->rcpt, mq->subject, mq->sender, mq->username, BBSNAME);
     tcp_pos = strlen(data);
 
     if (method == MQ_JUSTIFY)	/* 身分認證信函 */

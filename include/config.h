@@ -8,6 +8,15 @@
 #define BAN_FILE        "BAN"                        /* 闽硄 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */
 
+#ifndef MAX_USERS
+#define MAX_USERS         (120000)       /* 程蔼爹计 */
+#endif
+
+#ifndef HAVE_SEARCHALL
+#define HAVE_SEARCHALL    0              /* 穓碝琘ㄏノ┮Τ狾ゅ彻 */
+#endif
+
+/* 临ゼ俱瞶 */
 #define MAX_FRIEND        (256)          /* 更 cache ぇ程狟ね计ヘ */
 #define MAX_REJECT        (32)           /* 更 cache ぇ程胊计ヘ */
 #define MAX_MSGS          (10)           /* 瞴(荐癟)г瑻 */
@@ -17,7 +26,6 @@
 #define MAX_FROM          (300)          /* 程珿秏计 */
 #define MAX_ACTIVE        (1024)         /* 程计 */
 #define MAX_ITEMS         (1000)         /* ヘ魁程Τ碭兜 */
-#define MAX_USERS         (120000)       /* 程蔼爹计 */
 #define MAX_HISTORY       (12)           /* 笆篈狾玂 12 掸菌癘魁 */
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
 #define MAX_QUERYLINES    (16)           /* 陪ボ Query/Plan 癟程︽计 */

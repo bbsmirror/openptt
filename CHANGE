@@ -1,6 +1,8 @@
+o 如果看板列表是空的的話, 自動進入開板功能
+o 新增 initbbs 工具程式
+o 新增 BBSHOME environment variable 的使用
 o 搬移部份設定到 /usr/local/etc/pttbbs.conf
 o 修正在FreeBSD上swapinfo的bug
-o 整理code, 統一使用 BBSNAME
 
 --------------------------------------------------
 Version 0.9.4	2000/06/03

@@ -652,29 +652,36 @@ static int brd_class=-1;
 static void choose_board(int newflag) {
     static int num = 0;
     boardstat_t *ptr;
-    int head = -1, ch, tmp,tmp1, uidtmp, classtmp;
+    int head = -1, ch = 0, tmp,tmp1, uidtmp, classtmp;
     char genbuf[200];
     extern time_t board_visit_time;
-
+    
     setutmpmode(newflag ? READNEW : READBRD);
     brdnum = 0;
     if(!cuser.userlevel)         /* guest yank all boards */
 	yank_flag = 1;
-
+    
     do {
 	if(brdnum <= 0) {
 	    load_boards();
-	    if(brdnum <= 0)
-		break;
+	    if(brdnum <= 0) {
+		if(HAS_PERM(PERM_SYSOP) || (currmode & MODE_MENU)) {
+		    if(m_newbrd() == -1)
+			break;
+		    brdnum = -1;
+		    continue;
+		} else
+		    break;
+	    }
 	    qsort(nbrd, brdnum, sizeof(boardstat_t), (QCAST)cmpboard);
 	    head = -1;
 	}
-
+	
 	if(num < 0)
 	    num = 0;
 	else if(num >= brdnum)
 	    num = brdnum - 1;
-
+	
 	if(head < 0) {
 	    if(newflag) {
 		tmp = num;
@@ -697,7 +704,7 @@ static void choose_board(int newflag) {
 	    ch = cursor_key(7 + num - head, 10);
 	else
 	    ch = cursor_key(3 + num - head, 0);
-
+	
 	switch(ch) {
 	case 'e':
 	case KEY_LEFT:
@@ -712,7 +719,7 @@ static void choose_board(int newflag) {
 	    }
 	    show_brdlist(head, 1, newflag ^= 1);
 	    break;
-#if 0
+#if HAVE_SEARCHALL
 	case 'a': {
 	    if(yank_flag != 2 ) {
 		if(getdata_str(1, 0, "§@ªÌ ", genbuf, IDLEN + 2, DOECHO,
@@ -728,7 +735,7 @@ static void choose_board(int newflag) {
 	    show_brdlist(head, 1, newflag);
 	    break;
 	}
-#endif
+#endif /* HAVE_SEARCHALL */
 	case KEY_PGUP:
 	case 'P':
 	case 'b':

@@ -550,7 +550,7 @@ int m_newbrd() {
     newboard.uid = b_newuid();
     if(newboard.uid == -1) {
 	move(6, 0);
-	outs("看板總數已達飽合!");
+	outs("看板總數已達飽和!");
 	pressanykey();
 	return -1;
     } else if (newboard.gid == -1) {

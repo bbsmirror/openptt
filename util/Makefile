@@ -12,7 +12,8 @@ LIBS=
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam countalldice webgrep bbsrf bmda
+	poststat showboard inndBM antispam countalldice webgrep bbsrf bmda\
+	initbbs
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl
 
@@ -82,6 +83,9 @@ webgrep: webgrep.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 bbsrf: bbsrf.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+initbbs: initbbs.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)

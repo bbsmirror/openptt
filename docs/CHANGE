@@ -1,8 +1,11 @@
+Version 1.0.2	2001/07/17
+
 * 新增 util/merge_passwd
 * 新增 util/merge_board
 * 修正 load fromcache 超過 300 行會 segfault 的 bug
 * 修正來源字串在 FreeBSD 下會有亂碼的問題
 * 修正 mbbsd 中 select() 不好的用法
+* 修正 more.c 中的安全問題 (by kcwu)
 
 --------------------------------------------------
 Version 1.0.1	2001/04/26

@@ -52,11 +52,11 @@ void showtitle(char *title, char *mid) {
     if(title[0] == 0)
         title++;
     else if(chkmail(0)) {
-        mid = "\033[41;5m   郵差來按鈴囉   \033[0;1;46m";
+        mid = "\033[41;5m   郵差來按鈴囉   " TITLE_COLOR;
         spc = 22;
     } else if(HAS_PERM(PERM_SYSOP) && (nreg = dashs(fn_register)/163) > 10) {
         /* 超過十個人未審核 */
-        sprintf(numreg, "\033[41;5m  有%03d/%03d未審核  \033[0;1;46m",
+        sprintf(numreg, "\033[41;5m  有%03d/%03d未審核  " TITLE_COLOR,
 		nreg,
 		(int)dashs("register.new.tmp") / 163);
         mid = numreg;
@@ -70,7 +70,7 @@ void showtitle(char *title, char *mid) {
     buf[spc] = '\0';
     
     clear();
-    prints("\033[1;46;37m【%s】%s\033[33m%s%s%s\033[3%s《%s》\033[0m\n",
+    prints(TITLE_COLOR "【%s】%s\033[33m%s%s%s\033[3%s《%s》\033[0m\n",
            title, buf, mid, buf, " " + pad,
            currmode & MODE_SELECT ? "6m系列" : currmode & MODE_ETC ? "5m其他" :
            currmode & MODE_DIGEST ? "2m文摘" : "7m看板", currboard);

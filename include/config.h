@@ -28,6 +28,10 @@
 #define HAVE_JCEE         0
 #endif
 
+#ifndef TITLE_COLOR
+#define TITLE_COLOR       "\033[0;1;37;46m"
+#endif
+
 /* 临ゼ俱瞶 */
 #define MAX_FRIEND        (256)          /* 更 cache ぇ程狟ね计ヘ */
 #define MAX_REJECT        (32)           /* 更 cache ぇ程胊计ヘ */

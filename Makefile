@@ -1,4 +1,4 @@
-SUBDIR=	libptt mbbsd util innbbsd
+SUBDIR=	libptt mbbsd util
 BBSHOME?=$(HOME)
 
 all install clean:

@@ -25,7 +25,8 @@ LIBCHAT=$(LIBCHAT_$(OSTYPE))
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf\
-	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep
+	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
+	merge_passwd
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\
 	cvslog.sh
@@ -117,6 +118,9 @@ tunepasswd: tunepasswd.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 buildir: buildir.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+merge_passwd: merge_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)

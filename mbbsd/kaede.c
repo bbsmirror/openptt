@@ -30,43 +30,37 @@ char *Ptt_prints(char *str, int mode) {
                 switch(*(p-1)) {
                     case 's':
                         strcpy(q,cuser.userid);
-                        while(*q) q++;
                         break;
                     case 't': {
                         time_t now=time(0);
                         strcpy(q,Cdate(&now));
-			while(*q) q++;
                         }
                         break;
                     case 'u':
                         sprintf(q,"%d",utmpshm->number);
-                        while(*q) q++;
                         break;
                     case 'b':
                         sprintf(q,"%d/%d",cuser.month,cuser.day);
-                        while(*q) q++;
                         break;
                     case 'l':
                         sprintf(q,"%d",cuser.numlogins);
-                        while(*q) q++;
                         break;
                     case 'p':
                         sprintf(q,"%d",cuser.numposts);
-                        while(*q) q++;
                         break;
                     case 'n':
                         sprintf(q,"%s",cuser.username);
-                        while(*q) q++;
                         break;
                     case 'm':
                         sprintf(q,"%ld",cuser.money);
-                        while(*q) q++;
                         break;
                     default:
                         *q++='\033';
                         *q++='*';
+                        *q=0;
                         p--;
                 }
+                while(*q) q++;
             }
         }
     }

@@ -57,6 +57,8 @@ int main(argc, argv)
     now = time(NULL);		/* back to ancent */
     ptime = localtime(&now);
 
+    if(passwd_mmap())
+	exit(1);
     for(j = 1; j <= MAX_USERS; j++) {
 	passwd_query(j, &cuser);
 	if (bad_user_id())

@@ -9,6 +9,16 @@
 #include "pttstruct.h"
 #include "perm.h"
 
+static void initDir() {
+    mkdir("adm", 0755);
+    mkdir("boards", 0755);
+    mkdir("etc", 0755);
+    mkdir("man", 0755);
+    mkdir("man/boards", 0755);
+    mkdir("out", 0755);
+    mkdir("tmp", 0755);
+}
+
 static void initHome() {
     int i;
     char buf[256];
@@ -145,6 +155,56 @@ static void initBoards() {
     }
 }
 
+static void initMan() {
+    FILE *fp;
+    fileheader_t f;
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+    
+    memset(&f, 0, sizeof(f));
+    f.savemode = 0;
+    strcpy(f.owner, "SYSOP");
+    sprintf(f.date, "%2d/%02d", tm->tm_mon + 1, tm->tm_mday);
+    f.money = 0;
+    f.filemode = 0;
+    
+    if((fp = fopen("man/boards/Note/.DIR", "w"))) {
+	strcpy(f.filename, "SONGBOOK");
+	strcpy(f.title, "◆ 【點 歌 歌 本】");
+	fwrite(&f, sizeof(f), 1, fp);
+	mkdir("man/boards/Note/SONGBOOK", 0755);
+	
+	strcpy(f.filename, "SONGO");
+	strcpy(f.title, "◆ <點歌> 動態看板");
+	fwrite(&f, sizeof(f), 1, fp);
+	mkdir("man/boards/Note/SONGO", 0755);
+	
+	strcpy(f.filename, "SYS");
+	strcpy(f.title, "◆ <系統> 動態看板");
+	fwrite(&f, sizeof(f), 1, fp);
+	mkdir("man/boards/Note/SYS", 0755);
+	
+	strcpy(f.filename, "AD");
+	strcpy(f.title, "◆ <廣告> 動態看板");
+	fwrite(&f, sizeof(f), 1, fp);
+	mkdir("man/boards/Note/AD", 0755);
+	
+	strcpy(f.filename, "NEWS");
+	strcpy(f.title, "◆ <新聞> 動態看板");
+	fwrite(&f, sizeof(f), 1, fp);
+	mkdir("man/boards/Note/NEWS", 0755);
+	
+	fclose(fp);
+    }
+    
+}
+
+static void initSymLink() {
+    symlink("/home/bbs/man/boards/Note/SONGBOOK", "/home/bbs/etc/SONGBOOK");
+    symlink("/home/bbs/man/boards/Note/SONGO", "/home/bbs/etc/SONGO");
+    symlink("/hoem/bbs/man/boards/EditExp", "/home/bbs/etc/editexp");
+}
+
 static void initHistory() {
     FILE *fp = fopen("etc/history.data", "w");
     
@@ -160,17 +220,12 @@ int main() {
 	exit(1);
     }
     
-    mkdir("adm", 0755);
-    mkdir("boards", 0755);
-    mkdir("etc", 0755);
-    mkdir("man", 0755);
-    mkdir("man/boards", 0755);
-    mkdir("out", 0755);
-    mkdir("tmp", 0755);
-    
+    initDir();
     initHome();
     initPasswds();
     initBoards();
+    initMan();
+    initSymLink();
     initHistory();
     
     return 0;

@@ -1,2 +1,5 @@
 tmp
-Makefile.inc
+config.cache
+config.log
+config.status
+Makefile

@@ -1,5 +1,5 @@
 /* $Id$ */
-#ifdef HAVE_SETPROCTITLE
+#if HAVE_SETPROCTITLE
 
 void initsetproctitle(int argc, char **argv, char **envp) {
 }

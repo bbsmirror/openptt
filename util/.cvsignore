@@ -38,4 +38,5 @@ topsong.sh
 upgrade.sh
 weather.sh
 sed.tmp
-.depend
+Makefile
+

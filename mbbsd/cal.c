@@ -427,19 +427,14 @@ int p_touch_boards() {
 
 int p_sysinfo() {
     char buf[100];
-    long int total,used;
-    float p;
     
     move(b_lines-1,0);
     clrtoeol();
     cpuload(buf);
     outs("CPU 負荷 : ");
     outs(buf);
+    outs("\n");
     
-    p = swapused(&total,&used);
-    sprintf(buf, " 虛擬記憶體使用率: %.3f  (全部:%ldMB 用掉:%ldMB)\n",
-	    p, total >> 20, used >> 20);
-    outs(buf);
     pressanykey();
     return 0;
 }

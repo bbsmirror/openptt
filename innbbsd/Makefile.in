@@ -1,14 +1,7 @@
 # $Id$
 
-include ../Makefile.inc
-
 VERSION=	0.50beta-4
-ADMINUSER=	davidyu@oio.cx
-
-CFLAGS+=$(CFLAGS_INND) -pipe -g -O3 -I../include -I../mbbsd\
-	-DMapleBBS -DGETRUSAGE -DDBZDEBUG -DVERSION=\"$(VERSION)\"\
-	-DADMINUSER=\"$(ADMINUSER)\"
-LDFLAGS=-pipe -g -O3
+ADMINUSER=	me@davidyu.org
 
 TARGET=	innbbsd mkhistory bbsnnrp ctlinnbbsd bbslink
 OBJS=	inndchannel.o innbbsd.o connectsock.o rfc931.o\
@@ -24,6 +17,17 @@ NNRPOBJS=bbsnnrp.o pmain.o bbslib.o connectsock.o file.o
 LINKOBJS=	bbslink.o pmain.o inntobbs.o echobbslib.o connectsock.o\
 		file.o port.o
 CTLOBJS=ctlinnbbsd.o pmain.o bbslib.o connectsock.o file.o 
+
+BBSHOME=@prefix@
+
+CC=	@CC@
+CFLAGS=	-DBBSHOME=\"$(BBSHOME)\" -DBBSUID=@bbsuid@ -DBBSGID=@bbsgid@
+
+CFLAGS+=@CFLAGS@ @OSDEFS@ @DEFS@ -I../include -I../mbbsd\
+	-DMapleBBS -DGETRUSAGE -DDBZDEBUG -DVERSION=\"$(VERSION)\"\
+	-DADMINUSER=\"$(ADMINUSER)\" -DMMAP
+LDFLAGS=@LDFLAGS@
+LIBS=	@LIBS@
 
 .SUFFIXES: .c .o
 .c.o:

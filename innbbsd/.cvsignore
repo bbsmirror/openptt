@@ -1,7 +1,7 @@
+*.o
 bbslink
 bbsnnrp
 ctlinnbbsd
 innbbsd
 mkhistory
-*.o
-.depend
+Makefile

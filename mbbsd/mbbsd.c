@@ -136,8 +136,8 @@ void log_usies(char *mode, char *mesg) {
     time_t now = time(0);
     
     if (!mesg)
-	sprintf(genbuf, cuser.userid[0] ? "%s %s %-12s Stay:%d (%s)" :
-		"%s %s %s Stay:%d (%s)",
+	sprintf(genbuf, cuser.userid[0] ? "%s %s %-12s Stay:%ld (%s)" :
+		"%s %s %s Stay:%ld (%s)",
 		Cdate(&now), mode, cuser.userid,
 		(now - login_start_time) / 60, cuser.username);
     else

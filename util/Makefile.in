@@ -1,10 +1,5 @@
 # $Id$
 
-include ../Makefile.inc
-
-CFLAGS+=$(CFLAGS_UTIL) -pipe -Wall -g -O3 -I../include
-LDFLAGS=-pipe -Wall -g -O3
-
 OBJS=	util_cache.o util_record.o util_passwd.o
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
@@ -13,19 +8,23 @@ CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	createbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
-SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
-	mandex.c horoscope.c parse_news.c topusr.c\
-	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
-	webgrep.c bbsrf.c createbbs.c outmail.c xchatd.c\
-	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
-	merge_board.c
-
 SCRIPTS=BM_money.sh backpasswd.sh cvslog.sh mailog.sh\
 	stock.sh topsong.sh upgrade.sh weather.sh
 
 PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
 
 JUNK=	$(CPROGS) $(SCRIPTS) $(OBJS) sed.tmp
+
+BBSHOME=@prefix@
+
+CC=	@CC@
+CFLAGS=	-DBBSHOME=\"$(BBSHOME)\" -DBBSUID=@bbsuid@ -DBBSGID=@bbsgid@
+CFLAGS+=-DBBSNAME=\"@bbsname@\" -DMYHOSTNAME=\"@myhostname\"\
+	-DMAX_USERS=@max_users@
+CFLAGS+=@CFLAGS@ @OSDEFS@ @DEFS@ -I../include
+LDFLAGS=@LDFLAGS@
+LIBS=	@LIBS@
+
 
 .SUFFIXES: .c .o .shtpl .sh
 .c:
@@ -38,9 +37,6 @@ JUNK=	$(CPROGS) $(SCRIPTS) $(OBJS) sed.tmp
 	chmod 755 $@
 
 all: $(PROGS)
-
-depend:
-	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)
 
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/

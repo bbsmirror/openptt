@@ -16,7 +16,7 @@
 #include "pttstruct.h"
 
 
-#ifdef HAVE_SETPROCTITLE
+#if HAVE_SETPROCTITLE
 
 #include <sys/types.h>
 #include <libutil.h>

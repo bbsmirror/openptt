@@ -1,7 +1,7 @@
+* 使用 GNU autoconf 使安裝更容易
 * 按字母分類看板架構
 * 移除發票,樸克牌,字典,火車時刻表,聯考查榜,賭場,猜數字,黑白棋
 * util/initbbs 更名為 createbbs
-* 調整 Makefile 架構, 改用 Makefile.inc 取代 pttbbs.conf
 * 修正 util/post 漏掉 header 的問題
 * 修正 util/buildir 空標題會變成 \n 的 bug
 * 修正 util/buildir 的 s1g 時間排序 bug

@@ -1,0 +1,33 @@
+# $Id$
+TARGET=	mbbsd
+OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o chat.o\
+	chicken.o edit.o friend.o io.o kaede.o mail.o mbbsd.o menu.o more.o\
+	name.o osdep.o read.o record.o register.o screen.o stuff.o talk.o\
+	term.o topsong.o user.o vote.o xyz.o voteboard.o syspost.o var.o\
+	toolkit.o passwd.o
+
+BBSHOME=@prefix@
+
+CC=	@CC@
+CFLAGS=	-DBBSHOME=\"$(BBSHOME)\" -DBBSUID=@bbsuid@ -DBBSGID=@bbsgid@
+CFLAGS+=-DBBSNAME=\"@bbsname@\" -DMYHOSTNAME=\"@myhostname@\"\
+	-DMYIP=\"@myip@\" -DBBSUSER=\"@bbsuser@\" -DMAX_USERS=@max_users@
+CFLAGS+=@CFLAGS@ @OSDEFS@ @DEFS@ -I../include
+LDFLAGS=@LDFLAGS@
+LIBS=	@LIBS@
+
+.SUFFIXES: .c .o
+.c.o:
+	$(CC) $(CFLAGS) -c $?
+
+all: $(TARGET)
+
+mbbsd: $(OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+
+install: $(TARGET)
+	install -d $(BBSHOME)/bin/
+	install -c -m 755 $(TARGET) $(BBSHOME)/bin/
+
+clean:
+	rm -f $(TARGET) $(OBJS)

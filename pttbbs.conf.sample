@@ -16,4 +16,4 @@
 #define FROMSHM_KEY     1223
 #define FROMSEM_KEY     2003
 #define PASSWDSEM_KEY   2010
-k*/
+*/

@@ -78,7 +78,7 @@ xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c descrypt.c $(LIBCHAT)
 
 reaper: reaper.c util_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c util_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c util_passwd.c util_cache.c
 
 uhash_loader: uhash_loader.c
 	$(CC) $(CFLAGS) -o $@ $@.c

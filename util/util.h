@@ -16,11 +16,13 @@ void resolve_fcache();
 void attach_uhash();
 void stamplink(char *fpath, fileheader_t *fh);
 void resolve_utmp();
+void remove_from_uhash(int n);
 
 int passwd_mmap();
 int passwd_update(int num, userec_t *buf);
 int passwd_query(int num, userec_t *buf);
 int passwd_apply(int (*fptr)(userec_t *));
+int passwd_apply2(int (*fptr)(int, userec_t *));
 void passwd_lock();
 void passwd_unlock();
 

@@ -13,7 +13,7 @@
 
 time_t now;
 
-int check(userec_t *u) {
+int check(int n, userec_t *u) {
     time_t d;
     char buf[256];
     
@@ -28,6 +28,7 @@ int check(userec_t *u) {
 	if(system(buf))
 	    syslog(LOG_ERR, "can't move user home: %s", u->userid);
 	u->userid[0] = '\0';
+	remove_from_uhash(n);
     }
     return 0;
 }
@@ -39,7 +40,7 @@ int main() {
     
     if(passwd_mmap())
 	exit(1);
-    passwd_apply(check);
+    passwd_apply2(check);
     
     return 0;
 }

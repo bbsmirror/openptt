@@ -101,6 +101,15 @@ int passwd_apply(int (*fptr)(userec_t *)) {
     return 0;
 }
 
+int passwd_apply2(int (*fptr)(int, userec_t *)) {
+    int i;
+
+    for(i = 0; i < MAX_USERS; i++)
+	if((*fptr)(i, &passwd_image[i]) == QUIT)
+	    return QUIT;
+    return 0;
+}
+
 void passwd_lock() {
     struct sembuf buf = { 0, -1, SEM_UNDO };
     

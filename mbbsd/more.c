@@ -153,7 +153,7 @@ int more(char *fpath, int promptend) {
 			    prints("\033[47;34m %s \033[44;37m%-53.53s"
 				   "\033[47;34m %.4s \033[44;37m%-13s\033[m\n",
 				   head[0], word, ptr, ptr + 5);
-			} else if (pos < 4)
+			} else if (pos < line)
 			    prints("\033[47;34m %s \033[44;37m%-72.72s"
 				   "\033[m\n", head[pos], word);
 			
@@ -175,7 +175,7 @@ int more(char *fpath, int promptend) {
 			header = 1;
 			
 			prints("\033[36m%s\033[m\n", msg_seperator);
-			line = pos = 4;
+			line++; pos++;
 		    }
 		}
 		lino = pos;

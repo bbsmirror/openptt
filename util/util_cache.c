@@ -211,6 +211,16 @@ int searchuser(char *userid) {
     return 0;
 }
 
+void setuserid(int num, char *userid) {
+    if(num > 0 && num <= MAX_USERS) {
+	if(num > uhash->number)
+	    uhash->number = num;
+	else
+	    remove_from_uhash(num-1);
+	add_to_uhash(num-1,userid);
+    }
+}
+
 /*-------------------------------------------------------*/
 /* .UTMP cache                                           */
 /*-------------------------------------------------------*/

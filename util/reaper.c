@@ -39,18 +39,17 @@ int check(int n, userec_t *u) {
 	    if((d > MAX_GUEST_LIFE && (u->userlevel & PERM_LOGINOK) == 0) ||
 	       (d > MAX_LIFE && (u->userlevel & PERM_XEMPT) == 0)) {
 		/* expired */
-		int n;
+		int unum;
 		
-		if((n = searchuser(u->userid)) != 0)
-		    remove_from_uhash(n - 1);
-		
+		unum = searchuser(u->userid);
 		strcpy(buf, ctime(&u->lastlogin));
 		strtok(buf, "\n");
-		syslog(LOG_NOTICE, "kill user(%d): %s %s", n, u->userid, buf);
+		syslog(LOG_NOTICE, "kill user(%d): %s %s", unum, u->userid, buf);
 		sprintf(buf, "mv home/%c/%s tmp/", u->userid[0], u->userid);
 		if(system(buf))
 		    syslog(LOG_ERR, "can't move user home: %s", u->userid);
 		u->userid[0] = '\0';
+		setuserid(unum, u->userid);
 	    }
 	}
     }

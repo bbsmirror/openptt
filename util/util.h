@@ -17,6 +17,7 @@ void attach_uhash();
 void stamplink(char *fpath, fileheader_t *fh);
 void resolve_utmp();
 void remove_from_uhash(int n);
+void setuserid(int num, char *userid);
 
 int passwd_mmap();
 int passwd_update(int num, userec_t *buf);

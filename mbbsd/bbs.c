@@ -779,7 +779,7 @@ static int read_post(int ent, fileheader_t *fhdr, char *direct) {
     setdirpath(genbuf, direct, fhdr->filename);
 
     if((more_result = more(genbuf, YEA)) == -1)
-	return DONOTHING;
+	return FULLUPDATE;
 
     brc_addlist(fhdr->filename);
     strncpy(currtitle, subject(fhdr->title), 40);

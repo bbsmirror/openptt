@@ -108,6 +108,7 @@ userlist: userlist.c
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/
 	install -c -m 755 $(PROGS) $(BBSHOME)/bin/
+	chmod 4755 $(BBSHOME)/bin/post
 
 clean:
 	rm -f $(CPROGS)

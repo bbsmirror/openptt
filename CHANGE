@@ -1,4 +1,11 @@
+Version 0.9.6	2000/06/28
+
 o 修正使用暫存檔會當掉的 bug
+o 整合 FreeBSD 和 Linux 的 Makefile, 不需要再手動修改
+o 把 pttbbs.conf 從 include 搬到 pttsrc 下
+o 新增 outmail 取代 bmda
+o 整合 xchatd  (未測試)
+o 整合 innbbsd (未測試)
 
 --------------------------------------------------
 Version 0.9.5	2000/06/07

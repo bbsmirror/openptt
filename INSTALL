@@ -17,17 +17,16 @@
 
 7. 取得解開 pttbbs-VERSION.tar.gz (任何目錄下皆可), 並進到 pttsrc 的目錄下
 8. 如果之前沒有設定過 pttbbs.conf 的話,
-   請 cp pttbbs.conf.sample include/pttbbs.conf
-9. 修改 include/pttbbs.conf
-10. 如果使用 Linux 的話, 請修改 mbbsd/Makefile, util/Makefile
-11. make BBSHOME=/home/bbs install
-12. cd /home/bbs; bin/initbbs
+   請 cp pttbbs.conf.sample pttbbs.conf
+9. 修改 pttbbs.conf
+10. make BBSHOME=/home/bbs install
+11. cd /home/bbs; bin/initbbs
 
 假如一切都很順利的話,這樣子大概就安裝完了
 接下來是啟動 bbs 的部份
 
-11. 執行 bin/uhash_loader (註1)
-12. 用 root 執行 bin/mbbsd 23 (註2)
+12. 執行 bin/uhash_loader (註1)
+13. 用 root 執行 bin/mbbsd 23 (註2)
 
 然後 telnet localhost 23 看看
 new一個帳號叫SYSOP,然後logout再login, 這樣子就會擁有站長權限囉~

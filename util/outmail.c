@@ -88,7 +88,6 @@ void setproctitle(const char* format, ...) {
 #define INDEX SPOOL "/.DIR"
 #define NEWINDEX SPOOL "/.DIR.sending"
 #define FROM ".bbs@" MYHOSTNAME
-#define RELAYSERVERIP "127.0.0.1"
 #define SMTPPORT 25
 
 int waitReply(int sock) {
@@ -174,7 +173,7 @@ void doSendMail(int sock, FILE *fp, char *from, char *to, char *subject) {
     
     doSendBody(sock, fp, from, to, subject);
 
-    if(sendRequest(sock, ".\n") || waitReply(sock) != 2)
+    if(sendRequest(sock, "\n.\n") || waitReply(sock) != 2)
 	return;
 }
 

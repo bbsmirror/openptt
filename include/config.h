@@ -8,12 +8,16 @@
 #define BAN_FILE        "BAN"                        /* 關站通告 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */
 
-#ifndef MAX_USERS
-#define MAX_USERS         (120000)       /* 最高註冊人數 */
+#ifndef MAX_USERS                           /* 最高註冊人數 */
+#define MAX_USERS         (120000)
 #endif
 
-#ifndef HAVE_SEARCHALL
-#define HAVE_SEARCHALL    0              /* 搜尋某使用者在所有板上的文章 */
+#ifndef HAVE_SEARCHALL                      /* 搜尋某使用者在所有板上的文章 */
+#define HAVE_SEARCHALL    0
+#endif
+
+#ifndef RELAYSERVERIP                       /* 寄站外信的 mail server */
+#define RELAYSERVERIP     "127.0.0.1"
 #endif
 
 /* 以下還未整理 */

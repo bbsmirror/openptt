@@ -34,7 +34,7 @@ SRCS=	bbsmail.c post.c account.c birth.c deluserfile.c expire.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
 	merge_board.c
 
-SCRIPTS=backpasswd.sh cvslog.sh mailog.sh\
+SCRIPTS=backpasswd.sh mailog.sh\
 	upgrade.sh
 
 PROGS=	$(CPROGS) $(SCRIPTS)

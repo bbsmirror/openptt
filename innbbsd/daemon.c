@@ -40,6 +40,7 @@ char *cmd;
 	return NULL;
 }
 
+#if 0
 int daemon(dfd)
 int dfd;
 {
@@ -116,6 +117,7 @@ cont:
 	}
 	/*hash_reclaim();*/
 }
+#endif
 
 #define MAX_ARG 32
 #define MAX_ARG_SIZE 16384

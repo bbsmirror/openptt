@@ -382,16 +382,12 @@ receive_article()
   }
   strcat(userid, ".");
 
-#ifdef BSD44
   {
       struct tm tmbuf;
       
       strptime(DATE, "%d %b %Y %X GMT", &tmbuf);
       datevalue = timegm(&tmbuf);
   }
-#else
-  datevalue = parsedate(DATE, NULL);
-#endif
 
   if (datevalue > 0)
   {

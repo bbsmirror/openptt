@@ -139,5 +139,8 @@ enum {STRIP_ALL = 0, ONLY_COLOR, NO_RELOAD};
 #define SIG_PK          0
 #define SIG_TALK        1
 #define SIG_BROADCAST   2
+#define SIG_GOMO        3
+#define SIG_CHC         4
+#define SIG_DARK        5
 
 #endif

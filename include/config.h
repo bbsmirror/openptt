@@ -5,30 +5,6 @@
 #include <syslog.h>
 #include "../pttbbs.conf"
 
-#ifndef BBSNAME
-#error You must sepecify BBSNAME in pttbbs.conf
-#endif
-
-#ifndef MYHOSTNAME
-#error You must set MYHOSTNAME to your hostname in pttbbs.conf
-#endif
-
-#ifndef MYIP
-#error You must set MYIP to your ip address in pttbbs.conf
-#endif
-
-#ifndef BBSUSER
-#error You must set BBSUSER to bbs account in pttbbs.conf
-#endif
-
-#ifndef BBSUID
-#error You must set BBSUID to the user-id of the bbs account in pttbbs.conf
-#endif
-
-#ifndef BBSGID
-#error You must set BBSUID to the group-id of the bbs account in pttbbs.conf
-#endif
-
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 祘Α */
 #define BAN_FILE        "BAN"                        /* 闽硄郎 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */
@@ -38,7 +14,23 @@
 #endif
 
 #ifndef MAX_USERS                           /* 程蔼爹计 */
-#define MAX_USERS          (10000)
+#define MAX_USERS          (120000)
+#endif
+
+#ifndef MAX_ACTIVE
+#define MAX_ACTIVE        (1024)         /* 程计 */
+#endif
+
+#ifndef MAX_CPULOAD
+#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
+#endif
+
+#ifndef MAX_POST_MONEY                      /* 祇ゅ彻絑禣 */
+#define MAX_POST_MONEY     100
+#endif
+
+#ifndef MAX_CHICKEN_MONEY                   /* 緄蔓初矛 */
+#define MAX_CHICKEN_MONEY  100
 #endif
 
 #ifndef MAX_GUEST_LIFE                      /* 程ゼ粄靡ㄏノ玂痙丁() */
@@ -53,42 +45,24 @@
 #define HAVE_SEARCH_ALL    0
 #endif
 
-#ifndef HAVE_FREECLOAK                      /* ㄏノ禣留ō */
-#define HAVE_FREECLOAK     0
+#ifndef HAVE_JCEE                           /* 厩羛σ琩篯╰参 */
+#define HAVE_JCEE          0
 #endif
 
-#ifndef TITLE_COLOR                         /* 夹肈肅︹ */
+#ifndef HAVE_FREECLOAK
+#define HAVE_FREECLOAK    0
+#endif
+
+#ifndef FORCE_PROCESS_REGISTER_FORM
+#define FORCE_PROCESS_REGISTER_FORM 0
+#endif
+
+#ifndef TITLE_COLOR
 #define TITLE_COLOR       "\033[0;1;37;46m"
-#endif
-
-/* --------- */
-
-#ifndef USE_MPROTECT
-#define USE_MPROTECT       0
 #endif
 
 #ifndef SYSLOG_FACILITY
 #define SYSLOG_FACILITY   LOG_LOCAL0
-#endif
-
-#ifndef BRDSHM_KEY
-#define BRDSHM_KEY      1216
-#endif
-
-#ifndef UHASH_KEY
-#define UHASH_KEY       1219
-#endif
-
-#ifndef UTMPSHM_KEY
-#define UTMPSHM_KEY     2219
-#endif
-
-#ifndef PTTSHM_KEY
-#define PTTSHM_KEY      1220
-#endif
-
-#ifndef PASSWDSEM_KEY
-#define PASSWDSEM_KEY   2010
 #endif
 
 /* 临ゼ俱瞶 */
@@ -99,7 +73,6 @@
 #define MAX_MOVIE         (999)          /* 程笆篈计 */
 #define MAX_MOVIE_SECTION (10)		 /* 程笆篈狾摸 */
 #define MAX_FROM          (300)          /* 程珿秏计 */
-#define MAX_ACTIVE        (1024)         /* 程计 */
 #define MAX_ITEMS         (1000)         /* ヘ魁程Τ碭兜 */
 #define MAX_HISTORY       (12)           /* 笆篈狾玂 12 掸菌癘魁 */
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
@@ -115,7 +88,6 @@
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
 #define MAX_REVIEW        (7)		 /* 程瞴臮 */
 #define NUMVIEWFILE       (14)           /* 秈礶程计 */
-#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
 #define MAX_SWAPUSED      (0.7)          /* SWAP程蔼ㄏノ瞯 */
 #define LOGINATTEMPTS     (3)            /* 程秈ア粇Ω计 */
 #define WHERE                            /* 琌Τ珿秏 */
@@ -183,6 +155,17 @@
 #define SEM_RESET      0       /* reset semaphore */
 
 #define MAGIC_KEY       1234    /* ōだ粄靡獺ㄧ絪絏 */
+
+#define BRDSHM_KEY      1216
+#define UHASH_KEY       1219	/* userid->uid hash */
+#define UTMPSHM_KEY     2219
+#define PTTSHM_KEY      1220    /* 笆篈 , 竊ら */
+#define FROMSHM_KEY     1223    /* whereis, 程ㄏノ */
+
+#define BRDSEM_KEY      2005    /* semaphore key */
+#define PTTSEM_KEY      2000    /* semaphore key */
+#define FROMSEM_KEY     2003    /* semaphore key */
+#define PASSWDSEM_KEY   2010
 
 #define NEW_CHATPORT    3838
 #define CHATPORT        5722

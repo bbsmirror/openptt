@@ -4,7 +4,7 @@
 
 /* admin */
 int m_mod_board(char *bname);
-int m_newbrd();
+int m_newbrd(int recover);
 int scan_register_form(char *regfile, int automode, int neednum);
 int m_user();
 int search_user_bypwd();
@@ -19,6 +19,13 @@ int a_menu(char *maintitle, char *path, int lastlevel);
 void a_copyitem(char* fpath, char* title, char* owner, int mode);
 int Announce();
 void gem(char* maintitle, item_t* path, int update);
+
+/* args */
+void initsetproctitle(int argc, char **argv, char **envp);
+void setproctitle(const char* format, ...);
+
+/* bbcall */
+int main_bbcall();
 
 /* bbs */
 void make_blist();
@@ -91,10 +98,69 @@ void remove_from_uhash(int n);
 void add_to_uhash(int n, char *id);
 
 /* cal */
+int inumoney(char *tuser, int money);
 int cal();
+int reload_money();
+int demoney(int money);
+int inmoney(int money);
+int deumoney(char *tuser, int money);
+int lockutmpmode(int unmode, int state);
+int unlockutmpmode();
 int p_touch_boards();
 int x_file();
+int give_money();
 int p_sysinfo();
+int p_give();
+int p_cloak();
+int p_from();
+int ordersong();
+int p_exmail();
+void mail_redenvelop(char* from, char* to, int money, char mode);
+
+/* card */
+int g_card_jack();
+int g_ten_helf();
+int card_99();
+
+/* chat */
+int t_chat();
+
+/* chc_draw */
+void chc_drawline(board_t board, int line);
+void chc_movecur(int r, int c);
+void chc_redraw(board_t board);
+
+/* chc_net */
+void chc_sendmove(int s);
+int chc_recvmove(int s);
+
+/* chc_play */
+void chc(int s);
+
+/* chc_rule */
+void chc_movechess(board_t board);
+int chc_canmove(board_t board, rc_t from, rc_t to);
+int chc_iskfk(board_t board);
+int chc_ischeck(board_t board, int turn);
+void chc_init_board(board_t board);
+
+/* chicken */
+int show_file(char *filename, int y, int lines, int mode);
+void ch_buyitem(int money, char *picture, int *item);
+int chicken_main();
+int chickenpk(int fd);
+void time_diff(chicken_t *thechicken);
+int isdeadth(chicken_t *thechicken);
+void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken);
+int reload_chicken();
+
+/* dark */
+int main_dark(int fd,userinfo_t *uin);
+
+/* dice */
+int IsSNum(char *a);
+int dice_main();
+int IsNum(char *a, int n);
 
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
@@ -112,11 +178,46 @@ int t_reject();
 void friend_add(char *uident, int type);
 void friend_delete(char *uident, int type);
 
+/* gamble */
+int ticket_main();
+
+/* gomo */
+int gomoku(int fd);
+
+/* gomo1 */
+int getstyle(int x, int y, int color, int limit);
+int chkwin(int style, int limit);
+
+/* guess */
+int guess_main();
+
+/* indict */
+int x_dict();
+int use_dict();
+
+/* io */
+int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
+int igetch();
+int getdata_str(int line, int col, char *prompt, char *buf, int len, int echo, char *defaultstr);
+int getdata_buf(int line, int col, char *prompt, char *buf, int len, int echo);
+int i_get_key();
+void add_io(int fd, int timeout);
+int igetkey();
+void oflush();
+int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo);
+void output(char *s, int len);
+void init_alarm();
+int num_in_buf();
+int ochar(int c);
+
 /* kaede */
 int Rename(char* src, char* dst);
 int Link(char* src, char* dst);
 char *Ptt_prints(char *str, int mode);
 char *my_ctime(const time_t *t);
+
+/* lovepaper */
+int x_love();
 
 /* mail */
 int mail_muser(userec_t muser, char *title, char *filename);
@@ -152,6 +253,15 @@ void show_last_call_in(int save);
 int dosearchuser(char *userid);
 void u_exit(char *mode);
 
+/* menu */
+void showtitle(char *title, char *mid);
+int egetch();
+void movie(int i);
+void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]);
+
+/* more */
+int more(char *fpath, int promptend);
+
 /* name */
 void usercomplete(char *prompt, char *data);
 void namecomplete(char *prompt, char *data);
@@ -166,6 +276,12 @@ void ToggleNameList(int *reciper, char *listfile, char *msg);
 /* osdep */
 int cpuload(char *str);
 double swapused(long *total, long *used);
+
+/* othello */
+int othello_main();
+
+/* page */
+int main_railway();
 
 /* read */
 void z_download(char *fpath);
@@ -199,6 +315,29 @@ void new_register();
 int checkpasswd(char *passwd, char *test);
 void check_register();
 char *genpasswd(char *pw);
+
+/* screen */
+void move(int y, int x);
+void outs(char *str);
+void clrtoeol();
+void clear();
+void refresh();
+void clrtobot();
+void mprints(int y, int x, char *str);
+void outmsg(char *msg);
+void region_scroll_up(int top, int bottom);
+void outc(unsigned char ch);
+void redoscr();
+void clrtoline(int line);
+void standout();
+void standend();
+int edit_outs(char *text);
+void outch(unsigned char c);
+void rscroll();
+void scroll();
+void getyx(int *y, int *x);
+void initscr();
+void Jaky_outs(char *str, int line);
 
 /* stuff */
 void setcalfile(char *buf, char *userid);
@@ -268,45 +407,23 @@ int t_talk();
 int t_display();
 int my_query(char *uident);
 
+/* tmpjack */
+int reg_barbq();
+int p_ticket_main();
+int j_ticket_main();
+
 /* term */
-void InitTerminal();
+void init_tty();
 int term_init();
 void save_cursor();
 void restore_cursor();
-void DoMove(int destcol, int destline);
-int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
-int igetch();
-int getdata_str(int line, int col, char *prompt, char *buf, int len, int echo, char *defaultstr);
-int getdata_buf(int line, int col, char *prompt, char *buf, int len, int echo);
-int i_get_key();
-void add_io(int fd, int timeout);
-int igetkey();
-void oflush();
-int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo);
-void output(char *s, int len);
-void init_alarm();
-int ochar(int c);
-void move(int y, int x);
-void outs(char *str);
-void clrtoeol();
-void clear();
-void refresh();
-void clrtobot();
-void mprints(int y, int x, char *str);
-void outmsg(char *msg);
-void region_scroll_up(int top, int bottom);
-void outc(unsigned char ch);
-void redoscr();
-void clrtoline(int line);
-void standout();
-void standend();
-int edit_outs(char *text);
-void outch(unsigned char c);
-void rscroll();
-void scroll();
-void getyx(int *y, int *x);
-void initscr();
-void Jaky_outs(char *str, int line);
+void do_move(int destcol, int destline);
+void scroll_forward();
+void change_scroll_range(int top, int bottom);
+
+/* topsong */
+void sortsong();
+int topsong();
 
 /* user */
 int u_editcalendar();
@@ -325,6 +442,21 @@ int u_editproverb();
 int u_cloak();
 int u_register();
 int u_list();
+
+/* vote */
+int strip_ansi(char *buf, char *str, int mode);
+void b_suckinfile(FILE *fp, char *fname);
+int b_results();
+int b_vote();
+int b_vote_maintain();
+int b_closepolls();
+
+/* vice */
+int vice_main();
+
+/* voteboard */
+int do_voteboard();
+void do_voteboardreply(fileheader_t *fhdr);
 
 /* xyz */
 int m_sysop();
@@ -348,20 +480,6 @@ int Goodbye();
 
 /* toolkit */
 unsigned StringHash(unsigned char *s);
-int IsNum(char *a, int n);
-void mprotect_utmp(int lock);
-int strip_ansi(char *buf, char *str, int mode);
-void b_suckinfile(FILE *fp, char *fname);
-int show_file(char *filename, int y, int lines, int mode);
-void initsetproctitle(int argc, char **argv, char **envp);
-void setproctitle(const char* format, ...);
-
-/* ui */
-void showtitle(char *title, char *mid);
-int egetch();
-void movie(int i);
-void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]);
-int more(char *fpath, int promptend);
 
 /* passwd */
 int passwd_mmap();
@@ -370,5 +488,8 @@ int passwd_query(int num, userec_t *buf);
 int passwd_apply(int (*fptr)(userec_t *));
 void passwd_lock();
 void passwd_unlock();
+
+/* calendar */
+int calendar();
 
 #endif

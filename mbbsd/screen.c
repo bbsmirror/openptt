@@ -14,27 +14,17 @@ extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern int p_lines;             /* a Page of Screen line numbers: tlines-4 */
 extern int showansi;
 
-extern char *clearbuf;
-extern char *cleolbuf;
-extern char *scrollrev;
-extern char *strtstandout;
-extern char *endstandout;
-extern int clearbuflen;
-extern int cleolbuflen;
-extern int scrollrevlen;
-extern int strtstandoutlen;
-extern int endstandoutlen;
 extern int automargins;
 #ifdef SUPPORT_GB    
 static int current_font_type=TYPE_BIG5;
 static int gbinited=0;
 #endif
 #define SCR_WIDTH       80 
-#define o_clear()     output(clearbuf,clearbuflen)
-#define o_cleol()     output(cleolbuf,cleolbuflen)
-#define o_scrollrev() output(scrollrev,scrollrevlen)
-#define o_standup()   output(strtstandout,strtstandoutlen)
-#define o_standdown() output(endstandout,endstandoutlen)
+#define o_clear()     output("\33[H\33[J", 6)
+#define o_cleol()     output("\33[K", 3)
+#define o_scrollrev() output("\33M", 2)
+#define o_standup()   output("\33[7m", 4)
+#define o_standdown() output("\33[m", 3)
 
 unsigned char scr_lns, scr_cols;
 static unsigned char cur_ln = 0, cur_col = 0;
@@ -158,7 +148,6 @@ void refresh() {
     register screenline_t *bp = big_picture;
     register int i, j, len;
     extern int automargins;
-    extern int scrollrevlen;
     if(num_in_buf())
 	return;
 
@@ -168,14 +157,8 @@ void refresh() {
     }
 
     if(scrollcnt < 0) {
-	if(!scrollrevlen) {
-	    redoscr();
-	    return;
-	}
-	rel_move(tc_col, tc_line, 0, 0);
-	do {
-	    o_scrollrev();
-	} while(++scrollcnt);
+	redoscr();
+	return;
     } else if (scrollcnt > 0) {
 	rel_move(tc_col, tc_line, 0, b_lines);
 	do {
@@ -537,7 +520,7 @@ void region_scroll_up(int top, int bottom) {
 }
 
 void standout() {
-    if(!standing && strtstandoutlen) {
+    if(!standing) {
 	register screenline_t *slp;
 
 	slp = &big_picture[((cur_ln + roll) % scr_lns)];
@@ -548,7 +531,7 @@ void standout() {
 }
 
 void standend() {
-    if(standing && strtstandoutlen) {
+    if(standing) {
 	register screenline_t *slp;
 
 	slp = &big_picture[((cur_ln + roll) % scr_lns)];

@@ -11,102 +11,22 @@
 #include "common.h"
 #include "proto.h"
 
-int tgetent(const char *bp, char *name);
-char *tgetstr(const char *id, char **area);
-int tgetflag(const char *id);
-int tgetnum(const char *id);
-int tputs(const char *str, int affcnt, int (*putc)(int));
-char *tparm(const char *str, ...);
-char *tgoto(const char *cap, int col, int row);
-
-static struct termios tty_state, tty_new;
-
-/* ----------------------------------------------------- */
-/* basic tty control                                     */
-/* ----------------------------------------------------- */
-void init_tty() {
-    if(tcgetattr(1, &tty_state) < 0) {
-	syslog(LOG_ERR, "tcgetattr(): %m");
-	return;
-    }
-    memcpy(&tty_new, &tty_state, sizeof(tty_new));
-    cfmakeraw(&tty_new);
-    tcsetattr(1, TCSANOW, &tty_new);
-}
-
-/* ----------------------------------------------------- */
-/* init tty control code                                 */
-/* ----------------------------------------------------- */
-
-
-#define TERMCOMSIZE (40)
-
-char *clearbuf = "\33[H\33[J";
-int clearbuflen = 6;
-
-char *cleolbuf = "\33[K";
-int cleolbuflen = 3;
-
-char *scrollrev = "\33M";
-int scrollrevlen = 2;
-
-char *strtstandout = "\33[7m";
-int strtstandoutlen = 4;
-
-char *endstandout = "\33[m";
-int endstandoutlen = 3;
-
 int t_lines = 24;
 int b_lines = 23;
 int p_lines = 20;
 int t_columns = 80;
-
 int automargins = 1;
 
-static char *outp;
-static int *outlp;
-
-
-static int outcf(int ch) {
-    if(*outlp < TERMCOMSIZE) {
-	(*outlp)++;
-	*outp++ = ch;
+void init_tty() {
+    struct termios tty_state;
+    
+    if(tcgetattr(1, &tty_state) < 0) {
+	syslog(LOG_ERR, "tcgetattr(): %m");
+	return;
     }
-    return 0;
+    cfmakeraw(&tty_state);
+    tcsetattr(1, TCSANOW, &tty_state);
 }
-
-extern screenline_t *big_picture;
-
-static void term_resize(int sig) {
-    struct winsize newsize;
-    screenline_t *new_picture;
-
-    signal(SIGWINCH, SIG_IGN);	/* Don't bother me! */
-    ioctl(0, TIOCGWINSZ, &newsize);
-    if(newsize.ws_row > t_lines) {
-	new_picture = (screenline_t *)calloc(newsize.ws_row,
-					     sizeof(screenline_t));
-	if(new_picture == NULL) {
-	    syslog(LOG_ERR, "calloc(): %m");
-	    return;
-	}
-	free(big_picture);
-	big_picture = new_picture;
-    }
-
-    t_lines=newsize.ws_row;
-    b_lines=t_lines-1;
-    p_lines=t_lines-4;
-
-    signal(SIGWINCH, term_resize);
-}
-
-int term_init() {
-    signal(SIGWINCH, term_resize);
-    return YEA;
-}
-
-char term_buf[32];
 
 void do_move(int destcol, int destline) {
     char buf[16], *p;

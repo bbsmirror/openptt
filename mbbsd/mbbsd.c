@@ -852,7 +852,6 @@ static void do_aloha(char *hello) {
 }
 
 static void do_term_init() {
-    term_init();
     initscr();
 }
 

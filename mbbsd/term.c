@@ -5,6 +5,7 @@
 #include <syslog.h>
 #include <signal.h>
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include "config.h"
 #include "struct.h"
 #include "common.h"

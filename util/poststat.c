@@ -6,9 +6,13 @@
 #include <fcntl.h>
 #include <time.h>
 #include <sys/types.h>
-#include <machine/param.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+
+#ifdef __FreeBSD__
+#include <machine/param.h>
+#endif
+
 #include "config.h"
 #include "struct.h"
 

@@ -7,13 +7,18 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/types.h>
 #include <sys/mman.h>
-#include <machine/param.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/sem.h>
+
+#ifdef __FreeBSD__
+#include <machine/param.h>
+#endif
+
 #include "config.h"
 #include "struct.h"
 #include "common.h"
@@ -98,6 +103,17 @@ void *attach_shm(int shmkey, int shmsize) {
     return shmptr;
 }
 
+#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun is defined by including <sys/sem.h> */
+#else
+/* according to X/OPEN we have to define it ourselves */
+union semun {
+    int val;                    /* value for SETVAL */
+    struct semid_ds *buf;       /* buffer for IPC_STAT, IPC_SET */
+    unsigned short int *array;  /* array for GETALL, SETALL */
+    struct seminfo *__buf;      /* buffer for IPC_INFO */
+};
+#endif
 
 #define SEM_FLG        0600    /* semaphore mode */
 

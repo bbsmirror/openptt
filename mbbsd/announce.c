@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <setjmp.h>
 #include <signal.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>

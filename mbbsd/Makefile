@@ -1,3 +1,14 @@
+# FreeBSD
+#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
+#LDFLAGS=-pipe -Wall -g -O3
+#LIBS=	-ltermcap -lutil -lkvm
+
+# Linux
+CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
+LDFLAGS=-pipe -Wall -g -O3
+LIBS=	-lncurses -lcrypt
+
+
 CC=	gcc
 PROG=	mbbsd
 OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o card.o\
@@ -8,10 +19,6 @@ OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o card.o\
 	talk.o term.o topsong.o user.o vice.o vote.o xyz.o\
 	tmpjack.o voteboard.o syspost.o var.o descrypt.o toolkit.o passwd.o\
 	calendar.o
-
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
-LDFLAGS=-pipe -Wall -g -O3
-LIBS=	-ltermcap -lutil -lkvm
 
 .SUFFIXES: .c .o
 .c.o:

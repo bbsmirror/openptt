@@ -18,6 +18,25 @@ static userec_t *passwd_image = NULL;
 static int passwd_image_size;
 static int semid = -1;
 
+#ifndef SEM_R
+#define SEM_R 0400
+#endif
+
+#ifndef SEM_A
+#define SEM_A 0200
+#endif
+
+#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun is defined by including <sys/sem.h> */
+#else
+union semun {
+        int     val;            /* value for SETVAL */
+        struct  semid_ds *buf;  /* buffer for IPC_STAT & IPC_SET */
+        u_short *array;         /* array for GETALL & SETALL */
+        struct seminfo *__buf;  /* buffer for IPC_INFO */
+};
+#endif
+
 int passwd_mmap() {
     int fd;
     

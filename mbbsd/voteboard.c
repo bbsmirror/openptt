@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/file.h>
 #include "config.h"
 #include "struct.h"
 #include "modes.h"

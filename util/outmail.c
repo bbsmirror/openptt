@@ -178,41 +178,41 @@ void doSendMail(int sock, FILE *fp, char *from, char *to, char *subject) {
 }
 
 void sendMail() {
-    if(access(NEWINDEX, R_OK | W_OK) &&
-       (link(INDEX, NEWINDEX) || unlink(INDEX))) {
-	/* nothing to do */
-	return;
-    } else {
-	int fd, sock;
-	MailQueue mq;
-	
-	if((sock = connectMailServer()) < 0) {
-	    fprintf(stderr, "connect server failed...\n");
+    int fd, sock;
+    MailQueue mq;
+    
+    if(access(NEWINDEX, R_OK | W_OK)) {
+	if(link(INDEX, NEWINDEX) || unlink(INDEX))
+	    /* nothing to do */
 	    return;
-	}
-	
-	fd = open(NEWINDEX, O_RDONLY);
-	flock(fd, LOCK_EX);
-	while(read(fd, &mq, sizeof(mq)) > 0) {
-	    FILE *fp;
-	    char buf[256];
-	    
-	    snprintf(buf, sizeof(buf), "%s%s", mq.sender, FROM);
-	    if((fp = fopen(mq.filepath, "r"))) {
-		setproctitle("outmail: sending %s", mq.filepath);
-		doSendMail(sock, fp, buf, mq.rcpt, mq.subject);
-		fclose(fp);
-		unlink(mq.filepath);
-	    } else {
-		perror(mq.filepath);
-	    }
-	}
-	flock(fd, LOCK_UN);
-	close(fd);
-	unlink(NEWINDEX);
-	
-	disconnectMailServer(sock);
     }
+	
+    if((sock = connectMailServer()) < 0) {
+	fprintf(stderr, "connect server failed...\n");
+	return;
+    }
+    
+    fd = open(NEWINDEX, O_RDONLY);
+    flock(fd, LOCK_EX);
+    while(read(fd, &mq, sizeof(mq)) > 0) {
+	FILE *fp;
+	char buf[256];
+	
+	snprintf(buf, sizeof(buf), "%s%s", mq.sender, FROM);
+	if((fp = fopen(mq.filepath, "r"))) {
+	    setproctitle("outmail: sending %s", mq.filepath);
+	    doSendMail(sock, fp, buf, mq.rcpt, mq.subject);
+	    fclose(fp);
+	    unlink(mq.filepath);
+	} else {
+	    perror(mq.filepath);
+	}
+    }
+    flock(fd, LOCK_UN);
+    close(fd);
+    unlink(NEWINDEX);
+    
+    disconnectMailServer(sock);
 }
 
 void listQueue() {

@@ -11,7 +11,7 @@ void keeplog(FILE *fin, char *fpath, char *board, char *title, char *owner) {
     fileheader_t fhdr;
     char genbuf[256], buf[512];
     FILE *fout;
-    time_t now;
+    time_t now=time(NULL);
     int bid;
     
     sprintf(genbuf, BBSHOME "/boards/%c/%s", *board, board);
@@ -23,7 +23,7 @@ void keeplog(FILE *fin, char *fpath, char *board, char *title, char *owner) {
     }
 
     fprintf(fout, "作者: %s 看板: %s\n標題: %.44s\n時間: %s\n",
-	owner, board, title, ctime(time(&now)));
+	owner, board, title, ctime(&now));
 
     while(fgets(buf, 512, fin))
 	fputs(buf, fout);

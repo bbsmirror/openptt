@@ -446,7 +446,9 @@ static int playground();
 
 /* Ptt Play menu */
 static commands_t playlist[] = {
+#if HAVE_JCEE
     {m_jcee, PERM_LOGINOK,   "JJCEE        【 大學聯考查榜系統 】"},
+#endif
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
     {x_history, 0,           "HHistory     【 我們的成長 】"},
     {x_weather,0 ,           "WWeather     【 氣象預報 】"},

@@ -36,8 +36,7 @@ SRCS=	admin.c announce.c args.c bbcall.c bbs.c board.c cache.c cal.c card.c\
 	tmpjack.c voteboard.c syspost.c var.c descrypt.c toolkit.c passwd.c\
 	calendar.c
 
-.SUFFIXES: .c .o
-.c.o[A:
+.c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
 all: $(PROG)

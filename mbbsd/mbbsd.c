@@ -894,7 +894,8 @@ static void start_client() {
     login_query();		/* Ptt ¥[¤Wlogin time out */
     user_login();
     m_init();
-    
+
+#if FORCE_PROCESS_REGISTER_FORM    
     if (HAS_PERM(PERM_SYSOP) && (nreg = dashs(fn_register)/163) > 100)
     {
     	char cpu_load[30];
@@ -903,7 +904,7 @@ static void start_client() {
 	else
 	    scan_register_form(fn_register, 1, nreg/10);
     }
-    
+#endif
     if(HAVE_PERM(PERM_SYSOP | PERM_BM))
 	b_closepolls();
     if(!(cuser.uflag & COLOR_FLAG))

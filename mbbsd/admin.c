@@ -584,7 +584,7 @@ int m_newbrd(int recover) {
     if(recover) {
 	struct stat sb;
 	
-	if(stat(genbuf, &sb) == 0 && (sb.st_mode & S_IFDIR)) {
+	if(stat(genbuf, &sb) == -1 || !(sb.st_mode & S_IFDIR)) {
 	    outs(err_bid);
 	    pressanykey();
 	    return -1;

@@ -1,5 +1,0 @@
-#!/bin/sh
-# $Id$
-#
-%BBSHOME%/bin/post Record "上半個月點歌排行榜" "[Ptt流行網]" %BBSHOME%/etc/topsong
-mv %BBSHOME%/ussong %BBSHOME%/tmp

@@ -14,11 +14,11 @@ extern int b_lines;             /* Screen bottom line number: t_lines-1 */
 extern int p_lines;             /* a Page of Screen line numbers: tlines-4 */
 extern int showansi;
 
-extern char clearbuf[];
-extern char cleolbuf[];
-extern char scrollrev[];
-extern char strtstandout[];
-extern char endstandout[];
+extern char *clearbuf;
+extern char *cleolbuf;
+extern char *scrollrev;
+extern char *strtstandout;
+extern char *endstandout;
 extern int clearbuflen;
 extern int cleolbuflen;
 extern int scrollrevlen;

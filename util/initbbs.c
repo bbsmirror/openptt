@@ -112,7 +112,7 @@ static void initBoards() {
 	strcpy(b.brdname, "Record");
 	strcpy(b.title, "嘰哩 ◎我們的成果");
 	b.brdattr = BRD_NOTRAN | BRD_POSTMASK;
-	b.level = PERM_SYSOP;
+	b.level = 0;
 	b.uid = 8;
 	b.gid = 4;
 	newboard(fp, &b);
@@ -133,6 +133,23 @@ static void initBoards() {
 	b.gid = 4;
 	newboard(fp, &b);
 	
+	strcpy(b.brdname, "EditExp");
+	strcpy(b.title, "嘰哩 ◎範本精靈投稿區");
+	b.brdattr = BRD_NOTRAN;
+	b.level = 0;
+	b.uid = 11;
+	b.gid = 4;
+	newboard(fp, &b);
+	
+	fclose(fp);
+    }
+}
+
+static void initHistory() {
+    FILE *fp = fopen("etc/history.data", "w");
+    
+    if(fp) {
+	fprintf(fp, "0 0 0 0");
 	fclose(fp);
     }
 }
@@ -154,6 +171,7 @@ int main() {
     initHome();
     initPasswds();
     initBoards();
+    initHistory();
     
     return 0;
 }

@@ -531,7 +531,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
     
     if(flag == 3 && uin->msgcount) {
 	/* 不懂 */
-	uin->destuip = (currutmp - &utmpshm->uinfo[0]) / sizeof(userinfo_t);
+	uin->destuip = currutmp - &utmpshm->uinfo[0];
 	uin->sig = 2;
 	kill(uin->pid, SIGUSR1);
     } else if(flag != 2 &&
@@ -1082,7 +1082,7 @@ static void my_talk(userinfo_t * uin) {
 	currutmp->sockaddr = server.sin_port;
 	currutmp->destuid = uin->uid;
 	setutmpmode(PAGE);
-	uin->destuip = (currutmp - &utmpshm->uinfo[0]) / sizeof(userinfo_t);
+	uin->destuip = currutmp - &utmpshm->uinfo[0];
 	kill(pid, SIGUSR1);
 	clear();
 	prints("正呼叫 %s.....\n鍵入 Ctrl-D 中止....", uin->userid);
@@ -1096,7 +1096,7 @@ static void my_talk(userinfo_t * uin) {
 	    {
 		ch = uin->mode;
 		if (!ch && uin->chatid[0] == 1 &&
-		    uin->destuip == (currutmp - &utmpshm->uinfo[0]) / sizeof(userinfo_t))
+		    uin->destuip == currutmp - &utmpshm->uinfo[0])
 		{
 		    bell();
 		    outmsg("對方回應中...");
@@ -1125,7 +1125,7 @@ static void my_talk(userinfo_t * uin) {
 		    outs("再");
 		    bell();
 
-		    uin->destuip = (currutmp - &utmpshm->uinfo[0]) / sizeof(userinfo_t);
+		    uin->destuip = currutmp - &utmpshm->uinfo[0];
 		    if (kill(pid, SIGUSR1) == -1)
 		    {
 #ifdef linux
@@ -2348,7 +2348,7 @@ void talkreply() {
 	    strcpy(genbuf, "不告訴你咧 !! ^o^");
 	write(a, genbuf, 60);
     }
-    uip->destuip = (currutmp - &utmpshm->uinfo[0]) / sizeof(userinfo_t);
+    uip->destuip = currutmp - &utmpshm->uinfo[0];
     if (buf[0] == 'y')
 	switch (sig)
 	{

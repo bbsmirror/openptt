@@ -445,8 +445,8 @@ static int do_general() {
 #else
     owner = cuser.userid;
 #endif
-    
-    aborted = (aborted>200) ? 100: aborted/2 ;  /* ¿ú */
+    /* ¿ú */
+    aborted = (aborted > MAX_POSTMONEY * 2) ? MAX_POSTMONEY : aborted / 2;
     postfile.money = aborted;
     strcpy(postfile.owner, owner);
     strcpy(postfile.title, save_title);

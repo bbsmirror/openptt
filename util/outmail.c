@@ -124,7 +124,7 @@ void sendMail() {
 	    char buf[256];
 	    
 	    snprintf(buf, sizeof(buf), "%s%s", mq.sender, FROM);
-	    if((fp = fopen(mq.filepath, "r")) >= 0) {
+	    if((fp = fopen(mq.filepath, "r"))) {
 		doSendMail(sock, fp, buf, mq.rcpt, mq.subject);
 		fclose(fp);
 		unlink(mq.filepath);
@@ -168,6 +168,8 @@ void usage() {
 int main(int argc, char **argv) {
     int ch;
     
+    if(chdir(BBSHOME))
+	return 1;
     while((ch = getopt(argc, argv, "qh")) != -1) {
 	switch(ch) {
 	case 'q':

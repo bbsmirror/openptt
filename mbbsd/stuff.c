@@ -25,7 +25,7 @@ extern userec_t cuser;
 /* set file path for boards/user home                    */
 /* ----------------------------------------------------- */
 static char *str_home_file = "home/%c/%s/%s";
-static char *str_board_file = "boards/%c/%s/%s";
+static char *str_board_file = "boards/%s/%s";
 
 #define STR_DOTDIR  ".DIR"
 static char *str_dotdir = STR_DOTDIR;
@@ -51,7 +51,7 @@ void setuserfile(char *buf, char *fname) {
 }
 
 void setapath(char *buf, char *boardname) {
-    sprintf(buf, "man/boards/%c/%s", *boardname, boardname);
+    sprintf(buf, "man/boards/%s", boardname);
 }
 
 void setadir(char *buf, char *path) {
@@ -59,17 +59,17 @@ void setadir(char *buf, char *path) {
 }
 
 void setbpath(char *buf, char *boardname) {
-    sprintf(buf, "boards/%c/%s", *boardname, boardname);
+    sprintf(buf, "boards/%s", boardname);
 }
 
 void setbdir(char *buf, char *boardname) {
-    sprintf(buf, str_board_file, *boardname, boardname,
+    sprintf(buf, str_board_file, boardname,
 	    currmode & MODE_ETC ? ".ETC" :
 	    (currmode & MODE_DIGEST ? fn_mandex : str_dotdir));
 }
 
 void setbfile(char *buf, char *boardname, char *fname) {
-    sprintf(buf, str_board_file, *boardname, boardname, fname);
+    sprintf(buf, str_board_file, boardname, fname);
 }
 
 void setdirpath(char *buf, char *direct, char *fname) {

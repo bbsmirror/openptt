@@ -813,11 +813,11 @@ static void a_newitem(menu_t *pm, int mode) {
 	for(d = 0; d <= 3; d++) {
 	    switch(d) {
 	    case 0:
-		sprintf(lpath, "%s/man/boards/%c/%s/%s",
-			BBSHOME, *currboard, currboard , buf);
+		sprintf(lpath, "%s/man/boards/%s/%s",
+			BBSHOME, currboard , buf);
 		break;
 	    case 1:
-		sprintf(lpath, "%s/man/boards/%c/%s", BBSHOME, *buf, buf);
+		sprintf(lpath, "%s/man/boards/%s", BBSHOME, buf);
 		break;
 	    case 2:
 		sprintf(lpath, "%s/%s", BBSHOME, buf);

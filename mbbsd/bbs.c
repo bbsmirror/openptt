@@ -957,7 +957,7 @@ static int post_tag(int ent, fileheader_t *fhdr, char *direct) {
 	setbdir(genbuf, currboard);
 	now = getindex(genbuf, fhdr->filename, sizeof(fileheader_t));
 	substitute_record(genbuf, fhdr, sizeof(*fhdr), now);
-	sprintf(genbuf, "boards/%c/%s/SR.%s", *currboard, currboard, cuser.userid);
+	sprintf(genbuf, "boards/%s/SR.%s", currboard, cuser.userid);
 	substitute_record(genbuf, fhdr, sizeof(*fhdr), ent);
 	return POS_NEXT;
     }

@@ -277,10 +277,10 @@ static void b_result_one(boardheader_t *fh, int ind) {
 	b_suckinfile(frp, b_newresults);
 	fclose(frp);
     }
-    sprintf(inbuf, "boards/%c/%s", *bname, bname);
+    sprintf(inbuf, "boards/%s", bname);
     vote_report(bname, b_report, inbuf);
     if(!belong("etc/NoStatBoards", bname)) {
-	strcpy(inbuf, "boards/R/Record");
+	strcpy(inbuf, "boards/Record");
 	vote_report(bname, b_report, inbuf);
     }
     unlink(b_report);

@@ -489,7 +489,7 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	passwd_update(unum, &x);
 	now = time(0);
 	if(money_change) {
-	    strcpy(genbuf, "boards/S/Security");
+	    strcpy(genbuf, "boards/Security");
 	    stampfile(genbuf, &fhdr);	
 	    if(!(fp = fopen(genbuf,"w")))
 		return;
@@ -512,7 +512,7 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    sprintf(fhdr.title, "[公安報告] 站長%s修改%s錢報告", cuser.userid,
 		    x.userid);
 	    strcpy(fhdr.owner, "[系統安全局]");
-	    append_record("boards/S/Security/.DIR", &fhdr, sizeof(fhdr));
+	    append_record("boards/Security/.DIR", &fhdr, sizeof(fhdr));
 	}
     }
 }

@@ -264,9 +264,9 @@ int delete_files(char* dirname, int (*filecheck)(), int record) {
     char genbuf[256];
     char deleted[256];
     fileheader_t delfh;
-    char deletedDIR[] = "boards/d/deleted/.DIR";
+    char deletedDIR[] = "boards/deleted/.DIR";
     
-    strcpy(deleted, "boards/d/deleted");
+    strcpy(deleted, "boards/deleted");
   
     if(!(fp = fopen(dirname, "r")))
 	return ans;

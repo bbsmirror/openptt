@@ -385,9 +385,6 @@ static commands_t userlist[] = {
 #endif
     {u_editplan, PERM_LOGINOK,      "QQueryEdit     編輯名片檔"},
     {u_editsig, PERM_LOGINOK,       "SSignature     編輯簽名檔"},
-    {u_switchproverb, PERM_LOGINOK, "PProverbMode   切換座右銘 "
-     "[\033[33m%s\033[m]"},
-    {u_editproverb, PERM_LOGINOK,   "RRegProverb    編輯自定座右銘"},
     {u_cloak, PERM_CLOAK,           "CCloak         隱身術"},
     {u_register, PERM_BASIC,        "RRegister      填寫《註冊申請單》"},
     {u_list, PERM_BASIC,            "UUsers         列出註冊名單"},

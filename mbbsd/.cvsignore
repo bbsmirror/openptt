@@ -20,7 +20,6 @@ gomo.o
 gomo1.o
 io.o
 kaede.o
-lovepaper.o
 mail.o
 mbbsd.o
 menu.o
@@ -36,7 +35,6 @@ stuff.o
 syspost.o
 talk.o
 term.o
-tmpjack.o
 toolkit.o
 topsong.o
 user.o

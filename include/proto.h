@@ -196,9 +196,6 @@ int Link(char* src, char* dst);
 char *Ptt_prints(char *str, int mode);
 char *my_ctime(const time_t *t);
 
-/* lovepaper */
-int x_love();
-
 /* mail */
 int mail_muser(userec_t muser, char *title, char *filename);
 int mail_id(char* id, char *title, char *filename, char *owner);
@@ -314,7 +311,6 @@ void initscr();
 void Jaky_outs(char *str, int line);
 
 /* stuff */
-void setcalfile(char *buf, char *userid);
 void stand_title(char *title);
 void pressanykey();
 void trim(char *buf);
@@ -381,11 +377,6 @@ int t_talk();
 int t_display();
 int my_query(char *uident);
 
-/* tmpjack */
-int reg_barbq();
-int p_ticket_main();
-int j_ticket_main();
-
 /* term */
 void init_tty();
 int term_init();
@@ -400,7 +391,6 @@ void sortsong();
 int topsong();
 
 /* user */
-int u_editcalendar();
 void user_display(userec_t *u, int real);
 void uinfo_query(userec_t *u, int real, int unum);
 int showsignature(char *fname);
@@ -461,8 +451,5 @@ int passwd_query(int num, userec_t *buf);
 int passwd_apply(int (*fptr)(userec_t *));
 void passwd_lock();
 void passwd_unlock();
-
-/* calendar */
-int calendar();
 
 #endif

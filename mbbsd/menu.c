@@ -320,7 +320,6 @@ static commands_t maillist[] = {
     {m_new, PERM_READMAIL,      "RNew           閱\讀新進郵件"},
     {m_read, PERM_READMAIL,     "RRead          多功\能讀信選單"},
     {m_send, PERM_BASIC,        "RSend          站內寄信"},
-    {x_love, PERM_LOGINOK,      "PPaper         \033[1;32m情書產生器\033[m "},
     {mail_list, PERM_BASIC,     "RMail List     群組寄信"},
     {setforward, PERM_LOGINOK,"FForward       \033[32m設定信箱自動轉寄\033[m"},
     {m_sysop, 0,                "YYes, sir!     諂媚站長"},
@@ -370,8 +369,6 @@ static commands_t namelist[] = {
 /* User menu */
 static commands_t userlist[] = {
     {u_info, PERM_LOGINOK,          "IInfo          設定個人資料與密碼"},
-    {calendar, PERM_LOGINOK,          "CCalendar      個人行事曆"},
-    {u_editcalendar, PERM_LOGINOK,    "CCalendarEdit  編輯個人行事曆"},
     {u_loginview, PERM_LOGINOK,     "LLogin View    選擇進站畫面"},
     {u_ansi, 0, "AANSI          切換 ANSI \033[36m彩\033[35m色\033[37m/"
      "\033[30;47m黑\033[1;37m白\033[m模示"},

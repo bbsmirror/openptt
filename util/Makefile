@@ -2,7 +2,7 @@ DEPPROGS=	bbsmail BM_money post account birth deluserfile expire\
 		mandex horoscope openvice parse_news openticket bmda topusr\
 		yearsold
 NORPROGS=	uhash_loader poststat showboard inndBM\
-		antispam countalldice webgrep
+		antispam countalldice webgrep bbsrf
 SHLPROGS=	BM_money.sh backpasswd.sh mailog.sh opendice.sh openticket.sh\
 		stock.sh topsong.sh weather.sh
 PERLPROGS=	stock.perl weather.perl

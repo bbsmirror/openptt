@@ -117,25 +117,6 @@ void mail_redenvelop(char* from, char* to, int money, char mode);
 /* chat */
 int t_chat();
 
-/* chc_draw */
-void chc_drawline(board_t board, int line);
-void chc_movecur(int r, int c);
-void chc_redraw(board_t board);
-
-/* chc_net */
-void chc_sendmove(int s);
-int chc_recvmove(int s);
-
-/* chc_play */
-void chc(int s);
-
-/* chc_rule */
-void chc_movechess(board_t board);
-int chc_canmove(board_t board, rc_t from, rc_t to);
-int chc_iskfk(board_t board);
-int chc_ischeck(board_t board, int turn);
-void chc_init_board(board_t board);
-
 /* chicken */
 int show_file(char *filename, int y, int lines, int mode);
 void ch_buyitem(int money, char *picture, int *item);
@@ -145,9 +126,6 @@ void time_diff(chicken_t *thechicken);
 int isdeadth(chicken_t *thechicken);
 void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken);
 int reload_chicken();
-
-/* dark */
-int main_dark(int fd,userinfo_t *uin);
 
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
@@ -164,13 +142,6 @@ int t_override();
 int t_reject();
 void friend_add(char *uident, int type);
 void friend_delete(char *uident, int type);
-
-/* gomo */
-int gomoku(int fd);
-
-/* gomo1 */
-int getstyle(int x, int y, int color, int limit);
-int chkwin(int style, int limit);
 
 /* kaede */
 int Rename(char* src, char* dst);

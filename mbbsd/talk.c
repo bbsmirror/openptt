@@ -1028,31 +1028,13 @@ static void my_talk(userinfo_t * uin) {
     else
     {
 	showplans(uin->userid);
-	getdata(2, 0, "要和他(她) (T)談天(F)下五子棋(P)鬥寵物"
-		"(C)下象棋(D)下暗棋(N)沒事找錯人了?[N] ", genbuf, 4, LCECHO);
+	getdata(2, 0, "要和他(她) (T)談天(P)鬥寵物(N)沒事找錯人了?[N] ", genbuf, 4, LCECHO);
 	switch (*genbuf)
 	{
 	case 'y':
 	case 't':
 	    MPROTECT_UTMP_RW;
 	    uin->sig = SIG_TALK;
-	    MPROTECT_UTMP_R;
-	    break;
-	case 'f':
-	    lockreturn(M_FIVE, LOCK_THIS);
-	    MPROTECT_UTMP_RW;
-	    uin->sig = SIG_GOMO;
-	    MPROTECT_UTMP_R;
-	    break;
-	case 'c':
-	    lockreturn(CHC, LOCK_THIS);
-	    MPROTECT_UTMP_RW;
-	    uin->sig = SIG_CHC;
-	    MPROTECT_UTMP_R;
-	    break;
-	case 'd':
-	    MPROTECT_UTMP_RW;
-	    uin->sig = SIG_DARK;
 	    MPROTECT_UTMP_R;
 	    break;
 	case 'p':
@@ -1216,17 +1198,8 @@ static void my_talk(userinfo_t * uin) {
 	    /* gomo */
 	    switch (uin->sig)
 	    {
-	    case SIG_DARK:
-		main_dark(msgsock, uin);
-		break;
 	    case SIG_PK:
 		chickenpk(msgsock);
-		break;
-	    case SIG_GOMO:
-		gomoku(msgsock);
-		break;
-	    case SIG_CHC:
-		chc(msgsock);
 		break;
 	    case SIG_TALK:
 	    default:
@@ -2432,17 +2405,8 @@ void talkreply() {
     if (buf[0] == 'y')
 	switch (sig)
 	{
-	case SIG_DARK:
-	    main_dark(a, uip);
-	    break;
 	case SIG_PK:
 	    chickenpk(a);
-	    break;
-	case SIG_GOMO:
-	    gomoku(a);
-	    break;
-	case SIG_CHC:
-	    chc(a);
 	    break;
 	case SIG_TALK:
 	default:

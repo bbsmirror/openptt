@@ -324,7 +324,6 @@ static commands_t maillist[] = {
     {m_new, PERM_READMAIL,      "RNew           閱\讀新進郵件"},
     {m_read, PERM_READMAIL,     "RRead          多功\能讀信選單"},
     {m_send, PERM_BASIC,        "RSend          站內寄信"},
-    {x_love, PERM_LOGINOK,      "PPaper         \033[1;32m情書產生器\033[m "},
     {mail_list, PERM_BASIC,     "RMail List     群組寄信"},
     {setforward, PERM_LOGINOK,"FForward       \033[32m設定信箱自動轉寄\033[m"},
     {m_sysop, 0,                "YYes, sir!     諂媚站長"},

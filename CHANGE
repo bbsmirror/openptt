@@ -2,6 +2,7 @@ o 修正 Select 看板的 bug
 o 新增 Reaper, 刪除過期帳號
 o 新增 chickens 到 sample 中
 o 新增 initbbs 的功能: 初始化動態看板, 範本精靈
+o 新增 FAQ
 
 --------------------------------------------------
 Version 0.9.7	2000/08/31

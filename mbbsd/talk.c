@@ -815,7 +815,7 @@ static void do_talk_char(talkwin_t * twin, int ch) {
 	break;
     }
     trim(buf);
-    if (*buf)
+    if(*buf && flog)
 	fprintf(flog, "%s%s: %s%s\n",
 		(twin->eline == b_lines - 1) ? "\033[1;35m" : "",
 		(twin->eline == b_lines - 1) ?

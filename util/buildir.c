@@ -18,7 +18,9 @@ int dirselect(struct dirent *dir) {
 
 int time_sort(const void *a, const void *b)
 {
-  return atoi((char*)a+2)-atoi((char*)b+2);
+  struct dirent *aa=*(struct dirent**)a;
+  struct dirent *bb=*(struct dirent**)b;
+  return atoi(aa->d_name+2)-atoi(bb->d_name+2);
 }
 
 int main(int argc, char **argv) {

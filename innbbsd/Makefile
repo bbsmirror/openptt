@@ -50,9 +50,9 @@ mkhistory: $(HOBJS)
 innbbsd: $(OBJS)
 	$(CC) $(LDFLAGS) -o innbbsd $(OBJS)
 
-install: $(EXES)
+install: $(TARGET)
 	install -d $(BBSHOME)/innd/
-	install -c -m 755 $(EXES) $(BBSHOME)/innd/
+	install -c -m 755 $(TARGET) $(BBSHOME)/innd/
 
 depend:
 	env MKDEP_CPP_OPTS=-MM mkdep $(CFLAGS) $(SRCS)

@@ -1,4 +1,6 @@
 * 新增 util/merge_passwd
+* 新增 util/merge_board
+* 修復 load fromcache 超過 300 行會 segfault 的 bug
 
 --------------------------------------------------
 Version 1.0.1	2001/04/26

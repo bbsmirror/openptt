@@ -2,34 +2,6 @@
 #ifndef INCLUDE_STRUCT_H
 #define INCLUDE_STRUCT_H
 
-/* 小雞的資料 */
-typedef struct chicken_t {
-    char name[20];
-    char type;              /* 物種 */
-    unsigned char tech[16]; /* 技能 */
-    time_t birthday;        /* 生日 */
-    time_t lastvisit;       /* 上次照顧時間 */
-    int oo;                 /* 補品 */
-    int food;               /* 食物 */
-    int medicine;           /* 藥品 */
-    int weight;             /* 體重 */
-    int clean;              /* 乾淨 */
-    int run;                /* 敏捷度 */
-    int attack;             /* 攻擊力 */
-    int book;               /* 知識 */
-    int happy;              /* 快樂 */
-    int satis;              /* 滿意度 */
-    int temperament;        /* 氣質 */
-    int tiredstrong;        /* 疲勞度 */
-    int sick;               /* 病氣指數 */
-    int hp;                 /* 血量 */
-    int hp_max;             /* 滿血量 */
-    int mm;                 /* 法力 */
-    int mm_max;             /* 滿法力 */
-    time_t cbirth;          /* 實際計算用的生日 */
-    int pad[2];             /* 留著以後用 */
-} chicken_t;
-
 #define IDLEN      12             /* Length of bid/uid */
 #define PASSLEN    14             /* Length of encrypted passwd field */
 #define REGLEN     38             /* Length of registration data */
@@ -46,7 +18,6 @@ typedef struct userec_t {
     time_t firstlogin;
     time_t lastlogin;
     char lasthost[16];
-    signed long money;
     char remoteuser[3];           /* 保留 目前沒用到的 */
     char proverb;
     char email[50];
@@ -59,12 +30,8 @@ typedef struct userec_t {
     unsigned char state;
     unsigned char pager;
     unsigned char invisible;
-    unsigned int  exmailbox;
-    chicken_t mychicken;
-    time_t lastsong;
     unsigned int  loginview;
     unsigned char channel;        /* 動態看板 */
-    unsigned short vl_count;      /* ViolateLaw counter */
     char pad[107];
 } userec_t;
 /* these are flags in userec_t.uflag */
@@ -115,7 +82,6 @@ typedef struct fileheader_t {
     char owner[IDLEN + 2];        /* uid[.] */
     char date[6];                 /* [02/02] or space(5) */
     char title[TTLEN + 1];
-    unsigned int  money;
     unsigned char filemode;       /* must be last field @ boards.c */
 } fileheader_t;
 
@@ -194,7 +160,6 @@ typedef struct userinfo_t {
     char realname[20];
     char username[24];
     char from[27];                /* machine name the user called in from */
-    int from_alias;
     char birth;                   /* 是否是生日 Ptt*/
     char tty[11];                 /* tty port */
     int friend[MAX_FRIEND];
@@ -273,17 +238,6 @@ struct pttcache_t {
     time_t touchtime;
     int busystate;
 };
-
-typedef struct fromcache_t {
-    char domain[MAX_FROM][50];
-    char replace[MAX_FROM][50];
-    int top;
-    int max_user;
-    time_t max_time;
-    time_t uptime;
-    time_t touchtime;
-    int busystate;
-} fromcache_t;
 
 typedef struct {
     unsigned char oldlen;                /* previous line length */

@@ -272,29 +272,6 @@ static int thread(keeploc_t *locmem, int stype) {
 /* ------------------ */
 /* 檔案傳輸工具副程式 */
 /* ------------------ */
-void z_download(char *fpath) {
-    char cmd[100] = "/usr/bin/sz -a ";
-    char pname[50];
-    char fname[13];
-    int i;
-    
-    getdata(b_lines - 1, 0, "使用 Z-Modem 下傳檔名:", fname, 9, LCECHO);
-    for(i = 0; i < 8; i++)
-	if(!(isalnum(fname[i]) || fname[i] == '-' || fname[i] == '_')) {
-	    if(i)
-		break;
-	    else
-		return;
-	}
-    fname[i] = 0;
-    strcat(fname, ".bbs");
-    setuserfile(pname, fname);
-    unlink(pname);
-    Link(fpath, pname);
-    strcat(cmd, pname);
-    system(cmd);
-    unlink(pname);
-}
 
 #ifdef INTERNET_EMAIL
 static void mail_forward(fileheader_t *fhdr, char *direct, int mode) {
@@ -550,16 +527,6 @@ static int i_read_key(onekey_t *rcmdlist, keeploc_t *locmem, int ch) {
 		user_display(&muser, 1);
 		uinfo_query(&muser, 1, id);
 	    }
-	    return FULLUPDATE;
-	}
-	break;
-    case 'Z':
-	if(HAS_PERM(PERM_FORWARD)) {
-	    char fname[80];
-
-	    setdirpath(fname, currdirect,
-		       (char *)&headers[locmem->crs_ln - locmem->top_ln]);
-	    z_download(fname);
 	    return FULLUPDATE;
 	}
 	break;

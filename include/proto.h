@@ -223,7 +223,6 @@ int cpuload(char *str);
 double swapused(long *total, long *used);
 
 /* read */
-void z_download(char *fpath);
 void i_read(int cmdmode, char *direct, void (*dotitle)(), void (*doentry)(), onekey_t *rcmdlist, int *num_record);
 void fixkeep(char *s, int first);
 keeploc_t *getkeep(char *s, int def_topline, int def_cursline);

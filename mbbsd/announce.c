@@ -1490,13 +1490,9 @@ int a_menu(char *maintitle, char *path, int lastlevel) {
 
 	case 'F':
 	case 'U':
-	case 'Z':
 	    sprintf(fname, "%s/%s", path, me.header[me.now-me.page].filename);
 	    if(me.now < me.num && HAS_PERM(PERM_BASIC) && dashf(fname)) {
-		if(ch == 'Z')
-		    z_download(fname);
-		else
-		    a_forward(path, &me.header[me.now-me.page], ch /*== 'U'*/);
+		a_forward(path, &me.header[me.now-me.page], ch /*== 'U'*/);
 		/*By CharlieL*/
 	    } else
 		outmsg("無法轉寄此項目");

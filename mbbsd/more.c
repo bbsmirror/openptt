@@ -505,6 +505,7 @@ int more(char *fpath, int promptend) {
 			pageno--;
 		    lino = line = 0;
 		    break;
+#if 0
 		case Ctrl('I'):
 		    if(!pagecount)
 			break;
@@ -516,6 +517,7 @@ int more(char *fpath, int promptend) {
 			pageno--;
 		    lino = line = 0;
 		    break;
+#endif
 		case KEY_UP:
 		    line = -1;
 		    break;

@@ -183,7 +183,6 @@ void u_exit(char *mode) {
 	xuser.numposts = cuser.numposts;
 	if(!diff && cuser.numlogins)
 	    xuser.numlogins = --cuser.numlogins; /* Leeym 上站停留時間限制式 */
-	reload_money();
 	passwd_update(usernum, &xuser);
     }
     log_usies(mode, NULL);
@@ -593,30 +592,6 @@ void del_distinct(char *fname, char *line) {
     }
 }
 
-#ifdef WHERE
-static int where(char *from) {
-    register int i = 0, count = 0, j;
-    
-    for (j = 0; j < fcache->top; j++) {
-	char *token = strtok(fcache->domain[j], "&");
-	
-	i = 0;
-	count = 0;
-	while(token) {
-	    if(strstr(from, token))
-		count++;
-	    token = strtok(NULL, "&");
-	    i++;
-	}
-	if(i == count)
-	    break;
-    }
-    if(i != count)
-	return 0;
-    return j;
-}
-#endif
-
 static void check_BM() {
     int i;
     boardheader_t *bhdr;
@@ -659,11 +634,6 @@ static void setup_utmp(int mode) {
     uinfo.pager = cuser.pager % 5;
     
     uinfo.brc_id = 0;
-#ifdef WHERE
-    uinfo.from_alias = where(fromhost);
-#else
-    uinfo.from_alias = 0;
-#endif
     setuserfile(buf, "remoteuser");
     
     strcpy(remotebuf, getenv("RFC931"));
@@ -688,38 +658,12 @@ static void user_login() {
     char genbuf[200];
     struct tm *ptime, *tmp;
     time_t now;
-    int a;
-    /*** Heat:廣告詞
-	 char *ADV[17] = {
-	 "記得唷!! 5/12在台大二活地下室見~~~",
-	 "你知道Ptt之夜是什麼嗎? 5/12號就要上演耶 快去問吧!",
-	 "5/12 Ptt之夜即將引爆 能不去嗎? 在台大二活地下室咩",
-	 "不來就落伍了 啥? 就Ptt之夜啊 很棒的晚會唷 時間:5/12",
-	 "差點忘了提醒你 5/12我們有約 就台大二活地下室咩!!",
-	 "Ptt是啥 想知嗎? 5/12在台大二活地下室告訴你唷",
-	 "來來來....5/12快到台大二活地下室去拿獎品吧~~",
-	 "去去去...到台大二活地下室去 就5/12麻 有粉多獎品耶",
-	 "喂喂喂 怎還楞在這!!快呼朋引伴大鬧ptt",
-	 "Ptt最佳豬腳 換你幹幹看 5/12來吧....*^_^*",
-	 "幹什麼幹什麼?? 你怎麼不曉得啥是Ptt之夜..老土唷",
-	 "累了嗎? 讓我們來為你來一段精采表演吧.. 5/12 Ptt之夜",
-	 "世紀末最屁力的晚會 就在台大二活地下室 5/12不見不散 gogo",
-	 "到底誰比較帥(美) 來比比吧 5/12Ptt之夜 一較高下",       
-	 "台大二活地下室 5/12 聽說會有一場很棒的晚會唷 Ptt之夜",
-	 "台大二活地下室 5/12 你能不來嗎?粉多網友等著你耶",
-	 "5/12 台大二活地下室 是各約網友見面的好地方呢",
-	 }; 
-	 char *ADV[] = {
-	 "7/17 @LIVE 亂彈, 何欣穗 的 入場卷要送給 ptt 的愛用者!",
-	 "欲知詳情請看 PttAct 板!!",
-	 }; ***/
 
     log_usies("ENTER", getenv("RFC931") /* fromhost */ );
     setproctitle("%s: %s", margs, cuser.userid);
     
     /* resolve all cache */
     resolve_garbage();	/* get ptt cache */
-    resolve_fcache();
     resolve_boards();
     
     /* 初始化 uinfo、flag、mode */
@@ -733,13 +677,6 @@ static void user_login() {
     ptime = localtime(&now);
     tmp = localtime(&cuser.lastlogin);
     
-    if((a = utmpshm->number) > fcache->max_user) {
-	sem_init(FROMSEM_KEY, &fcache_semid);
-	sem_lock(SEM_ENTER, fcache_semid);
-	fcache->max_user = a;
-	fcache->max_time = now;
-	sem_lock(SEM_LEAVE, fcache_semid);
-    }
 #ifdef INITIAL_SETUP
     if(!getbnum(DEFAULT_BOARD)) {
 	strcpy(currboard, "尚未選定");
@@ -817,7 +754,6 @@ static void user_login() {
     if(!PERM_HIDE(currutmp))
 	cuser.lastlogin = login_start_time;
     
-    reload_money();
     passwd_update(usernum, &cuser);
     
     for(i = 0; i < NUMVIEWFILE; i++)
@@ -904,8 +840,6 @@ static void start_client() {
 	    scan_register_form(fn_register, 1, nreg/10);
     }
 #endif
-    if(HAVE_PERM(PERM_SYSOP | PERM_BM))
-	b_closepolls();
     if(!(cuser.uflag & COLOR_FLAG))
 	showansi = 0;
 #ifdef DOTIMEOUT

@@ -193,17 +193,16 @@ static int GenerateCalendar(char **buf, int y, int m, int today, event_t *e) {
     
     d = MonthDay(m, IsLeap(y));
     for(i = 1; i <= d; i++, w = (w + 1) % 7) {
+        attr1[0] = 0;
+        attr2 = "";
+	while(e && e->days == first_day + i - 1) {
+	    sprintf(attr1, "\33[1;%dm", e->color);
+	    attr2 = CALENDAR_COLOR;
+	    e = e->next;
+	}
 	if(today == first_day + i - 1) {
 	    strcpy(attr1, "\33[1;37;42m");
 	    attr2 = CALENDAR_COLOR;
-	} else {
-	    attr1[0] = 0;
-	    attr2 = "";
-	    while(e && e->days == first_day + i - 1) {
-		sprintf(attr1, "\33[1;%dm", e->color);
-		attr2 = CALENDAR_COLOR;
-		e = e->next;
-	    }
 	}
 	p += sprintf(p, "%s%2d%s", attr1, i, attr2);
 	

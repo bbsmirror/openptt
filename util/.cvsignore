@@ -8,7 +8,6 @@ expire
 mandex
 horoscope
 parse_news
-openticket
 bmda
 uhash_loader
 poststat
@@ -18,7 +17,6 @@ yearsold
 cutpasswd
 inndBM
 antispam
-countalldice
 webgrep
 bbsrf
 initbbs
@@ -35,8 +33,6 @@ BM_money.sh
 backpasswd.sh
 cvslog.sh
 mailog.sh
-opendice.sh
-openticket.sh
 stock.sh
 topsong.sh
 upgrade.sh

@@ -25,20 +25,20 @@ LIBCHAT=$(LIBCHAT_$(OSTYPE))
 OBJS=	util_cache.o util_record.o util_passwd.o
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
-	horoscope parse_news openticket topusr yearsold uhash_loader\
-	poststat showboard inndBM antispam countalldice webgrep bbsrf\
+	horoscope parse_news topusr yearsold uhash_loader\
+	poststat showboard inndBM antispam webgrep bbsrf\
 	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
 SRCS=	bbsmail.c BM_money.c post.c account.c birth.c deluserfile.c expire.c\
-	mandex.c horoscope.c parse_news.c openticket.c topusr.c\
+	mandex.c horoscope.c parse_news.c topusr.c\
 	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
-	countalldice.c webgrep.c bbsrf.c initbbs.c outmail.c xchatd.c\
+	webgrep.c bbsrf.c initbbs.c outmail.c xchatd.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
 	merge_board.c
 
-SCRIPTS=BM_money.sh backpasswd.sh cvslog.sh mailog.sh opendice.sh\
-	openticket.sh stock.sh topsong.sh upgrade.sh weather.sh
+SCRIPTS=BM_money.sh backpasswd.sh cvslog.sh mailog.sh\
+	stock.sh topsong.sh upgrade.sh weather.sh
 
 PROGS=	$(CPROGS) $(SCRIPTS) stock.perl weather.perl
 
@@ -103,9 +103,6 @@ horoscope: horoscope.c $(OBJS)
 
 parse_news: parse_news.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ parse_news.c $(OBJS)
-
-openticket: openticket.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ openticket.c $(OBJS)
 
 topusr: topusr.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ topusr.c $(OBJS)

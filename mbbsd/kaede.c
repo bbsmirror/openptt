@@ -51,9 +51,6 @@ char *Ptt_prints(char *str, int mode) {
                     case 'n':
                         sprintf(q,"%s",cuser.username);
                         break;
-                    case 'm':
-                        sprintf(q,"%ld",cuser.money);
-                        break;
                     default:
                         *q++='\033';
                         *q++='*';

@@ -35,4 +35,4 @@ $(LIB): $(OBJS)
 install: $(LIB)
 
 clean:
-	rm -f $(OBJS) $(LIB)
+	rm -f $(OBJS) $(LIB).a

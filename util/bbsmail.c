@@ -9,10 +9,9 @@
 #include "config.h"
 #include "struct.h"
 #include "util.h"
+#include "common.h"
 
 #define	LOG_FILE	(BBSHOME "/etc/mailog")
-
-char *fn_passwd = BBSHOME "/.PASSWDS";
 
 #ifdef HMM_USE_ANTI_SPAM
 extern char *notitle[], *nofrom[], *nocont[];

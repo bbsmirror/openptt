@@ -9,8 +9,8 @@
 #include "config.h"
 #include "struct.h"
 #include "util.h"
+#include "common.h"
 
-#define DOTPASSWDS "/home/bbs/.PASSWDS"
 #define OUTFILE    "/home/bbs/etc/birth.today"
 
 struct userec_t cuser;
@@ -56,7 +56,7 @@ int main(argc, argv)
     now = time(NULL);		/* back to ancent */
     ptime = localtime(&now);
 
-    fp1 = fopen(DOTPASSWDS, "r");
+    fp1 = fopen(FN_PASSWD, "r");
 
     while ((fread(&cuser, sizeof(cuser), 1, fp1)) > 0)
     {

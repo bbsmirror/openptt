@@ -6,8 +6,7 @@
 #include <sys/types.h>
 #include "config.h"
 #include "struct.h"
-
-#define DOTPASSWDS "/home/bbs/.PASSWDS"
+#include "common.h"
 
 #define MAX_LINE        16
 
@@ -44,9 +43,9 @@ int main()
     now = time(NULL);
     ptime = localtime(&now);
 
-    fp = fopen(DOTPASSWDS, "r");
+    fp = fopen(FN_PASSWD, "r");
     if (!fp)
-	printf("unable to open file %s", DOTPASSWDS);
+	printf("unable to open file %s", FN_PASSWD);
     memset(act, 0, sizeof(act));
     while ((fread(&cuser, sizeof(cuser), 1, fp)) > 0)
     {

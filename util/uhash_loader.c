@@ -12,6 +12,7 @@
 #include <sys/shm.h>
 #include "config.h"
 #include "struct.h"
+#include "common.h"
 
 unsigned string_hash(unsigned char *s);
 void add_to_uhash(int n, char *id);
@@ -66,7 +67,7 @@ void fill_uhash(void)
     for (fd = 0; fd < (1 << UHASH_BITS); fd++)
 	uhash->hash_head[fd] = -1;
 
-    if ((fd = open(".PASSWDS", O_RDONLY)) > 0)
+    if ((fd = open(FN_PASSWD, O_RDONLY)) > 0)
     {
 	struct stat stbuf;
 	caddr_t fimage, mimage;

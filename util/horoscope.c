@@ -10,8 +10,7 @@
 #include "config.h"
 #include "struct.h"
 #include "util.h"
-
-#define DOTPASSWDS "/home/bbs/.PASSWDS"
+#include "common.h"
 
 struct userec_t cuser;
 
@@ -44,7 +43,7 @@ int main() {
     };
 
 
-    fp = fopen(DOTPASSWDS, "r");
+    fp = fopen(FN_PASSWD, "r");
 
     memset(act, 0, sizeof(act));
     while ((fread(&cuser, sizeof(cuser), 1, fp)) > 0)

@@ -7,6 +7,7 @@
 #include "config.h"
 #include "struct.h"
 #include "perm.h"
+#include "common.h"
 
 #define REAL_INFO
 struct manrec
@@ -162,7 +163,7 @@ char **argv;
     if (num == 0)
 	num = 30;
 
-    inf = fopen(BBSHOME "/.PASSWDS", "rb");
+    inf = fopen(FN_PASSWD, "rb");
 
     if (inf == NULL)
     {

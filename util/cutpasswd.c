@@ -4,9 +4,8 @@
 #include <sys/types.h>
 #include "config.h"
 #include "struct.h"
+#include "common.h"
 
-
-#define  PASSWD "/home/bbs/.PASSWDS"
 #define  OUTPASS "PASSWDS.NEW"
 char yn[10] = "";
 int coun = 0, count;
@@ -54,7 +53,7 @@ int main()
 {
     userec_t new;
     userec_t blank;
-    FILE *fp1 = fopen(PASSWD, "r");
+    FILE *fp1 = fopen(FN_PASSWD, "r");
     FILE *fp2 = fopen(OUTPASS, "w");
 
     memset(&blank, 0, sizeof(blank));

@@ -5,7 +5,7 @@
 #define STR_GUEST                 "guest"
 #define DEFAULT_BOARD   str_sysop
 
-#define FN_PASSWD       ".PASSWDS"      /* User records */
+#define FN_PASSWD       BBSHOME "/.PASSWDS"      /* User records */
 #define FN_USSONG       "ussong"        /* 點歌統計 */
 #define FN_POST_NOTE    "post.note"     /* po文章備忘錄 */
 #define FN_APPLICATION  "application"

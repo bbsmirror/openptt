@@ -19,7 +19,6 @@ static char *betname[8] = {"Ptt", "Jaky",  "Action",  "Heat",
 
 #define MAX_DES 7		/* 最大保留獎數 */
 
-#define DOTPASSWDS "/home/bbs/.PASSWDS"
 userec_t xuser;
 
 int getuser(userid)
@@ -28,7 +27,7 @@ char *userid;
     int uid;
     if((uid = searchuser(userid)))
     {
-	get_record(DOTPASSWDS, &xuser, sizeof(xuser), uid);
+	get_record(FN_PASSWD, &xuser, sizeof(xuser), uid);
     }
     return uid;
 }
@@ -40,7 +39,7 @@ int inumoney(char *tuser, int money)
     if((unum = getuser(tuser)))
     {
 	xuser.money += money;
-	substitute_record(DOTPASSWDS, &xuser, sizeof(userec_t), unum);
+	substitute_record(FN_PASSWD, &xuser, sizeof(userec_t), unum);
 	return xuser.money;
     }
     return -1;

@@ -942,8 +942,7 @@ static void telnet_init() {
     
     data = buf;
     
-    to.tv_sec = 1;
-    rset = to.tv_usec = 0;
+    rset = 0;
     FD_SET(0, (fd_set *) & rset);
     oset = rset;
     for(n = 0, cmd = svr; n < 3; n++) {
@@ -952,6 +951,8 @@ static void telnet_init() {
 	write(0, cmd, len);
 	cmd += len;
 	
+	to.tv_sec = 1;
+	to.tv_usec = 0;
 	if(select(1, (fd_set *) & rset, NULL, NULL, &to) > 0)
 	    read(0, data, sizeof(buf));
 	rset = oset;

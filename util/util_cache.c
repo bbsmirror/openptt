@@ -397,15 +397,6 @@ void reload_pttcache() {
 	    ptt->max_history = MAX_HISTORY - 1;
 	if(ptt->max_history <0) ptt->max_history=0;
 
-	fp = fopen("etc/today_is","r");
-	if(fp) {
-	    fgets(ptt->today_is,15,fp);
-	    if((chr = strchr(ptt->today_is,'\n')))
-		*chr = 0;
-	    ptt->today_is[15] = 0;
-	    fclose(fp);
-	}
-     
 	/* 等所有資料更新後再設定 uptime */
 
 	ptt->uptime = ptt->touchtime ;

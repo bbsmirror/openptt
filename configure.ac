@@ -59,6 +59,5 @@ AC_CONFIG_FILES([Makefile
 		 innbbsd/Makefile
 		 sample/Makefile
 		 sample/innd/Makefile
-		 sample/etc/Makefile
-		 sample/etc/chickens/Makefile])
+		 sample/etc/Makefile])
 AC_OUTPUT

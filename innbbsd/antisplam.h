@@ -14,16 +14,6 @@ void str_lower(char *t, char *s)
 }
 
 int
-strcasestr(str, tag)
-  char *str, *tag;              /* tag : lower-case string */
-{
-  char buf[256];
-
-  str_lower(buf, str);
-  return (int) strstr(buf, tag);
-}
-
-int
 bad_subject(char *subject)
 {
    char *badkey[] = {"µL½X","avcd","mp3",NULL};

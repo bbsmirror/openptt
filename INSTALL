@@ -15,19 +15,16 @@
 
 然後切換成 bbsadm
 
-7. mkdir adm bin boards etc home man out tmp
-8. cd home; mkdir a b c ............ z A B C .......... Z
-9. touch .PASSWDS
-10. cp BOARDS.init .BOARDS
-11. tar xvfz <你抓下來的pttsrc的位置>
-12. 修改 pttsrc/include/config.h
-13. cd pttsrc; make install(註1)
+7. 修改 pttsrc/include/config.h
+8. 修改 pttsrc/mbbsd/Makefile
+9. 修改 pttsrc/util/Makefile
+10. cd pttsrc; make install
 
-假如一切都很順立的話,這樣子大概就安裝完了
+假如一切都很順利的話,這樣子大概就安裝完了
 接下來是啟動 bbs 的部份
 
-14. 執行 bin/uhash_loader (註2)
-15. 用 root 執行 bin/mbbsd 23 (註3)
+11. 執行 bin/uhash_loader (註1)
+12. 用 root 執行 bin/mbbsd 23 (註2)
 
 然後 telnet localhost 23 看看
 new一個帳號叫SYSOP,然後logout再login, 這樣子就會擁有站長權限囉~
@@ -35,11 +32,9 @@ new一個帳號叫SYSOP,然後logout再login, 這樣子就會擁有站長權限囉~
 開板,開群組,以及搬動群組的方法會再另外介紹 :)
 
 註:
-1. 在 Linux 下請用 pmake
-
-2. 這個程式是在 initial shared memory 用的, 只有開機後第一次執行, 或是
+1. 這個程式是在 initial shared memory 用的, 只有開機後第一次執行, 或是
    你手動清除 shm 後才需要執行
 
-3.. bin/mbbsd 23 是指定要 bind 23 port, 依照 UNIX 規定, 1024 以下的 port
+2. bin/mbbsd 23 是指定要 bind 23 port, 依照 UNIX 規定, 1024 以下的 port
    須要有 root 權限, 所以如果要 bind 23 port 的話就要用 root 去執行,
    3000 port 則不需要

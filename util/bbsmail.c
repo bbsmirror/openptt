@@ -96,7 +96,7 @@ int mail2bbs(char *userid) {
 	} else if(strncmp(genbuf, "Subject: ", 9) == 0) {
 	    strncpy(title, genbuf + 9, sizeof(title));
 	    title[sizeof(title) - 1] = '\0';
-	} else if(strncmp(genbuf, "Message-ID: ", 12) == 0) {
+	} else if(strncasecmp(genbuf, "Message-ID: ", 12) == 0) {
 	    strncpy(msgid, genbuf + 12, sizeof(msgid));
 	    msgid[sizeof(msgid) - 1] = 0;
 	} else if(genbuf[0] == '\n')

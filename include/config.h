@@ -5,6 +5,30 @@
 #include <syslog.h>
 #include "../pttbbs.conf"
 
+#ifndef BBSNAME
+#error You must sepecify BBSNAME in pttbbs.conf
+#endif
+
+#ifndef MYHOSTNAME
+#error You must set MYHOSTNAME to your hostname in pttbbs.conf
+#endif
+
+#ifndef MYIP
+#error You must set MYIP to your ip address in pttbbs.conf
+#endif
+
+#ifndef BBSUSER
+#error You must set BBSUSER to bbs account in pttbbs.conf
+#endif
+
+#ifndef BBSUID
+#error You must set BBSUID to the user-id of the bbs account in pttbbs.conf
+#endif
+
+#ifndef BBSGID
+#error You must set BBSUID to the group-id of the bbs account in pttbbs.conf
+#endif
+
 #define BBSPROG         BBSHOME "/bin/mbbsd"         /* 主程式 */
 #define BAN_FILE        "BAN"                        /* 關站通告檔 */
 #define LOAD_FILE       "/proc/loadavg"              /* for Linux */
@@ -14,7 +38,7 @@
 #endif
 
 #ifndef MAX_USERS                           /* 最高註冊人數 */
-#define MAX_USERS          (120000)
+#define MAX_USERS          (10000)
 #endif
 
 #ifndef MAX_POST_MONEY                      /* 發表文章稿費的上限 */
@@ -51,6 +75,34 @@
 
 #ifndef SYSLOG_FACILITY
 #define SYSLOG_FACILITY   LOG_LOCAL0
+#endif
+
+#ifndef BRDSHM_KEY
+#define BRDSHM_KEY      1216
+#endif
+
+#ifndef UHASH_KEY
+#define UHASH_KEY       1219
+#endif
+
+#ifndef UTMPSHM_KEY
+#define UTMPSHM_KEY     2219
+#endif
+
+#ifndef PTTSHM_KEY
+#define PTTSHM_KEY      1220
+#endif
+
+#ifndef FROMSHM_KEY
+#define FROMSHM_KEY     1223
+#endif
+
+#ifndef FROMSEM_KEY
+#define FROMSEM_KEY     2003
+#endif
+
+#ifndef PASSWDSEM_KEY
+#define PASSWDSEM_KEY   2010
 #endif
 
 /* 以下還未整理 */
@@ -145,17 +197,6 @@
 #define SEM_RESET      0       /* reset semaphore */
 
 #define MAGIC_KEY       1234    /* 身分認證信函編碼 */
-
-#define BRDSHM_KEY      1216
-#define UHASH_KEY       1219	/* userid->uid hash */
-#define UTMPSHM_KEY     2219
-#define PTTSHM_KEY      1220    /* 動態看版 , 節日 */
-#define FROMSHM_KEY     1223    /* whereis, 最多使用者 */
-
-#define BRDSEM_KEY      2005    /* semaphore key */
-#define PTTSEM_KEY      2000    /* semaphore key */
-#define FROMSEM_KEY     2003    /* semaphore key */
-#define PASSWDSEM_KEY   2010
 
 #define NEW_CHATPORT    3838
 #define CHATPORT        5722

@@ -75,7 +75,6 @@ typedef struct boardheader_t {
 #define BRD_ANONYMOUS         00100         /* 匿名板? */
 #define BRD_DEFAULTANONYMOUS  00200         /* 預設匿名板 */
 #define BRD_BAD		      00400         /* 違法改進中看板 */
-#define BRD_VOTEBOARD         01000	    /* 連署機看板 */
 
 #define TTLEN      64             /* Length of title */
 #define FNLEN      33             /* Length of filename  */

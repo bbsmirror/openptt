@@ -485,10 +485,7 @@ static int do_general() {
 int do_post() {
     boardheader_t *bp;
     bp = getbcache(currbid);
-    if(bp->brdattr & BRD_VOTEBOARD)
-        return do_voteboard();
-    else
-        return do_general();
+    return do_general();
 }
 
 extern int b_lines;
@@ -549,10 +546,7 @@ int invalid_brdname(char *brd) {
 static void do_reply(fileheader_t *fhdr) {
     boardheader_t *bp;
     bp = getbcache(currbid);
-    if (bp->brdattr & BRD_VOTEBOARD)
-        do_voteboardreply(fhdr);
-    else
-        do_generalboardreply(fhdr);
+    do_generalboardreply(fhdr);
 }
 
 static int reply_post(int ent, fileheader_t *fhdr, char *direct) {
@@ -571,9 +565,7 @@ static int edit_post(int ent, fileheader_t *fhdr, char *direct) {
     fileheader_t postfile;
     boardheader_t *bp;
     bp = getbcache(currbid);
-    if (!HAS_PERM(PERM_SYSOP) && (bp->brdattr & BRD_VOTEBOARD))
-	return DONOTHING;
-
+    
     if ((!HAS_PERM(PERM_SYSOP)) && 
         strcmp(fhdr->owner, cuser.userid))
 	return DONOTHING;
@@ -615,9 +607,7 @@ static int cross_post(int ent, fileheader_t *fhdr, char *direct) {
     clrtoeol();
     move(1, 0);
     bp = getbcache(currbid);
-    if (bp->brdattr & BRD_VOTEBOARD)
-	return FULLUPDATE;
-       
+    
     namecomplete("轉錄本文章於看板：", xboard);
     if(*xboard == '\0' || !haspostperm(xboard))
 	return FULLUPDATE;
@@ -1027,7 +1017,6 @@ static int del_post(int ent, fileheader_t *fhdr, char *direct) {
 
     not_owned = strcmp(fhdr->owner, cuser.userid);
     if((!(currmode & MODE_BOARD) && not_owned) ||
-       ((bp->brdattr & BRD_VOTEBOARD) && !HAS_PERM(PERM_SYSOP)) ||
        !strcmp(cuser.userid, STR_GUEST))
 	return DONOTHING;
 

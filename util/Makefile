@@ -1,11 +1,13 @@
+BBSHOME?=$(HOME)
+
 # FreeBSD
 CC=	gcc
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
+CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME=\"$(BBSHOME)\" -I../include
 LIBS=
 
 # Linux
 #CC=gcc
-#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
+#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME=\"$(BBSHOME)\" -I../include
 #LIBS=	-lresolv
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
@@ -17,7 +19,7 @@ PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 all: $(PROGS)
 
 bmda: bmda.c util_cache.c util_record.c util_passwd.c
-	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -I../include -o $@ $@.c util_cache.c util_record.c util_passwd.c $(LIBS)
+	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -DBBSHOME=\"$(BBSHOME)\" -I../include -o $@ $@.c util_cache.c util_record.c util_passwd.c $(LIBS)
 
 bbsmail: bbsmail.c util_cache.c util_record.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_cache.c util_record.c util_passwd.c
@@ -83,7 +85,8 @@ bbsrf: bbsrf.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)
-	install -c -o bbs -g bbs -m 755 $(PROGS) $(HOME)/bin
+	install -d $(BBSHOME)/bin/
+	install -c -m 755 $(PROGS) $(BBSHOME)/bin/
 
 clean:
 	rm -f $(CPROGS)

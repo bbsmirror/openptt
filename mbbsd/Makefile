@@ -1,10 +1,12 @@
+BBSHOME?=$(HOME)
+
 # FreeBSD
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -I../include
+CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME=\"$(BBSHOME)\" -I../include
 LDFLAGS=-pipe -Wall -g -O3
 LIBS=	-lutil -lkvm
 
 # Linux
-#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -I../include
+#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME=\"$(BBSHOME)\" -I../include
 #LDFLAGS=-pipe -Wall -g -O3
 #LIBS=	-lcrypt
 
@@ -30,7 +32,8 @@ $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
 
 install: $(PROG)
-	install -c -o bbs -g bbs -m 755 $(PROG) $(HOME)/bin
+	install -d $(BBSHOME)/bin/
+	install -c -m 755 $(PROG) $(BBSHOME)/bin/
 
 clean:
 	rm -f $(OBJS) $(PROG)

@@ -1,14 +1,18 @@
 BBSHOME?=$(HOME)
 
 # FreeBSD
-CC=	gcc
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME=\"$(BBSHOME)\" -I../include
-LIBS=
+CC_FreeBSD=	gcc
+CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
+LIBS_FreeBSD=
 
 # Linux
-#CC=gcc
-#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME=\"$(BBSHOME)\" -I../include
-#LIBS=	-lresolv
+CC_linux=	gcc
+CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
+LIBS_linux=	-lresolv
+
+CC=	$(CC_$(OSTYPE))
+CFLAGS=	$(CFLAGS_$(OSTYPE))
+LDFLAGS=$(LDFLAGS_$(OSTYPE))
 
 CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\

@@ -1,15 +1,18 @@
 BBSHOME?=$(HOME)
 
 # FreeBSD
-CFLAGS=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME=\"$(BBSHOME)\" -I../include
-LDFLAGS=-pipe -Wall -g -O3
-LIBS=	-lutil -lkvm
+CFLAGS_FreeBSD=	-pipe -Wall -g -O3 -DHAVE_SETPROCTITLE -DBBSHOME='"$(BBSHOME)"' -I../include
+LDFLAGS_FreeBSD=-pipe -Wall -g -O3
+LIBS_FreeBSD=	-lutil -lkvm
 
 # Linux
-#CFLAGS=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME=\"$(BBSHOME)\" -I../include
-#LDFLAGS=-pipe -Wall -g -O3
-#LIBS=	-lcrypt
+CFLAGS_linux=	-pipe -Wall -g -O3 -DHAVE_DES_CRYPT -DBBSHOME='"$(BBSHOME)"' -I../include
+LDFLAGS_linux=	-pipe -Wall -g -O3
+LIBS_linux=	-lcrypt
 
+CFLAGS=	$(CFLAGS_$(OSTYPE))
+LDFLAGS=$(LDFLAGS_$(OSTYPE))
+LIBS=	$(LIBS_$(OSTYPE))
 
 CC=	gcc
 PROG=	mbbsd

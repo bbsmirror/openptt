@@ -2,6 +2,8 @@
 #ifndef __PROTO_H__
 #define __PROTO_H__
 
-int daemon_run(int port);
+#include "struct.h"
+
+int daemon_run(client_t *clt, int port);
 
 #endif

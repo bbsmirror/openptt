@@ -1,46 +1,112 @@
 /* $Id$ */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
 #include <syslog.h>
+#include <unistd.h>
+#include <termios.h>
+#include <utmp.h>
+#include <sys/types.h>
+#include <arpa/telnet.h>
 #include "config.h"
 #include "proto.h"
 
 static int initialize() {
     struct sigaction act;
     
+    close(1);
+    close(2);
     openlog("bbsd", LOG_PID | LOG_NDELAY, SYSLOG_FACILITY);
     
     act.sa_handler = SIG_IGN;
     bzero(&act.sa_mask, sizeof(act.sa_mask));
     act.sa_flags = 0;
     if(sigaction(SIGPIPE, &act, NULL) == -1) {
-	syslog(LOG_ERR, "sigaction: SIGPIPE: %m");
+	syslog(LOG_ERR, "sigaction(): SIGPIPE: %m");
 	return -1;
     }
     
     return 0;
 }
 
-int init_telnet() {
+static int init_telnet(client_t *clt) {
+    char init_cmd[] = {
+	IAC, WILL, TELOPT_ECHO,
+	IAC, WILL, TELOPT_SGA,
+	IAC, DO, TELOPT_BINARY
+    };
+    
+    if(write(clt->fd, init_cmd, sizeof(init_cmd)) == -1) {
+	syslog(LOG_ERR, "write(): %m");
+	return -1;
+    }
     return 0;
 }
 
-int init_tty() {
+static int init_tty(client_t *clt) {
+    struct termios t;
+    
+    if(tcgetattr(clt->fd, &t) == -1) {
+	syslog(LOG_ERR, "tcgetattr(): %m");
+	return -1;
+    }
+    cfmakeraw(&t);
+    if(tcsetattr(clt->fd, TCSANOW, &t) == -1) {
+	syslog(LOG_ERR, "tcsetattr(): %m");
+	return -1;
+    }
     return 0;
+}
+
+static void utmp_remote_host(client_t *clt) {
+    FILE *fp;
+    char *tty;
+    struct utmp u;
+    
+    if((tty = ttyname(clt->fd)) == NULL)
+	strncpy(clt->remote_host, "(not tty)", MAX_HOST_LEN);
+    else {
+	if((fp = fopen(_PATH_UTMP, "r")) == NULL)
+	    strncpy(clt->remote_host, "(no utmp)", MAX_HOST_LEN);
+	else {
+	    strncpy(clt->remote_host, "(unknown)", MAX_HOST_LEN);
+	    while(fread(&u, sizeof(u), 1, fp) == 1)
+		if(strcmp(u.ut_line, tty) == 0) {
+		    strncpy(clt->remote_host, u.ut_host, MAX_HOST_LEN);
+		    break;
+		}
+	    fclose(fp);
+	}
+    }
+    clt->remote_host[MAX_HOST_LEN - 1] = '\0';
 }
 
 int main(int argc, char **argv, char **envp) {
+    client_t clt;
+    
     if(initialize() == -1) {
 	syslog(LOG_ERR, "initialize failed");
 	return 1;
     }
     
     if(argc == 2) {
-	daemon_run(atoi(argv[1]));
-	init_telnet();
+	close(0);
+	if(daemon_run(&clt, atoi(argv[1])) == -1) {
+	    syslog(LOG_ERR, "run daemon failed");
+	    return 1;
+	}
+	if(init_telnet(&clt) == -1) {
+	    syslog(LOG_ERR, "init telnet failed");
+	    return 1;
+	}
     } else {
-	init_tty();
+	clt.fd = 0;
+	utmp_remote_host(&clt);
+	if(init_tty(&clt) == -1) {
+	    syslog(LOG_ERR, "init tty failed");
+	    return 1;
+	}
     }
     return 0;
 }
@@ -1304,9 +1370,9 @@ static int check_ban_and_load(int fd)
 	    strcmp(fromhost, "localhost") != 0;
 	chkload_time = time(0);
     }
-
+    
     write(fd, buf, strlen(buf));
-
+    
     if(banned && (fp = fopen(BBSHOME "/BAN", "r"))) {
 	while(fgets(buf, 256, fp))
 	    write(fd, buf, strlen(buf));

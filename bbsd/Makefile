@@ -18,7 +18,7 @@ LIBS_common=
 
 CC=	gcc
 PROG=	bbsd
-HDRS=	proto.h
+HDRS=	proto.h struct.h
 SRCS=	bbsd.c daemon.c
 OBJS=	bbsd.o daemon.o
 CFLAGS=	$(CFLAGS_common) $(CFLAGS_$(OSTYPE))

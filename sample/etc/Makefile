@@ -1,6 +1,7 @@
 BBSHOME?=$(HOME)
 TARGET=$(BBSHOME)/etc/
-FILES=Welcome Welcome_login goodbye register registered ve.hlp
+FILES=	Welcome Welcome_login goodbye register registered ve.hlp Logout\
+	Welcome_birth domain_name_query feast
 
 install:
 	install -d $(TARGET)

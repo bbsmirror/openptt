@@ -462,7 +462,7 @@ static int do_general() {
 
 	if(currmode & MODE_SELECT)
 	    append_record(currdirect,&postfile,sizeof(postfile));
-	if(aborted != 1 && !(bp->brdattr && BRD_NOTRAN))
+	if(aborted != 1 && !(bp->brdattr & BRD_NOTRAN))
 	    outgo_post(&postfile, currboard);
 	brc_addlist(postfile.filename);
 

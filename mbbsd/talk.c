@@ -314,32 +314,6 @@ static void my_kick(userinfo_t * uentp) {
     pressanykey();
 }
 
-static void chicken_query(char *userid) {
-    char buf[100];
-
-    if (getuser(userid))
-    {
-	if (xuser.mychicken.name[0])
-	{
-	    time_diff(&(xuser.mychicken));
-	    if (!isdeadth(&(xuser.mychicken)))
-	    {
-		show_chicken_data(&(xuser.mychicken), NULL);
-		sprintf(buf, "\n\n以上是 %s 的寵物資料..", userid);
-		outs(buf);
-	    }
-	}
-	else
-	{
-	    move(1, 0);
-	    clrtobot();
-	    sprintf(buf, "\n\n%s 並沒有養寵物..", userid);
-	    outs(buf);
-	}
-	pressanykey();
-    }
-}
-
 int my_query(char *uident) {
     extern char currmaildir[];
     userec_t muser;
@@ -995,24 +969,6 @@ static void my_talk(userinfo_t * uin) {
 	case 't':
 	    uin->sig = SIG_TALK;
 	    break;
-	case 'p':
-	    reload_chicken();
-	    getuser(uin->userid);
-	    if (uin->lockmode == CHICKEN || currutmp->lockmode == CHICKEN)
-		error = 1;
-	    if (!cuser.mychicken.name[0] || !xuser.mychicken.name[0])
-		error = 2;
-	    if (error)
-	    {
-		outmsg(error == 2 ? "並非兩人都養寵物" :
-		       "有一方的寵物正在使用中");
-		bell();
-		refresh();
-		sleep(1);
-		return;
-	    }
-	    uin->sig = SIG_PK;
-	    break;
 	default:
 	    return;
 	}
@@ -1140,9 +1096,6 @@ static void my_talk(userinfo_t * uin) {
 		    uin->userid, uin->username);
 	    switch (uin->sig)
 	    {
-	    case SIG_PK:
-		chickenpk(msgsock);
-		break;
 	    case SIG_TALK:
 	    default:
 		do_talk(msgsock);
@@ -1569,7 +1522,11 @@ static void pickup_user() {
 #endif
 		   uentp->username,
 		   /* %-17.16s 故鄉 */
+#if 0
 		   descript(show_mode, uentp, diff, fcache),
+#else
+		   "*",
+#endif
 
 		   /* %-17.16s 看板 */
 #ifdef SHOWBOARD
@@ -1973,9 +1930,6 @@ static void pickup_user() {
 		strcpy(currauthor, uentp->userid);
 		my_query(uentp->userid);
 		break;
-	    case 'c':
-		chicken_query(uentp->userid);
-		break;
 	    case 'u':		/* Thor: 可線上查看及修改使用者 */
 	    {
 		int id;
@@ -2078,16 +2032,6 @@ int t_idle() {
     currutmp->destuid = destuid0;
     currstat = stat0;
 
-    return 0;
-}
-
-int t_qchicken() {
-    char uident[STRLEN];
-
-    stand_title("查詢寵物");
-    usercomplete(msg_uid, uident);
-    if (uident[0])
-	chicken_query(uident);
     return 0;
 }
 
@@ -2230,9 +2174,6 @@ void talkreply() {
     if (buf[0] == 'y')
 	switch (sig)
 	{
-	case SIG_PK:
-	    chickenpk(a);
-	    break;
 	case SIG_TALK:
 	default:
 	    do_talk(a);

@@ -1,7 +1,7 @@
 # $Id$
 TARGET=	mbbsd
 OBJS=	admin.o announce.o args.o bbs.o board.o cache.o cal.o chat.o\
-	chicken.o edit.o friend.o io.o kaede.o mail.o mbbsd.o menu.o more.o\
+	edit.o friend.o io.o kaede.o mail.o mbbsd.o menu.o more.o\
 	name.o osdep.o read.o record.o register.o screen.o stuff.o talk.o\
 	term.o topsong.o user.o vote.o xyz.o voteboard.o syspost.o var.o\
 	toolkit.o passwd.o

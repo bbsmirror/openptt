@@ -264,7 +264,6 @@ struct utmpfile_t {
 
 struct pttcache_t {
     char notes[MAX_MOVIE][200*11];
-    char today_is[20];
     int n_notes[MAX_MOVIE_SECTION];          /* 一節中有幾個 看板 */
     int next_refresh[MAX_MOVIE_SECTION];     /* 下一次要refresh的 看板 */
     int max_film;

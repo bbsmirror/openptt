@@ -117,16 +117,6 @@ void mail_redenvelop(char* from, char* to, int money, char mode);
 /* chat */
 int t_chat();
 
-/* chicken */
-int show_file(char *filename, int y, int lines, int mode);
-void ch_buyitem(int money, char *picture, int *item);
-int chicken_main();
-int chickenpk(int fd);
-void time_diff(chicken_t *thechicken);
-int isdeadth(chicken_t *thechicken);
-void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken);
-int reload_chicken();
-
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
 void write_header(FILE *fp);
@@ -339,7 +329,6 @@ void talkreply();
 int t_monitor();
 int t_pager();
 int t_query();
-int t_qchicken();
 int t_talk();
 int t_display();
 int my_query(char *uident);
@@ -410,6 +399,7 @@ int Goodbye();
 unsigned StringHash(unsigned char *s);
 int IsSNum(char *a);
 int IsNum(char *a, int n);
+int show_file(char *filename, int y, int lines, int mode);
 
 /* passwd */
 int passwd_mmap();

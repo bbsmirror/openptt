@@ -126,12 +126,11 @@ void movie(int i) {
         outs(reset_color);
     }
     i = ptime->tm_wday << 1;
-    sprintf(mystatus, "\033[34;46m[%d/%d 星期%c%c %d:%02d]\033[1;33;45m%-14s"
-            "\033[30;47m 目前坊裡有 \033[31m%d\033[30m人, 我是\033[31m%-12s"
-            "\033[30m[扣機]\033[31m%s\033[0m",
+    sprintf(mystatus, "\033[34;46m[%d/%d 星期%c%c %d:%02d]"
+	    "\033[30;47m 目前坊裡有 \033[31m%d\033[30m人, 我是\033[31m%-12s"
+            "\033[30m[扣機]\033[31m%s                  \033[0m",
             ptime->tm_mon + 1, ptime->tm_mday, myweek[i], myweek[i + 1],
-            ptime->tm_hour, ptime->tm_min, currutmp->birth ?
-            "生日要請客唷" : ptt->today_is,
+            ptime->tm_hour, ptime->tm_min,
             count_ulist(), cuser.userid, msgs[currutmp->pager]);
     outmsg(mystatus);
     refresh();
@@ -337,7 +336,6 @@ static commands_t talklist[] = {
     {t_pager, PERM_BASIC,   "PPager         切換呼叫器"},
     {t_idle, 0,             "IIdle          發呆"},
     {t_query, 0,            "QQuery         查詢網友"},
-    {t_qchicken, 0,         "WWatch Pet     查詢寵物"},
     {t_talk, PERM_PAGE,     "TTalk          找人聊聊"},
     {t_chat, PERM_CHAT,     "CChat          找家茶坊喫茶去"},
     {t_display, 0,          "DDisplay       顯示上幾次熱訊"},
@@ -436,8 +434,6 @@ static commands_t playlist[] = {
     {x_stock,0 ,             "SStock       【 股市行情 】"},
     {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
     {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
-    {chicken_main,PERM_LOGINOK, "CChicken     "
-     "【\033[1;34m Ｐtt養雞場 \033[m】"},
     {NULL, 0, NULL}
 };
 

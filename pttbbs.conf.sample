@@ -7,3 +7,4 @@
 #define BBSUID          9999
 #define BBSGID          99
 
+#define MAX_USERS	10000

@@ -13,56 +13,66 @@ extern struct utmpfile_t *utmpshm;
 extern userec_t cuser;
 
 char *Ptt_prints(char *str, int mode) {
-    char *po , strbuf[256];
-
-    while((po = strstr(str, "\033*s"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%s%s", str, cuser.userid, po + 3);
-	strcpy(str, strbuf);
+    char *p,*q,strbuf[1024];
+    p=str; q=strbuf;
+    while(*p) {
+        if(q-strbuf>512) {
+            break; /* buffer overflow */
+        }
+        if(*p!='\033') {
+            *q++=*p++;
+        } else {
+            if(*(p+1)!='*') {
+                *q++=*p++;
+                *q++=*p++;
+            } else {
+                p+=3;
+                switch(*(p-1)) {
+                    case 's':
+                        strcpy(q,cuser.userid);
+                        while(*q) q++;
+                        break;
+                    case 't': {
+                        time_t now=time(0);
+                        strcpy(q,Cdate(&now));
+			while(*q) q++;
+                        }
+                        break;
+                    case 'u':
+                        sprintf(q,"%d",utmpshm->number);
+                        while(*q) q++;
+                        break;
+                    case 'b':
+                        sprintf(q,"%d/%d",cuser.month,cuser.day);
+                        while(*q) q++;
+                        break;
+                    case 'l':
+                        sprintf(q,"%d",cuser.numlogins);
+                        while(*q) q++;
+                        break;
+                    case 'p':
+                        sprintf(q,"%d",cuser.numposts);
+                        while(*q) q++;
+                        break;
+                    case 'n':
+                        sprintf(q,"%s",cuser.username);
+                        while(*q) q++;
+                        break;
+                    case 'm':
+                        sprintf(q,"%ld",cuser.money);
+                        while(*q) q++;
+                        break;
+                    default:
+                        *q++='\033';
+                        *q++='*';
+                        p--;
+                }
+            }
+        }
     }
-    while((po = strstr(str, "\033*t"))) {
-	time_t now = time(0);
-
-	po[0] = 0;
-	sprintf(strbuf, "%s%s", str, Cdate(&now));
-	str[strlen(strbuf)-1] = 0;
-	strcat(strbuf, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*u"))) {
-	int attempts;
-
-	attempts = utmpshm->number;
-	po[0] = 0;
-	sprintf(strbuf, "%s%d%s", str, attempts, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*b"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%d/%d%s", str, cuser.month, cuser.day, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*l"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%d%s", str, cuser.numlogins, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*p"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%d%s", str, cuser.numposts, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*n"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%s%s", str, cuser.username, po + 3);
-	strcpy(str, strbuf);
-    }
-    while((po = strstr(str, "\033*m"))) {
-	po[0] = 0;
-	sprintf(strbuf, "%s%ld%s", str, cuser.money, po + 3);
-	strcpy(str, strbuf);
-    }
-    strip_ansi(str, str ,mode);
+    *q=0;
+    strbuf[511]=0; /* truncate string length */
+    strip_ansi(str, strbuf ,mode);
     return str;
 }
 

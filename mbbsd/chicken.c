@@ -165,13 +165,13 @@ static int new_chicken() {
 
 int show_file(char *filename, int y, int lines, int mode) {
     FILE *fp;
-    char buf[256];
+    char buf[512];
     
     if(y >= 0)
 	move(y,0);
     clrtoline(lines + y);
     if((fp=fopen(filename,"r"))) {
-	while(fgets(buf,256,fp) && lines--)
+	while(fgets(buf,sizeof(buf),fp) && lines--)
 	    outs(Ptt_prints(buf,mode));
 	fclose(fp);
     } else

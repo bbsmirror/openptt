@@ -218,7 +218,7 @@ int more(char *fpath, int promptend) {
 	    if(word)
 		outs(word);
 	    {
-		char msg[500], *pos;
+		char msg[1024], *pos;
 		
 		if(*search_str && (pos = fptr(buf, search_str))) {
 		    char SearchStr[81];

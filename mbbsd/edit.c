@@ -608,7 +608,7 @@ static int garbage_line(char *str) {
 
 static void do_quote() {
     int op;
-    char buf[256];
+    char buf[512];
 
     getdata(b_lines - 1, 0, "請問要引用原文嗎(Y/N/All/Repost)？[Y] ",
 	    buf, 3, LCECHO);
@@ -621,7 +621,7 @@ static void do_quote() {
 	    char *ptr;
 	    int indent_mode0 = indent_mode;
 	    
-	    fgets(buf, 256, inf);
+	    fgets(buf, sizeof(buf), inf);
 	    if((ptr = strrchr(buf, ')')))
 		ptr[1] = '\0';
 	    else if((ptr = strrchr(buf, '\n')))
@@ -647,21 +647,21 @@ static void do_quote() {
 	    insert_string("》之銘言：\n");
 	    
 	    if(op != 'a')           /* 去掉 header */
-		while(fgets(buf, 256, inf) && buf[0] != '\n');
+		while(fgets(buf, sizeof(buf), inf) && buf[0] != '\n');
 
 	    if(op == 'a')
-		while(fgets(buf, 256, inf)) {
+		while(fgets(buf, sizeof(buf), inf)) {
 		    insert_char(':');
 		    insert_char(' ');
 		    insert_string(Ptt_prints(buf,STRIP_ALL));
 		}
 	    else if(op == 'r')
-		while(fgets(buf, 256, inf))
+		while(fgets(buf, sizeof(buf), inf))
 		    insert_string(Ptt_prints(buf,NO_RELOAD));
 	    else {
 		if(curredit & EDIT_LIST)       /* 去掉 mail list 之 header */
-		    while (fgets(buf, 256, inf) && (!strncmp(buf, "※ ", 3)));
-		while(fgets(buf, 256, inf)) {
+		    while (fgets(buf, sizeof(buf), inf) && (!strncmp(buf, "※ ", 3)));
+		while(fgets(buf, sizeof(buf)-2, inf)) {
 		    if(!strcmp(buf, "--\n"))
 			break;
 		    if(!garbage_line(buf)) {

@@ -1172,7 +1172,6 @@ static int mail_cross_post(int ent, fileheader_t *fhdr, char *direct) {
 	append_record(fname, &xfile, sizeof(xfile));
 	if(!xfile.filemode)
 	    outgo_post(&xfile, xboard);
-	cuser.numposts++;
 	passwd_update(usernum, &cuser);
 	outs("文章轉錄完成");
 	pressanykey();

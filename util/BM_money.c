@@ -1,4 +1,6 @@
-/*        給版主錢的程式          Ptt */
+/* $Id$ */
+
+/* 給版主錢的程式 */
 
 #include <stdio.h>
 #include <string.h>

@@ -1,9 +1,13 @@
-/* target : 精華區索引程式 (man index)                   */
-/*                                                       */
-/* syntax : mandex [board]                               */
-/*          [board] 有值 ==> 只跑該 board                */
-/*                  空的 ==> 所有的 boards 都跑          */
-/*-------------------------------------------------------*/
+/* $Id$ */
+
+/*
+  target : 精華區索引程式 (man index)
+  
+  syntax : mandex [board]
+  [board] 有值 ==> 只跑該 board
+  空的 ==> 所有的 boards 都跑
+*/
+
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,11 +1,4 @@
-/*-------------------------------------------------------*/
-/* xchatd.c     ( NTHU CS MapleBBS Ver 3.00 )            */
-/*-------------------------------------------------------*/
-/* target : super KTV daemon for chat server             */
-/* create : 95/03/29                                     */
-/* update : 97/10/20                                     */
-/*-------------------------------------------------------*/
-
+/* $Id$ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

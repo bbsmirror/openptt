@@ -1,4 +1,5 @@
-/* target : 站上年齡統計                                 */
+/* $Id$ */
+/* 站上年齡統計 */
 
 #include <stdio.h>
 #include <string.h>

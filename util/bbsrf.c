@@ -1,15 +1,4 @@
-/* Copyright 1998,1999 NTU CSIE
-
-   You should have received a copy of the GNU General Public License
-   along with PttBBS; see the file COPYRIGHT.
-   If not, write to the Free Software Foundation,
-   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-
-   $Id$
-
-   BBS front-end shell
- */
+/* $Id$ */
 
 #include <stdio.h>
 #include <string.h>

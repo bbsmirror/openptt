@@ -1,4 +1,5 @@
-/* 抓廣告信的程式 Ptt */
+/* $Id$ */
+/* 抓廣告信的程式 */
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

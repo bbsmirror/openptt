@@ -1,4 +1,5 @@
 #!/bin/sh
+# $Id$
 
 bin/countalldice > etc/dice.dis
 bin/post  Record   "骰子中獎名單"  "[骰子報告]"   etc/windice.log

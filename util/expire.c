@@ -1,4 +1,5 @@
-/* target : 自動砍信工具程式                             */
+/* $Id$ */
+/* 自動砍信工具程式 */
 
 #include <stdio.h>
 #include <stdlib.h>

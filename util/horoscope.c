@@ -1,10 +1,4 @@
-/* util/horoscope.c     ( NTHU CS MapleBBS Ver 2.36 )    */
-/*                                                       */
-/* target : 站上星座統計                                 */
-/* create : 97/09/05                                     */
-/* update : 97/09/05                                     */
-/*-------------------------------------------------------*/
-
+/* $Id$ */
 #include <stdio.h>
 #include <sys/types.h>
 #include "config.h"

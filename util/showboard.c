@@ -1,4 +1,5 @@
-/* target : 看板一覽表(sorted)                           */
+/* $Id$ */
+/* 看板一覽表(sorted) */
 
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,5 @@
-/*    Ptt   開獎 的utility  */
+/* $Id$ */
+/* 開獎的 utility */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

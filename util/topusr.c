@@ -1,4 +1,5 @@
-/* target : 使用者 上站記錄/文章篇數 排行榜              */
+/* $Id$ */
+/* 使用者 上站記錄/文章篇數 排行榜 */
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #define _BBS_UTIL_C_
 #include <stdio.h>
 #include <string.h>

@@ -1,4 +1,5 @@
-/* target : 統計今日、週、月、年熱門話題                 */
+/* $Id$ */
+/* 統計今日、週、月、年熱門話題 */
 
 #include <stdio.h>
 #include <stdlib.h>

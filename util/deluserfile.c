@@ -1,4 +1,5 @@
-/* target : 自動砍user目錄檔案程式                       */
+/* $Id$ */
+/* 自動砍user目錄檔案程式 */
 
 #include <stdio.h>
 #include <string.h>

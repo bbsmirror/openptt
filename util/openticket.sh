@@ -1,5 +1,6 @@
 #!/bin/sh
-#
+# $Id$
+
 bin/openticket > etc/jackpot
 bin/post Record "彩券中獎名單" "[賭場報告]" etc/jackpot
 bin/post Record "猜數字中獎名單" "[猜數字報告]" etc/winguess.log

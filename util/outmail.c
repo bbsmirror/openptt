@@ -114,8 +114,10 @@ void sendMail() {
 	int fd, sock;
 	MailQueue mq;
 	
-	if((sock = connectMailServer()) < 0)
+	if((sock = connectMailServer()) < 0) {
+	    fprintf(stderr, "connect server failed...\n");
 	    return;
+	}
 	
 	fd = open(NEWINDEX, O_RDONLY);
 	flock(fd, LOCK_EX);

@@ -37,7 +37,6 @@ static void mail_by_link(char* owner, char* title, char* path) {
     append_record(genbuf, &mymail, sizeof(mymail));      
 }
 
-extern char *fn_passwd;
 extern int usernum;
 
 void anticrosspost() {
@@ -55,7 +54,7 @@ void anticrosspost() {
     mail_by_link("PttÄµ¹î³¡¶¤", "Cross-Post»@³æ",
 		 "/home/bbs/etc/crosspost.txt");
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     exit(0);
 }
 
@@ -111,7 +110,7 @@ int save_violatelaw() {
     demoney(cuser.vl_count*1000);
     cuser.userlevel &= (~PERM_VIOLATELAW);
     reload_money();   
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     return 0;
 }
 

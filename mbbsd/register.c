@@ -14,7 +14,6 @@
 #include "proto.h"
 
 extern char *str_new;
-extern char *fn_passwd;
 extern char *msg_uid;
 extern int t_lines, t_columns;  /* Screen size / width */
 extern char *str_mail_address;
@@ -107,6 +106,8 @@ static int compute_user_value(userec_t *urec, time_t clock) {
     return (urec->userlevel & PERM_LOGINOK ? 120 : 15) * 24 * 60 - value;
 }
 
+extern char *fn_passwd;
+
 int getnewuserid() {
     static char *fn_fresh = ".fresh";
     userec_t utmp, zerorec;
@@ -130,14 +131,13 @@ int getnewuserid() {
 	    log_usies("CLEAN", "dated users");
 	    
 	    fprintf(stdout, "尋找新帳號中, 請稍待片刻...\n\r");
+	    
 	    if((fd = open(fn_passwd, O_RDWR | O_CREAT, 0600)) == -1)
 		return -1;
-	    i = 0;  /* Ptt解決第一個帳號老是被砍問題 */
- 	    while(i < MAX_USERS) {
-		i++;
-		if(read(fd, &utmp, sizeof(userec_t)) != sizeof(userec_t))
-		    break;
-		if(i<=1) continue;
+	    
+	    /* 不曉得為什麼要從 2 開始... */
+ 	    for(i = 2; i <= MAX_USERS; i++) {
+		passwd_query(i, &utmp);
 		if((val = compute_user_value(&utmp, clock)) < 0) {
 		    sprintf(genbuf, "#%d %-12s %15.15s %d %d %d",
 			    i, utmp.userid, ctime(&(utmp.lastlogin)) + 4,
@@ -152,29 +152,22 @@ int getnewuserid() {
 				    utmp.userid[0],utmp.userid);
 			    system(genbuf);
 			}
-			lseek(fd, (off_t)(i - 1) * sizeof(userec_t), SEEK_SET);
-			write(fd, &zerorec, sizeof(utmp));
-		        remove_from_uhash(i-1);
-		        add_to_uhash(i-1,"");
+			passwd_update(i, &zerorec);
+		        remove_from_uhash(i - 1);
+		        add_to_uhash(i - 1, "");
 		    } else
 			log_usies("DATED", genbuf);
 		}
 	    }
-	    close(fd);
 	}
     }
-    if((fd = open(fn_passwd, O_RDWR | O_CREAT, 0600)) == -1)
-	return -1;
-    flock(fd, LOCK_EX);
     
+    passwd_lock();
     i = searchnewuser(1);
     if((i <= 0) || (i > MAX_USERS)) {
-	flock(fd, LOCK_UN);
-	close(fd);
+	passwd_unlock();
 	if(more("etc/user_full", NA) == -1)
 	    fprintf(stdout, "抱歉，使用者帳號已經滿了，無法註冊新的帳號\n\r");
-	val = (st.st_mtime - clock + 3660) / 60;
-	fprintf(stdout, "請等待 %d 分鐘後再試一次，祝你好運\n\r", val);
 	safe_sleep(2);
 	exit(1);
     }
@@ -184,15 +177,9 @@ int getnewuserid() {
     
     strcpy(zerorec.userid, str_new);
     zerorec.lastlogin = clock;
-    if(lseek(fd, (off_t)sizeof(zerorec) * (i - 1), SEEK_SET) == -1) {
-	flock(fd, LOCK_UN);
-	close(fd);
-	return -1;
-    }
-    write(fd, &zerorec, sizeof(zerorec));
+    passwd_update(i, &zerorec);
     setuserid(i, zerorec.userid);
-    flock(fd, LOCK_UN);
-    close(fd);
+    passwd_unlock();
     return i;
 }
 
@@ -259,8 +246,7 @@ void new_register() {
 	exit(1);
     }
     
-    if(substitute_record(fn_passwd, &newuser, sizeof(newuser),
-			 allocid) == -1) {
+    if(passwd_update(allocid, &newuser) == -1) {
 	fprintf(stderr, "客滿了，再見！\n");
 	exit(1);
     }

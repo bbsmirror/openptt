@@ -12,7 +12,6 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *fn_passwd;
 extern int usernum;
 extern userinfo_t *currutmp;
 
@@ -168,7 +167,7 @@ static int gomo_key(int fd, int ch, Horder_t *mv) {
 extern userec_t xuser;
 
 static int reload_gomo() {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     cuser.five_win = xuser.five_win;
     cuser.five_lose = xuser.five_lose;
     cuser.five_tie = xuser.five_tie;
@@ -213,7 +212,7 @@ int gomoku(int fd) {
     cuser.five_lose++;
     /* 一進來先加一場敗場, 贏了後再扣回去, 避免快輸了惡意斷線 */
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum); 
+    passwd_update(usernum, &cuser);
     
     add_io(fd, 0);
     
@@ -245,8 +244,7 @@ int gomoku(int fd) {
 		cuser.five_win++;
 		my->five_win++;
 		reload_money();
-		substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-				  usernum);
+		passwd_update(usernum, &cuser);
 		mv.x = mv.y = -2;
 		send(fd, &mv, sizeof(Horder_t), 0);
 		mv = *(v - 1);		
@@ -267,8 +265,7 @@ int gomoku(int fd) {
 	    if(countgomo() < 10) {
 		cuser.five_lose--;		 	
 		reload_money();
-		substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-				  usernum);
+		passwd_update(usernum, &cuser);
 	    }
 	    send(fd, '\0', 1, 0);
 	    break;
@@ -298,8 +295,7 @@ int gomoku(int fd) {
 		cuser.five_tie++;
 		my->five_tie++;
 		reload_money();
-		substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-				  usernum);
+		passwd_update(usernum, &cuser);
 		mv.x=mv.y=-2;
 		send(fd, &mv, sizeof(Horder_t), 0);
 		mv = *(v - 1);
@@ -319,8 +315,7 @@ int gomoku(int fd) {
 			my->five_win++;
 		    }
 		    reload_money();
-		    substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-				      usernum);			 
+		    passwd_update(usernum, &cuser);
 		    outmsg("對方認輸了!!");
 		    break;
 		} else {
@@ -336,8 +331,7 @@ int gomoku(int fd) {
 		    cuser.five_tie++;
 		    my->five_tie++;
 		    reload_money();
-		    substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-				      usernum);
+		    passwd_update(usernum, &cuser);
 		    break;
 		} else {
 		    hewantpass = 1;
@@ -370,8 +364,7 @@ int gomoku(int fd) {
 			cuser.five_win++;
 			my->five_win++;
 			reload_money();
-			substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-					  usernum);
+			passwd_update(usernum, &cuser);
 		    } else
 		    	my->five_lose++;
 		    win = -win;
@@ -406,8 +399,7 @@ int gomoku(int fd) {
 			cuser.five_win++;
 			my->five_win++;
 			reload_money();
-			substitute_record(fn_passwd, &cuser, sizeof(userec_t),
-					  usernum);
+			passwd_update(usernum, &cuser);
 		    } else 
 		    	my->five_lose++;
 		    break;

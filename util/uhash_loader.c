@@ -64,9 +64,9 @@ void fill_uhash(void)
     int fd, usernumber;
     usernumber = 0;
 
-    for (fd = 0; fd < (1 << UHASH_BITS); fd++)
+    for (fd = 0; fd < (1 << HASH_BITS); fd++)
 	uhash->hash_head[fd] = -1;
-
+    
     if ((fd = open(FN_PASSWD, O_RDONLY)) > 0)
     {
 	struct stat stbuf;
@@ -83,7 +83,7 @@ void fill_uhash(void)
 	fd = stbuf.st_size / sizeof(userec_t);
 	if (fd > MAX_USERS)
 	    fd = MAX_USERS;
-
+	
 	for (mimage = fimage; usernumber < fd; mimage += sizeof(userec_t))
 	{
 	    add_to_uhash(usernumber, mimage);
@@ -107,7 +107,7 @@ unsigned string_hash(unsigned char *s)
 	v = (v << 8) | (v >> 24);
 	v ^= toupper(*s++);	/* note this is case insensitive */
     }
-    return (v * 2654435769UL) >> (32 - UHASH_BITS);
+    return (v * 2654435769UL) >> (32 - HASH_BITS);
 }
 
 void add_to_uhash(int n, char *id)

@@ -65,13 +65,12 @@ int unlockutmpmode() {
     return 0;
 }
 
-extern char *fn_passwd;
 extern userec_t cuser;
 extern userec_t xuser;
 
 /* 使用錢的函數 */
 int reload_money() {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     cuser.money = xuser.money;
     cuser.lastsong = xuser.lastsong;
     return 0;
@@ -304,23 +303,23 @@ int inumoney(char *tuser, int money) {
     
     if((unum = getuser(tuser))) {
 	xuser.money += money;
-	substitute_record(fn_passwd, &xuser, sizeof(userec_t), unum);
+	passwd_update(unum, &xuser);
 	return xuser.money;
     } else
 	return -1;
 }
 
 int inmoney(int money) {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     cuser.money = xuser.money + money;
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     return cuser.money;
 }
 
 static int inmailbox(int m) {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     cuser.exmailbox = xuser.exmailbox + m;
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     return cuser.exmailbox;
 }
 
@@ -331,19 +330,19 @@ int deumoney(char *tuser, int money) {
 	    xuser.money=0;
 	else
 	    xuser.money -= money;
-	substitute_record(fn_passwd, &xuser, sizeof(userec_t), unum);
+	passwd_update(unum, &xuser);
 	return xuser.money;
     } else
 	return -1;
 }
 
 int demoney(int money) {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     if((unsigned long int)xuser.money <= (unsigned long int)money)
 	cuser.money=0;
     else
 	cuser.money = xuser.money - money;
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     return cuser.money;
 }
 

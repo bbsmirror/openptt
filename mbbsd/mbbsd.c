@@ -155,7 +155,6 @@ static void setflags(int mask, int value) {
 	cuser.uflag &= ~mask;
 }
 
-extern char *fn_passwd;
 extern int usernum;
 extern int currmode;
 
@@ -163,7 +162,7 @@ void u_exit(char *mode) {
     userec_t xuser;
     int diff = (time(0) - login_start_time) / 60;
 
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     
     auto_backup();
     
@@ -183,7 +182,7 @@ void u_exit(char *mode) {
 	if(!diff && cuser.numlogins)
 	    xuser.numlogins = --cuser.numlogins; /* Leeym 上站停留時間限制式 */
 	reload_money();
-	substitute_record(fn_passwd, &xuser, sizeof(userec_t), usernum);
+	passwd_update(usernum, &xuser);
     }
     log_usies(mode, NULL);
 }
@@ -811,8 +810,8 @@ static void user_login() {
 	cuser.lastlogin = login_start_time;
     
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(cuser), usernum);
-
+    passwd_update(usernum, &cuser);
+    
     for(i = 0; i < NUMVIEWFILE; i++)
 	if((cuser.loginview >> i) & 1)
 	    more(loginview_file[(int)i][0], YEA);
@@ -1112,15 +1111,19 @@ static int check_ban_and_load(int fd);
 #ifdef SUPPORT_GB    
 extern int current_font_type;
 #endif
+
 int main(int argc, char *argv[], char *envp[]) {
     /* avoid SIGPIPE */
-
     signal(SIGPIPE,SIG_IGN);
-
+    
     /* avoid erroneous signal from other mbbsd */
     signal(SIGUSR1,SIG_IGN);
     signal(SIGUSR2,SIG_IGN);
-
+    
+    /* mmap passwd file */
+    if(passwd_mmap())
+	exit(1);
+    
     /* check if invoked as "bbs" */
     if(argc < 2)
 	shell_login(argc,argv,envp);

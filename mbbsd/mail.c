@@ -35,7 +35,6 @@ extern char currboard[];        /* name of currently selected board */
 extern char *str_space;
 extern char *str_author1;
 extern char *str_author2;
-extern char *fn_passwd;
 extern userinfo_t *currutmp;
 extern unsigned int currstat;
 extern pid_t currpid;
@@ -1189,7 +1188,7 @@ static int mail_cross_post(int ent, fileheader_t *fhdr, char *direct) {
 	    outgo_post(&xfile, xboard);
 	cuser.numposts++;
 	reload_money();
-	substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+	passwd_update(usernum, &cuser);
 	outs("文章轉錄完成");
 	pressanykey();
 	currmode = currmode0;

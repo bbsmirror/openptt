@@ -15,7 +15,7 @@
 struct userec_t cuser;
 
 int main() {
-    int i, j;
+    int i, j, k;
     FILE *fp;
     int max, item, maxhoroscope;
 
@@ -42,12 +42,13 @@ int main() {
 	"¢n", "¢o", "¢p", "¢i", "¢i",
     };
 
-
-    fp = fopen(FN_PASSWD, "r");
-
     memset(act, 0, sizeof(act));
-    while ((fread(&cuser, sizeof(cuser), 1, fp)) > 0)
-    {
+    if(passwd_mmap())
+	exit(1);
+    for(k = 1; k <= MAX_USERS; k++) {
+	passwd_query(k, &cuser);
+	if(!cuser.userid[0])
+	    continue;
 	switch (cuser.month)
 	{
 	case 1:
@@ -123,10 +124,7 @@ int main() {
 		act[9]++;
 	    break;
 	}
-
     }
-    fclose(fp);
-
 
     for (i = max = maxhoroscope = 0; i < 12; i++)
     {

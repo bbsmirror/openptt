@@ -8,6 +8,7 @@
 #include "struct.h"
 #include "perm.h"
 #include "common.h"
+#include "util.h"
 
 #define REAL_INFO
 struct manrec
@@ -150,7 +151,6 @@ int main(argc, argv)
 int argc;
 char **argv;
 {
-    FILE *inf;
     int i;
 
     if (argc < 3)
@@ -163,15 +163,13 @@ char **argv;
     if (num == 0)
 	num = 30;
 
-    inf = fopen(FN_PASSWD, "rb");
-
-    if (inf == NULL)
+    if(passwd_mmap())
     {
 	printf("Sorry, the data is not ready.\n");
 	exit(0);
     }
 
-    for (i = 0; fread(&aman, sizeof(userec_t), 1, inf); i++)
+    for (i = 0; passwd_query(i + 1, &aman); i++)
     {
 	if ((aman.userlevel & PERM_NOTOP)
 	    || bad_user_id(aman.userid)

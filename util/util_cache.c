@@ -151,7 +151,7 @@ static unsigned string_hash(unsigned char *s) {
 	v = (v << 8) | (v >> 24);
 	v ^= toupper(*s++);	/* note this is case insensitive */
     }
-    return (v * 2654435769UL) >> (32 - UHASH_BITS);
+    return (v * 2654435769UL) >> (32 - HASH_BITS);
 }
 
 void add_to_uhash(int n, char *id) {

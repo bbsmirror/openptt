@@ -22,7 +22,7 @@ userec_t xuser;
 int getuser(char *userid) {
     int uid;
     if((uid = searchuser(userid)))
-	get_record(FN_PASSWD, &xuser, sizeof(xuser), uid);
+	passwd_query(uid, &xuser);
     return uid;
 }
 
@@ -31,7 +31,7 @@ int inumoney(char *tuser, int money) {
 
     if((unum = getuser(tuser))) {
 	xuser.money += money;
-	substitute_record(FN_PASSWD, &xuser, sizeof(userec_t), unum);
+	passwd_update(unum, &xuser);
 	return xuser.money;
     }
     return -1;
@@ -55,6 +55,8 @@ int main() {
     int nBM;
 
     resolve_boards();
+    if(passwd_mmap())
+	exit(1);
     if (!fp)
 	return 0;
 

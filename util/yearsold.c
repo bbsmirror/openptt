@@ -7,6 +7,7 @@
 #include "config.h"
 #include "struct.h"
 #include "common.h"
+#include "util.h"
 
 #define MAX_LINE        16
 
@@ -30,7 +31,7 @@ char buf[], mode;
 
 int main()
 {
-    int i, j;
+    int i, j, k;
     char buf[256];
     FILE *fp;
     int year, max, item, maxyear;
@@ -43,12 +44,12 @@ int main()
     now = time(NULL);
     ptime = localtime(&now);
 
-    fp = fopen(FN_PASSWD, "r");
-    if (!fp)
-	printf("unable to open file %s", FN_PASSWD);
+    if(passwd_mmap())
+	exit(1);
+    
     memset(act, 0, sizeof(act));
-    while ((fread(&cuser, sizeof(cuser), 1, fp)) > 0)
-    {
+    for(k = 1; k <= MAX_USERS; k++) {
+	passwd_query(k, &cuser);
 	printf("[%d]", c++);
 	if (((ptime->tm_year - cuser.year) < 10) || ((ptime->tm_year - cuser.year) >
 						     33))
@@ -58,9 +59,7 @@ int main()
 	act[24]++;
 	printf("[%d]", c++);
     }
-    fclose(fp);
-
-
+    
     for (i = max = totalyear = maxyear = 0; i < 24; i++)
     {
 	totalyear += act[i] * (i + 10);

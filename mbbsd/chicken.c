@@ -92,12 +92,11 @@ static const int time_change[NUM_KINDS][14] =
     { 1,  1, 147,    2,  10,   10,   85,  20,  4,  25,  25,   5,  145,  95}
 };
 
-extern char *fn_passwd;
 extern userec_t xuser;
 extern int usernum;
 
 int reload_chicken() {
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     memcpy(mychicken, &xuser.mychicken, sizeof(chicken_t));
     if(!mychicken->name[0])
 	return 0;
@@ -485,7 +484,7 @@ static int ch_sell() {
 		chicken_type[(int)mychicken->type],money,ctime(&now));
 	log_file(CHICKENLOG, buf);
 	mychicken->lastvisit = mychicken->name[0]=0;
-	substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+	passwd_update(usernum, &cuser);
 	more(CHICKEN_PIC "/sell",YEA);
 	inmoney(money);
 	return 1;
@@ -636,7 +635,7 @@ static int deadtype(chicken_t *thechicken) {
 		ctime(&now));
 	log_file(CHICKENLOG, buf);
 	mychicken->name[0] = 0;
-	substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+	passwd_update(usernum, &cuser);
     }           
     return i;
 }
@@ -821,7 +820,7 @@ static int recover_chicken(chicken_t *thechicken) {
     igetch();
     thechicken->lastvisit = 0;
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     return 0;
 }
 
@@ -844,7 +843,7 @@ int chicken_main() {
 	show_chicken_data(mychicken, NULL);
     } while(select_menu());
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     unlockutmpmode();
     return 0;
 }
@@ -970,9 +969,9 @@ int chickenpk(int fd) {
 	    move(17,0);
 	    outs(data+1);
 	    i = strlen(data) +1;
-	    substitute_record(fn_passwd, &ouser, sizeof(userec_t), duid);
+	    passwd_update(duid, &ouser);
 	    reload_money();
-	    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+	    passwd_update(usernum, &cuser);
 	    send(fd, data, i, 0); 
 	    if(data[0]=='q' || data[0]=='d')
 		break;

@@ -9,7 +9,6 @@
 #include "modes.h"
 #include "proto.h"
 
-extern char *fn_passwd;
 extern userinfo_t *currutmp;
 extern int usernum;
 
@@ -224,7 +223,7 @@ static void mainloop(int s, board_t board) {
     }
     cuser.chc_lose--;
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+    passwd_update(usernum, &cuser);
     chc_drawline(board, WARN_ROW);
     bell();
     oflush();
@@ -247,13 +246,13 @@ static void chc_init(int s, board_t board) {
     add_io(s, 0);
     
     if(my->turn) chc_recvmove(s);
-    get_record(fn_passwd, &xuser, sizeof(xuser), usernum);
+    passwd_query(usernum, &xuser);
     cuser.chc_win = xuser.chc_win;
     cuser.chc_lose = xuser.chc_lose + 1;
     cuser.chc_tie = xuser.chc_tie;
     cuser.money   = xuser.money;
-    substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
-
+    passwd_update(usernum, &cuser);
+    
     getuser(chc_mateid);
     chc_hiswin = xuser.chc_win;
     chc_hislose = xuser.chc_lose;

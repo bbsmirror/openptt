@@ -40,7 +40,6 @@ int m_user() {
     return 0;
 }
 
-extern char *fn_passwd;
 extern int b_lines;
 
 static int search_key_user(char *passwdfile, int mode) {
@@ -85,8 +84,7 @@ static int search_key_user(char *passwdfile, int mode) {
 		    return 0;
 		if(ch == 's' && !mode) {
 		    if((ch = getuser(user.userid))) {
-			substitute_record(fn_passwd, &user, sizeof(userec_t),
-					  ch);
+			passwd_update(ch, &user);
 			return 0;
 		    } else {
 			move(b_lines - 1, 0);
@@ -105,9 +103,7 @@ static int search_key_user(char *passwdfile, int mode) {
 				exit(1);
 			    }
 			    
-			    if(substitute_record(fn_passwd, &user,
-						 sizeof(user), 
-						 allocid) == -1) {
+			    if(passwd_update(allocid, &user) == -1) {
 				fprintf(stderr, "客滿了，再見！\n");
 				exit(1);
 			    }
@@ -922,7 +918,7 @@ int scan_register_form(char *regfile, int automode, int neednum) {
 		strncpy(muser.justify, genbuf, REGLEN);
 		sethomefile(buf, muser.userid, "justify");
 		log_file(buf, genbuf);
-		substitute_record(fn_passwd, &muser, sizeof(muser), unum);
+		passwd_update(unum, &muser);
 		
 		if((fout = fopen(logfile, "a"))) {
 		    for(n = 0; field[n]; n++)

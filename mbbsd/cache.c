@@ -193,14 +193,13 @@ int searchuser(char *userid) {
 }
 
 #if !defined(_BBS_UTIL_C_)
-extern char *fn_passwd;
 extern userec_t xuser;
 
 int getuser(char *userid) {
     int uid;
     
     if((uid = searchuser(userid)))
-	get_record(fn_passwd, &xuser, sizeof(xuser), uid);
+	passwd_query(uid, &xuser);
     return uid;
 }
 
@@ -228,6 +227,8 @@ int searchnewuser(int mode) {
 
     num = uhash->number;
     i = 0;
+
+    /* 為什麼這邊不用 hash table 去找而要用 linear search? */
     while(i < num) {
 	if(!uhash->userid[i++][0])
 	    return i;

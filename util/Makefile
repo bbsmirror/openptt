@@ -1,7 +1,8 @@
 DEPPROGS=	bbsmail BM_money post account birth deluserfile expire\
-		mandex horoscope openvice parse_news openticket bmda
-NORPROGS=	uhash_loader poststat showboard topusr yearsold cutpasswd\
-		inndBM antispam countalldice webgrep
+		mandex horoscope openvice parse_news openticket bmda topusr\
+		yearsold
+NORPROGS=	uhash_loader poststat showboard inndBM\
+		antispam countalldice webgrep
 SHLPROGS=	BM_money.sh backpasswd.sh mailog.sh opendice.sh openticket.sh\
 		stock.sh topsong.sh weather.sh
 PERLPROGS=	stock.perl weather.perl
@@ -13,11 +14,11 @@ LIBS=
 
 all: $(PROGS)
 
-bmda: $*.c util_cache.c util_record.c
-	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -I../include -o $* $*.c util_cache.c util_record.c
+bmda: $*.c util_cache.c util_record.c util_passwd.c
+	$(CC) -pipe -Wall -g -DHAVE_SETPROCTITLE -I../include -o $* $*.c util_cache.c util_record.c util_passwd.c
 
-$(DEPPROGS): $*.c util_cache.c util_record.c
-	$(CC) $(CFLAGS) -o $* $*.c util_cache.c util_record.c
+$(DEPPROGS): $*.c util_cache.c util_record.c util_passwd.c
+	$(CC) $(CFLAGS) -o $* $*.c util_cache.c util_record.c util_passwd.c
 
 $(NORPROGS): $*.c
 	$(CC) $(CFLAGS) -o $* $*.c

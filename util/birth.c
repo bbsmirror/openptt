@@ -46,20 +46,19 @@ int main(argc, argv)
     int argc;
     char **argv;
 {
-    fileheader_t mymail;
     FILE *fp1;
+    fileheader_t mymail;
     char today[500][14], today_name[500][24];
     int i, day = 0, a[50], b[50];
     time_t now;
     struct tm *ptime;
+    int j;
 
     now = time(NULL);		/* back to ancent */
     ptime = localtime(&now);
 
-    fp1 = fopen(FN_PASSWD, "r");
-
-    while ((fread(&cuser, sizeof(cuser), 1, fp1)) > 0)
-    {
+    for(j = 1; j <= MAX_USERS; j++) {
+	passwd_query(j, &cuser);
 	if (bad_user_id())
 	    continue;
 	if (cuser.month == ptime->tm_mon + 1)
@@ -99,7 +98,6 @@ int main(argc, argv)
 */
 	}
     }
-    fclose(fp1);
     printf("*»sªí\n");
     fp1 = fopen(OUTFILE, "w");
 

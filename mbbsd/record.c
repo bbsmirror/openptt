@@ -98,19 +98,10 @@ int substitute_record(char *fpath, void *rptr, int size, int id) {
     if(id < 1 || (fd = open(fpath, O_WRONLY | O_CREAT, 0644)) == -1)
 	return -1;
     
-#ifdef HAVE_REPORT
-    if(lseek(fd, (off_t)(size * (id - 1)), SEEK_SET) == -1)
-	report("substitute_record failed!!! (lseek)");
-    PttLock(fd, size, F_WRLCK);
-    if(safewrite(fd, rptr, size) != size)
-	report("substitute_record failed!!! (safewrite)");
-    PttLock(fd, size, F_UNLCK);
-#else
     lseek(fd, (off_t) (size * (id - 1)), SEEK_SET);
     PttLock(fd, size, F_WRLCK);
     safewrite(fd, rptr, size);
     PttLock(fd, size, F_UNLCK);
-#endif
     close(fd);
     
     return 0;

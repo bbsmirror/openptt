@@ -480,4 +480,12 @@ int Goodbye();
 /* toolkit */
 unsigned StringHash(unsigned char *s);
 
+/* passwd */
+int passwd_mmap();
+int passwd_update(int num, userec_t *buf);
+int passwd_query(int num, userec_t *buf);
+int passwd_apply(int (*fptr)(userec_t *));
+void passwd_lock();
+void passwd_unlock();
+
 #endif

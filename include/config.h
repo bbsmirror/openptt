@@ -120,6 +120,7 @@
 #define BRDSEM_KEY      2005    /* semaphore key */
 #define PTTSEM_KEY      2000    /* semaphore key */
 #define FROMSEM_KEY     2003    /* semaphore key */
+#define PASSWDSEM_KEY   2010
 
 #define NEW_CHATPORT    3838
 #define CHATPORT        5722

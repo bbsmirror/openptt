@@ -17,7 +17,6 @@ extern int numboards;
 extern boardheader_t *bcache;
 extern char *loginview_file[NUMVIEWFILE][2];
 extern int b_lines;             /* Screen bottom line number: t_lines-1 */
-extern char *fn_passwd;
 extern time_t login_start_time;
 extern char *msg_uid;
 extern int usernum;
@@ -65,7 +64,7 @@ int u_loginview() {
     if(pbits != cuser.loginview) {
 	reload_money();
 	cuser.loginview = pbits ;
-	substitute_record(fn_passwd, &cuser, sizeof(userec_t), usernum);
+	passwd_update(usernum, &cuser);
     }
     return 0;
 }
@@ -212,14 +211,14 @@ static void violate_law(userec_t *u, int unum){
 	log_usies("KILL", u->userid);
 	post_violatelaw(u->userid, cuser.userid, reason, "砍除 ID");       
 	u->userid[0] = '\0';
-	setuserid(unum, u->userid);          
-	substitute_record(fn_passwd, u, sizeof(userec_t), unum);    
+	setuserid(unum, u->userid);
+	passwd_update(unum, u);
     }
     else{
         u->userlevel |= PERM_VIOLATELAW;
         u->vl_count ++;
         reload_money();
-        substitute_record(fn_passwd, u, sizeof(userec_t), unum);     
+	passwd_update(unum, u);
         post_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
         mail_violatelaw(u->userid, cuser.userid, reason, "罰單處份");
     }                 
@@ -518,7 +517,7 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    reload_money(); /* Ptt:防洗錢 */
 	    x.money = cuser.money;
 	}
-	substitute_record(fn_passwd, &x, sizeof(x), unum);
+	passwd_update(unum, &x);
 	now = time(0);
 	if(money_change) {
 	    strcpy(genbuf, "boards/Security");
@@ -583,7 +582,7 @@ int u_switchproverb() {
 	fclose(fp);
     }
     reload_money();
-    substitute_record(fn_passwd, &cuser, sizeof(cuser), usernum);
+    passwd_update(usernum, &cuser);
     return 0;
 }
 
@@ -936,7 +935,7 @@ int u_list() {
 	    showrealname = 1;
     }
     u_list_CB(NULL);
-    if(apply_record(fn_passwd, u_list_CB, sizeof(userec_t)) == -1) {
+    if(passwd_apply(u_list_CB) == -1) {
 	outs(msg_nobody);
 	return XEASY;
     }

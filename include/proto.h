@@ -396,7 +396,7 @@ int is_rejected(userinfo_t * ui);
 int isvisible(userinfo_t * uentp, int isfri, int isrej);
 int t_users();
 int cmpuids(int uid, userinfo_t * urec);
-int my_write(pid_t pid, char *hint, char *id);
+int my_write(pid_t pid, char *hint, char *id, int flag);
 void t_display_new();
 void talkreply();
 int t_monitor();

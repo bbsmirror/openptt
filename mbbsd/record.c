@@ -28,87 +28,7 @@ static void PttLock(int fd, int size, int mode) {
     while((ret = fcntl(fd, F_SETLKW, &lock_it)) < 0 && errno == EINTR);
 }
 
-#ifdef  POSTBUG
-static char bigbuf[10240];
-static int numtowrite;
-static int bug_possible = 0;
-
-static void saverecords(char *fpath, int size, int pos) {
-    int fd;
-    
-    if(!bug_possible)
-	return 0;
-    if((fd = open(fpath, O_RDONLY)) == -1)
-	return -1;
-    if(pos > 5)
-	numtowrite = 5;
-    else
-	numtowrite = 4;
-    lseek(fd, (off_t)((pos - numtowrite - 1) * size), L_SET);
-    read(fd, bigbuf, numtowrite * size);
-}
-
-static int restorerecords(char *fpath, int size, int pos) {
-    int fd;
-    
-    if(!bug_possible)
-	return 0;
-    if((fd = open(fpath, O_WRONLY)) == -1)
-	return -1;
-    
-    lseek(fd, (off_t)((pos - numtowrite - 1) * size), L_SET);
-    PttLock(fd, numtowrite * size, F_WRLCK);
-    safewrite(fd, bigbuf, numtowrite * size);
-    PttLock(fd, numtowrite * size, F_UNLCK);
-    
-#ifdef  HAVE_REPORT
-    report("post bug poison set out!");
-#endif
-    
-    bigbuf[0] = '\0';
-    close(fd);
-}
-
-/* 每次寫一點點，以策安全 */
-static int safewrite(int fd, char *buf, int size) {
-    int cc, sz = size, origsz = size;
-    char *bp = buf;
-    
-#ifdef POSTBUG
-    if(size == sizeof(fileheader)) {
-	char foo[80];
-	struct stat stbuf;
-	fileheader_t *fbuf = (fileheader_t *) buf;
-
-	setbpath(foo, fbuf->filename);
-	if(!isalpha(fbuf->filename[0]) || stat(foo, &stbuf) == -1)
-	    if(fbuf->filename[0] != 'M' || fbuf->filename[1] != '.') {
-
-#ifdef  HAVE_REPORT
-		report("safewrite: foiled attempt to write bugged record\n");
-#endif
-		return origsz;
-	    }
-    }
-#endif
-    do {
-	cc = write(fd, bp, sz);
-	if((cc < 0) && (errno != EINTR)) {
-#ifdef  HAVE_REPORT
-	    report("safewrite failed!");
-#endif
-	    return -1;
-	}
-	if(cc > 0) {
-	    bp += cc;
-	    sz -= cc;
-	}
-    } while(sz > 0);
-    return origsz;
-}
-#else
 #define safewrite       write
-#endif                          /* POSTBUG */
 
 int get_num_records(char *fpath, int size) {
     struct stat st;
@@ -175,11 +95,6 @@ int get_records(char *fpath, void *rptr, int size, int id, int number) {
 int substitute_record(char *fpath, void *rptr, int size, int id) {
     int fd;
 
-#ifdef POSTBUG
-    if(size == sizeof(fileheader) && (id > 1) && ((id - 1) % 4 == 0))
-	saverecords(fpath, size, id);
-#endif
-    
     if(id < 1 || (fd = open(fpath, O_WRONLY | O_CREAT, 0644)) == -1)
 	return -1;
     
@@ -197,11 +112,6 @@ int substitute_record(char *fpath, void *rptr, int size, int id) {
     PttLock(fd, size, F_UNLCK);
 #endif
     close(fd);
-    
-#ifdef POSTBUG
-    if(size == sizeof(fileheader) && (id > 1) && ((id - 1) % 4 == 0))
-	restorerecords(fpath, size, id);
-#endif
     
     return 0;
 }
@@ -576,15 +486,6 @@ int do_append(char *fpath, fileheader_t *record, int size) {
 int append_record(char *fpath, fileheader_t *record, int size) {
 #if !defined(_BBS_UTIL_C_)
     int m,n;
-#endif
-#ifdef POSTBUG
-    int numrecs = (int)get_num_records(fpath, size);
-
-    bug_possible = 1;
-    if(size == sizeof(fileheader) && numrecs && (numrecs % 4 == 0))
-	saverecords(fpath, size, numrecs + 1);
-#endif
-#if !defined(_BBS_UTIL_C_)
     if(get_num_records(fpath, sizeof(fileheader_t)) <= MAX_KEEPMAIL * 2) {
 	FILE *fp;
 	char buf[512],address[200];
@@ -615,10 +516,5 @@ int append_record(char *fpath, fileheader_t *record, int size) {
     
     do_append(fpath,record,size);
     
-#ifdef POSTBUG
-    if(size == sizeof(fileheader) && numrecs && (numrecs % 4 == 0))
-	restorerecords(fpath, size, numrecs + 1);
-    bug_possible = 0;
-#endif
     return 0;
 }

@@ -1,5 +1,0 @@
-#!/bin/sh
-# $Id$
-
-%BBSHOME%/bin/BM_money > %BBSHOME%/etc/BM_money
-%BBSHOME%/bin/post Record 星期五' '版主發薪日 [財金消息] %BBSHOME%/etc/BM_money

@@ -1,6 +1,5 @@
 # $Id$
-
-include ../../../Makefile.inc
+BBSHOME=@prefix@
 
 TARGET=$(BBSHOME)/etc/chickens/
 FILES=	buymedicine buyoo clean deadth eat food hit kiss\

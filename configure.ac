@@ -56,5 +56,9 @@ AC_FUNC_GETLOADAVG
 AC_CONFIG_FILES([Makefile
 		 mbbsd/Makefile
 		 util/Makefile
-		 innbbsd/Makefile])
+		 innbbsd/Makefile
+		 sample/Makefile
+		 sample/innd/Makefile
+		 sample/etc/Makefile
+		 sample/etc/chickens/Makefile])
 AC_OUTPUT

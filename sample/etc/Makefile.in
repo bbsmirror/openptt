@@ -1,6 +1,6 @@
 # $Id$
-
-include ../../Makefile.inc
+@SET_MAKE@
+BBSHOME=@prefix@
 
 SUBDIR=	chickens
 TARGET=	$(BBSHOME)/etc/
@@ -12,7 +12,7 @@ all:
 install_sub:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
-		make install;\
+		$(MAKE) install;\
 		cd ..;\
 	done
 

@@ -10,4 +10,5 @@ all install clean depend:
 
 distclean: clean
 	rm -f Makefile mbbsd/Makefile util/Makefile innbbsd/Makefile\
-	config.status config.cache config.log
+	sample/Makefile sample/innd/Makefile sample/etc/Makefile\
+	sample/etc/chickens/Makefile config.status config.cache config.log

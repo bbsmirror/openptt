@@ -1,3 +1,4 @@
+@SET_MAKE@
 SUBDIR=	etc innd
 
 all:
@@ -5,6 +6,6 @@ all:
 install:
 	@for i in $(SUBDIR); do\
 		cd $$i;\
-		make $@;\
+		$(MAKE) $@;\
 		cd ..;\
 	done

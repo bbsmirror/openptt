@@ -1,6 +1,5 @@
 # $Id$
-
-include ../../Makefile.inc
+BBSHOME=@prefix@
 
 TARGET=	$(BBSHOME)/innd/
 FILES=	bbsname.bbs newsfeeds.bbs nodelist.bbs ntu.active

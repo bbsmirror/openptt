@@ -83,7 +83,6 @@ void attach_uhash();
 void getnewutmpent(userinfo_t *up);
 void resolve_garbage();
 void resolve_boards();
-void resolve_fcache();
 void sem_init(int semkey,int *semid);
 void sem_lock(int op,int semid);
 int count_ulist();
@@ -93,39 +92,6 @@ int searchnewuser(int mode);
 int count_logins(int (*fptr)(int, userinfo_t *), int farg, int show);
 void remove_from_uhash(int n);
 void add_to_uhash(int n, char *id);
-
-/* cal */
-int inumoney(char *tuser, int money);
-int cal();
-int reload_money();
-int demoney(int money);
-int inmoney(int money);
-int deumoney(char *tuser, int money);
-int lockutmpmode(int unmode, int state);
-int unlockutmpmode();
-int p_touch_boards();
-int x_file();
-int give_money();
-int p_sysinfo();
-int p_give();
-int p_cloak();
-int p_from();
-int ordersong();
-int p_exmail();
-void mail_redenvelop(char* from, char* to, int money, char mode);
-
-/* chat */
-int t_chat();
-
-/* chicken */
-int show_file(char *filename, int y, int lines, int mode);
-void ch_buyitem(int money, char *picture, int *item);
-int chicken_main();
-int chickenpk(int fd);
-void time_diff(chicken_t *thechicken);
-int isdeadth(chicken_t *thechicken);
-void show_chicken_data(chicken_t *thechicken, chicken_t *pkchicken);
-int reload_chicken();
 
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
@@ -321,11 +287,6 @@ int valid_ident(char *ident);
 int userid_is_BM(char *userid, char *list);
 int is_uBM(char *list, char *id);
 
-/* syspost */
-void post_newboard(char *bgroup, char *bname, char *bms);
-void post_violatelaw(char *crime, char *police, char *reason, char *result);
-void post_change_perm(int oldperm, int newperm, char *sysopid, char *userid);
-
 /* talk */
 int t_idle();
 char *modestring(userinfo_t * uentp, int simple);
@@ -354,10 +315,6 @@ void do_move(int destcol, int destline);
 void scroll_forward();
 void change_scroll_range(int top, int bottom);
 
-/* topsong */
-void sortsong();
-int topsong();
-
 /* user */
 void user_display(userec_t *u, int real);
 void uinfo_query(userec_t *u, int real, int unum);
@@ -374,18 +331,6 @@ int u_editproverb();
 int u_cloak();
 int u_register();
 int u_list();
-
-/* vote */
-int strip_ansi(char *buf, char *str, int mode);
-void b_suckinfile(FILE *fp, char *fname);
-int b_results();
-int b_vote();
-int b_vote_maintain();
-int b_closepolls();
-
-/* voteboard */
-int do_voteboard();
-void do_voteboardreply(fileheader_t *fhdr);
 
 /* xyz */
 int m_sysop();
@@ -411,6 +356,9 @@ int Goodbye();
 unsigned StringHash(unsigned char *s);
 int IsSNum(char *a);
 int IsNum(char *a, int n);
+int show_file(char *filename, int y, int lines, int mode);
+int strip_ansi(char *buf, char *str, int mode);
+void b_suckinfile(FILE *fp, char *fname);
 
 /* passwd */
 int passwd_mmap();

@@ -214,7 +214,7 @@ static int GenerateCalendar(char **buf, int y, int m, int today, event_t *e) {
 		p += sprintf(p, "%s%2.2s\33[m  %s", month_color[m - 1],
 			     month_str[m - 1] + (line - 2) * 2,
 			     CALENDAR_COLOR);
-	    else
+	    else if(i < d)
 		p += sprintf(p, "    %s", CALENDAR_COLOR);
 	} else
 	    *p++ = ' ';
@@ -246,8 +246,8 @@ int calendar() {
     head = e = ReadEvent(today);
     
     /* generate calendar */
-    buf = AllocCalBuffer(21, 256);
-    for(i = 0; i < 21; i++)
+    buf = AllocCalBuffer(22, 256);
+    for(i = 0; i < 22; i++)
 	sprintf(buf[i], "%24s", "");
     for(i = 0; i < 3; i++) {
 	lines += GenerateCalendar(buf + lines, y, m, today, e) + 1;
@@ -260,7 +260,7 @@ int calendar() {
     /* output */
     clear();
     outc('\n');
-    for(i = 0; i < 21; i++) {
+    for(i = 0; i < 22; i++) {
 	outs(buf[i]);
 	if(i == 0) {
 	    prints("\t\33[1;37m²{¦b¬O %d.%02d.%02d %2d:%02d:%02d%cm\33[m",
@@ -277,6 +277,7 @@ int calendar() {
 	outc('\n');
     }
     FreeEvent(head);
+    FreeCalBuffer(buf);
     pressanykey();
     return 0;
 }

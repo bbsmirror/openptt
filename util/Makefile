@@ -39,6 +39,9 @@ PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\
 	cvslog.sh
 
+.c:
+	$(CC) $(CFLAGS) -o $@ $@.c
+
 all: $(PROGS)
 
 depend:
@@ -92,50 +95,8 @@ xchatd: xchatd.c util_cache.c util_record.c util_passwd.c descrypt.c
 reaper: reaper.c util_passwd.c
 	$(CC) $(CFLAGS) -o $@ $@.c util_passwd.c util_cache.c
 
-shmsweep: shmsweep.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-uhash_loader: uhash_loader.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-showboard: showboard.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-inndBM: inndBM.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-antispam: antispam.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-countalldice: countalldice.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-webgrep: webgrep.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-bbsrf: bbsrf.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-initbbs: initbbs.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
 outmail: outmail.c
 	$(CC) $(CFLAGS) -o $@ $@.c $(LIBMAIL)
-
-userlist: userlist.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-tunepasswd: tunepasswd.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-buildir: buildir.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-merge_passwd: merge_passwd.c
-	$(CC) $(CFLAGS) -o $@ $@.c
-
-merge_board: merge_board.c
-	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)
 	install -d $(BBSHOME)/bin/

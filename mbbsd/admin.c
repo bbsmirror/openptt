@@ -647,14 +647,50 @@ int m_newbrd(int recover) {
     return 0;
 }
 
+/* return true if "tail" is tail of "str" */
+int strtailcmp(char *str, char *tail)
+{
+  int i = strlen(tail);
+  int l = strlen(str);
+  
+  if(l<i) return 0;
+  
+  while(i--)
+    if(str[--l]!=tail[i]) 
+      return 0;
+
+  return 1;
+}
+
+/* 自動審核註冊單程式 利用簡單規則去除不合規定的註冊單
+return value:  0  無法判定  -1  接受  
+               1  姓名  2  服務單位  3  住址不接受  4  電話 (不接受) */
 static int auto_scan(char fdata[][STRLEN], char ans[]) {
     int good = 0;
     int count = 0;
-    int i;
+    int i,j;
     char temp[10];
     
-    if(!strncmp(fdata[2], "小", 2) || strstr(fdata[2], "丫")
-	|| strstr(fdata[2], "誰") || strstr(fdata[2], "不")) {
+    for(i=2;i<6;i++) {
+      for(j=0;fdata[i][j];j++);
+      for(;j>=0;j--)
+        if(fdata[i][j] == ' ')
+          fdata[i][j] = 0;
+        else
+          break;
+      
+      /* 資料不可 2 bytes 以下 (ex: 無) */
+      if(j<=2) {   
+        ans[0] = '0'+i-2;
+        return i-1;
+      }
+      
+    }
+    
+    /* 姓名: 不可含有 小 丫 誰 不 ㄚ, 首字不為 阿 */
+    if(strstr(fdata[2], "小") || strstr(fdata[2], "丫") ||
+       strstr(fdata[2], "誰") || strstr(fdata[2], "不") ||
+       strstr(fdata[2], "ㄚ") || !strncmp(fdata[2], "阿", 2)) {
 	ans[0] = '0';
 	return 1;
     }
@@ -684,8 +720,10 @@ static int auto_scan(char fdata[][STRLEN], char ans[]) {
 	    good++;
     }
     
+    /* 姓名有不在上面的字 無法判定 但繼續下面規則 故馬克
     if(!good)
 	return 0;
+    */
 
     if(!strcmp(fdata[3], fdata[4]) ||
        !strcmp(fdata[3], fdata[5]) ||
@@ -704,6 +742,18 @@ static int auto_scan(char fdata[][STRLEN], char ans[]) {
 	    good++;
     } else if(strstr(fdata[3], "女中"))
 	good++;
+	
+    /* 服務單位用 大 大學 師 醫 xxu xxxU 結尾 */
+    if(strtailcmp(fdata[3], "大") ||
+       strtailcmp(fdata[3], "大學") ||
+       strtailcmp(fdata[3], "師") ||
+       strtailcmp(fdata[3], "醫") ||
+       ((strtailcmp(fdata[3], "u") || strtailcmp(fdata[3], "U")) &&
+        strlen(fdata[3])<=4)
+      ) {
+      ans[0] = '1';
+      return 2;
+    }
     
     if(strstr(fdata[4], "地球") || strstr(fdata[4], "宇宙") ||
        strstr(fdata[4], "信箱")) {
@@ -716,6 +766,20 @@ static int auto_scan(char fdata[][STRLEN], char ans[]) {
 	    if(strstr(fdata[4], "號"))
 		good++;
 	}
+    }
+    
+    /* 住址不可以用 巷 路 段 市 縣 學 舍 鎮 區 結尾 */
+    if(strtailcmp(fdata[4], "巷") ||
+       strtailcmp(fdata[4], "路") ||
+       strtailcmp(fdata[4], "段") ||
+       strtailcmp(fdata[4], "市") ||
+       strtailcmp(fdata[4], "縣") ||
+       strtailcmp(fdata[4], "學") ||
+       strtailcmp(fdata[4], "舍") ||
+       strtailcmp(fdata[4], "鎮") ||
+       strtailcmp(fdata[4], "區")) {
+      ans[0] = '2';
+      return 3;
     }
     
     for(i = 0; fdata[5][i]; i++) {
@@ -732,8 +796,9 @@ static int auto_scan(char fdata[][STRLEN], char ans[]) {
     if(good >= 3) {
 	ans[0] = 'y';
 	return -1;
-    } else
-	return 0;
+    }
+    
+    return 0;
 }
 
 /* 處理 Register Form */

@@ -849,12 +849,13 @@ int chicken_main() {
 }
 
 extern userinfo_t *currutmp;
+extern struct utmpfile_t *utmpshm;
 
 int chickenpk(int fd) {
     char mateid[IDLEN + 1], data[200], buf[200];
     int ch = 0;
 
-    userinfo_t *uin = currutmp->destuip;
+    userinfo_t *uin = &utmpshm->uinfo[currutmp->destuip];
     userec_t ouser;
     chicken_t *ochicken = &ouser.mychicken;
     int r, attmax, i, datac, duid = currutmp->destuid, catched=0, count=0;

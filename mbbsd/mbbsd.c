@@ -242,7 +242,7 @@ static void talk_request() {
 	time_t now = time(0);
 	
 	sprintf(buf, "\033[33;41m★%s\033[34;47m [%s] %s \033[0m",
-		(currutmp->destuip)->userid, my_ctime(&now),
+		utmpshm->uinfo[currutmp->destuip].userid, my_ctime(&now),
 		(currutmp->sig == 2) ? "重要消息廣播！(請Ctrl-U,l查看熱訊記錄)"
 		: "呼叫、呼叫，聽到請回答");
 	move(0, 0);

@@ -186,7 +186,7 @@ typedef struct userinfo_t {
     pid_t pid;                    /* kill() to notify user of talk request */
     int sockaddr;                 /* ... */
     int destuid;                  /* talk uses this to identify who called */
-    struct userinfo_t *destuip;
+    int destuip;                  /* dest index in utmpshm->uinfo[] */
     unsigned char active;         /* When allocated this field is true */
     unsigned char invisible;      /* Used by cloaking function in Xyz menu */
     unsigned char sockactive;     /* Used to coordinate talk requests */

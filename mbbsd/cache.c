@@ -717,7 +717,7 @@ static void reload_fcache() {
 	    char buf[101],*po;
 
 	    fcache->top=0;
-	    while(fgets(buf,100,fp)) {
+	    while(fgets(buf, sizeof(buf), fp)) {
 		if(buf[0] && buf[0] != '#' && buf[0] != ' ' &&
 		   buf[0] != '\n') {
 		    sscanf(buf,"%s",fcache->domain[fcache->top]);
@@ -728,6 +728,8 @@ static void reload_fcache() {
 		    fcache->replace[fcache->top]
 			[strlen(fcache->replace[fcache->top])-1] = 0;
 		    (fcache->top)++;
+		    if(fcache->top == MAX_FROM)
+			break;
 		}	
 	    }
 	}

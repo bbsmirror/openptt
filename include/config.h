@@ -41,6 +41,10 @@
 #define MAX_LIFE           (120 * 24 * 60 * 60)
 #endif
 
+#ifndef MAX_FROM
+#define MAX_FROM           (300)            /* 程珿秏计 */
+#endif
+
 #ifndef HAVE_SEARCH_ALL                     /* 穓碝琘ㄏノ┮Τ狾ゅ彻 */
 #define HAVE_SEARCH_ALL    0
 #endif
@@ -76,7 +80,6 @@
 #define MAX_BOARD         (4096)         /* 程秨计 */
 #define MAX_MOVIE         (999)          /* 程笆篈计 */
 #define MAX_MOVIE_SECTION (10)		 /* 程笆篈狾摸 */
-#define MAX_FROM          (300)          /* 程珿秏计 */
 #define MAX_ITEMS         (1000)         /* ヘ魁程Τ碭兜 */
 #define MAX_HISTORY       (12)           /* 笆篈狾玂 12 掸菌癘魁 */
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */

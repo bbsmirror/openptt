@@ -432,8 +432,6 @@ static int p_money() {
     return 0;
 }
 
-static int playground();
-
 /* Ptt Play menu */
 static commands_t playlist[] = {
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
@@ -444,21 +442,8 @@ static commands_t playlist[] = {
     {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
     {chicken_main,PERM_LOGINOK, "CChicken     "
      "【\033[1;34m Ｐtt養雞場 \033[m】"},
-    {playground,PERM_LOGINOK, "AAmusement   【\033[1;33m Ｐtt遊樂場 \033[m】"},
     {NULL, 0, NULL}
 };
-
-static commands_t plist[] = {
-    {ticket_main, PERM_LOGINOK,  "11Gamble      【 Ｐtt賭場 】"},
-    {guess_main, PERM_LOGINOK,   "22Guess number【 猜數字   】"},
-    {othello_main, PERM_LOGINOK, "33Othello     【 黑白棋   】"},
-    {NULL, 0, NULL}
-};
-
-static int playground() {
-    domenu(AMUSE, "Ｐtt遊樂場",'1',plist);
-    return 0;
-}
 
 /* main menu */
 

@@ -17,10 +17,8 @@ dark.o
 descrypt.o
 edit.o
 friend.o
-gamble.o
 gomo.o
 gomo1.o
-guess.o
 io.o
 kaede.o
 lovepaper.o
@@ -30,7 +28,6 @@ menu.o
 more.o
 name.o
 osdep.o
-othello.o
 passwd.o
 read.o
 record.o

@@ -178,9 +178,6 @@ int gomoku(int fd);
 int getstyle(int x, int y, int color, int limit);
 int chkwin(int style, int limit);
 
-/* guess */
-int guess_main();
-
 /* io */
 int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
 int igetch();
@@ -262,9 +259,6 @@ void ToggleNameList(int *reciper, char *listfile, char *msg);
 /* osdep */
 int cpuload(char *str);
 double swapused(long *total, long *used);
-
-/* othello */
-int othello_main();
 
 /* read */
 void z_download(char *fpath);

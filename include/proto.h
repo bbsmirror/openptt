@@ -99,11 +99,6 @@ int lockutmpmode(int unmode, int state);
 int unlockutmpmode();
 int p_touch_boards();
 int x_file();
-int p_sysinfo();
-int p_give();
-
-/* chat */
-int t_chat();
 
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
@@ -330,10 +325,6 @@ void do_move(int destcol, int destline);
 void scroll_forward();
 void change_scroll_range(int top, int bottom);
 
-/* topsong */
-void sortsong();
-int topsong();
-
 /* user */
 void user_display(userec_t *u, int real);
 void uinfo_query(userec_t *u, int real, int unum);
@@ -374,9 +365,6 @@ int x_today();
 int x_yesterday();
 int x_user100();
 int x_birth();
-int x_88();
-int x_87();
-int x_86();
 int x_history();
 int x_weather();
 int x_stock();

@@ -90,17 +90,3 @@ int p_touch_boards() {
     pressanykey();
     return 0;
 }
-
-int p_sysinfo() {
-    char buf[100];
-    
-    move(b_lines-1,0);
-    clrtoeol();
-    cpuload(buf);
-    outs("CPU ­t²ü : ");
-    outs(buf);
-    outs("\n");
-    
-    pressanykey();
-    return 0;
-}

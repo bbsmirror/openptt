@@ -330,7 +330,6 @@ static commands_t talklist[] = {
     {t_idle, 0,             "IIdle          發呆"},
     {t_query, 0,            "QQuery         查詢網友"},
     {t_talk, PERM_PAGE,     "TTalk          找人聊聊"},
-    {t_chat, PERM_CHAT,     "CChat          找家茶坊喫茶去"},
     {t_display, 0,          "DDisplay       顯示上幾次熱訊"},
     {NULL, 0, NULL}
 };
@@ -397,7 +396,6 @@ static commands_t xyzlist[] = {
     {x_yesterday, 0, "YYesterday     《昨日上線人次統計》"},
     {x_user100 ,0,   "UUsers         《使用者百大排行榜》"},
     {x_birth, 0,     "BBirthday      《今日壽星大觀》"},
-    {p_sysinfo, 0,   "XXload         《查看系統負荷》"},
     {NULL, 0, NULL}
 };
 

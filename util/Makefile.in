@@ -5,7 +5,7 @@ OBJS=	util_cache.o util_record.o util_passwd.o
 CPROGS=	bbsmail post account birth deluserfile expire mandex\
 	horoscope parse_news topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam webgrep bbsrf\
-	createbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
+	createbbs outmail userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
 SCRIPTS=backpasswd.sh cvslog.sh mailog.sh\
@@ -89,9 +89,6 @@ yearsold: yearsold.c $(OBJS)
 
 reaper: reaper.c $(OBJS)
 	$(CC) $(CFLAGS) -o $@ reaper.c $(OBJS)
-
-xchatd: xchatd.c descrypt.c $(OBJS)
-	$(CC) $(CFLAGS) -o $@ xchatd.c descrypt.c $(OBJS) $(LIBS_CHAT)
 
 outmail: outmail.c
 	$(CC) $(CFLAGS) -o $@ outmail.c $(LIBS_MAIL)

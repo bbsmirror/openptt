@@ -653,7 +653,9 @@ static void choose_board(int newflag) {
     static int num = 0;
     boardstat_t *ptr;
     int head = -1, ch = 0, tmp,tmp1, uidtmp, classtmp;
+#if HAVE_SEARCHALL
     char genbuf[200];
+#endif
     extern time_t board_visit_time;
     
     setutmpmode(newflag ? READNEW : READBRD);

@@ -297,6 +297,7 @@ static int chat_cmd(char *buf, int fd) {
 
 extern char trans_buffer[256];         /* 一般傳遞變數 add by Ptt */
 
+#if 0
 static char *select_address() {
     int c;
     FILE *fp;
@@ -328,6 +329,7 @@ static char *select_address() {
     }
     return trans_buffer;
 }
+#endif
 
 extern int usernum;
 extern int t_lines;

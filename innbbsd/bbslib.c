@@ -469,7 +469,6 @@ char *inndhome;
 	if (*nptr == '\0') continue;
         NEWSFEEDS[NFCOUNT].path = nptr;
 	for (nptr++; *nptr && !strchr("\r\n",*nptr); ) nptr++;
-	/*if (*nptr == '\0') continue;*/
         *nptr = '\0';
     }
     qsort(NEWSFEEDS, NFCOUNT, sizeof(newsfeeds_t), nfcmp);

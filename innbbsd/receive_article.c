@@ -440,32 +440,17 @@ receive_article()
   splitptr = (char **) BNGsplit(GROUPS);
   firstpath[0] = '\0';
   firstpathbase = firstpath;
-  /*
-   * try to split newsgroups into separate group and check if any duplicated
-   */
 
-  /* try to use hardlink */
-  /*
-   * for ( ngptr = GROUPS, nngptr = (char*) strchr(ngptr,','); ngptr != NULL
-   * && *ngptr != '\0'; nngptr = (char*)strchr(ngptr,',')) {
-   */
   for (ngptr = *splitptr; ngptr != NULL; ngptr = *(++splitptr))
   {
     char *boardptr, *nboardptr;
 
-    /*
-     * if (nngptr != NULL) { nngptr = '\0'; }
-     */
     if (*ngptr == '\0')
       continue;
     nf = (newsfeeds_t *) search_group(ngptr);
-    /* printf("board %s\n",nf->board); */
     if (nf == NULL)
     {
       bbslog("unwanted \'%s\'\n", ngptr);
-      /*
-       * if( strstr( ngptr, "tw.bbs" ) != NULL ) { }
-       */
       continue;
     }
     if (nf->board == NULL || !*nf->board)

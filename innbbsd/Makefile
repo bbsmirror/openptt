@@ -38,7 +38,7 @@ $(EXTRAFLAGS) -DDBZDEBUG -DBBSHOME='"$(BBSHOME)"' \
 OBJS = inndchannel.o innbbsd.o connectsock.o rfc931.o \
        daemon.o file.o pmain.o his.o dbz.o \
        closeonexec.o dbztool.o inntobbs.o receive_article.o \
-       bbslib.o
+       echobbslib.o
        # $(BBS_REC)
 SRCS = inndchannel.c innbbsd.c connectsock.c rfc931.c \
        daemon.c file.c pmain.c parsdate.y his.c dbz.c \

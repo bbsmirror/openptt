@@ -28,3 +28,4 @@ user.o
 var.o
 xyz.o
 mbbsd
+.depend

@@ -68,10 +68,7 @@ typedef struct userec_t {
     unsigned short five_win;
     unsigned short five_lose;
     unsigned short five_tie;
-    unsigned short chc_win;
-    unsigned short chc_lose;
-    unsigned short chc_tie;
-    char pad[95];
+    char pad[101];
 } userec_t;
 /* these are flags in userec_t.uflag */
 #define SIG_FLAG        0x3     /* signature number, 2 bits */

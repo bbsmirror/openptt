@@ -7,12 +7,7 @@ cache.o
 cal.o
 calendar.o
 chat.o
-chc_draw.o
-chc_net.o
-chc_play.o
-chc_rule.o
 chicken.o
-dark.o
 descrypt.o
 edit.o
 friend.o

@@ -53,7 +53,7 @@ static char *IdleTypeTable[] = {
     "偶在花呆啦", "情人來電", "覓食中", "拜見周公", "假死狀態", "我在思考"
 };
 static char *sig_des[] = {
-    "鬥雞", "聊天", "", "下棋", "象棋", "暗棋"
+    "鬥雞", "聊天", "", "下棋"
 };
 
 #define MAX_SHOW_MODE 3
@@ -194,13 +194,6 @@ char *modestring(userinfo_t * uentp, int simple) {
 	    sprintf(modestr, "%s", "五子棋");
 	else
 	    sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
-    }
-    else if (mode == CHC)
-    {
-	if (is_hidden(getuserid(uentp->destuid)))
-	    sprintf(modestr, "%s", "下象棋");
-	else
-	    sprintf(modestr, "下象棋 %s", getuserid(uentp->destuid));
     }
     else if (mode != PAGE && mode != TQUERY)
 	return word;
@@ -412,10 +405,8 @@ int my_query(char *uident) {
 		   sex[muser.sex % 8],
 		   muser.money);
 	}
-	prints("《五子棋戰績》%3d 勝 %3d 敗 %3d 和      "
-	       "《象棋戰績》%3d 勝 %3d 敗 %3d 和",
-	       muser.five_win, muser.five_lose, muser.five_tie,
-	       muser.chc_win, muser.chc_lose, muser.chc_tie);
+	prints("《五子棋戰績》%3d 勝 %3d 敗 %3d 和",
+	       muser.five_win, muser.five_lose, muser.five_tie);
 	showplans(uident);
 	pressanykey();
 	return FULLUPDATE;
@@ -970,9 +961,9 @@ static void my_talk(userinfo_t * uin) {
     strcpy(currauthor, uin->userid);
 
     if (ch == EDITING || ch == TALK || ch == CHATING || ch == PAGE ||
-	ch == MAILALL || ch == MONITOR || ch == M_FIVE || ch == CHC ||
+	ch == MAILALL || ch == MONITOR || ch == M_FIVE ||
 	(!ch && (uin->chatid[0] == 1 || uin->chatid[0] == 3)) ||
-	uin->lockmode == M_FIVE || uin->lockmode == CHC)
+	uin->lockmode == M_FIVE)
     {
 	outs("人家在忙啦");
     }
@@ -1008,7 +999,7 @@ static void my_talk(userinfo_t * uin) {
     {
 	showplans(uin->userid);
 	getdata(2, 0, "要和他(她) (T)談天(F)下五子棋(P)鬥寵物"
-		"(C)下象棋(D)下暗棋(N)沒事找錯人了?[N] ", genbuf, 4, LCECHO);
+		"(N)沒事找錯人了?[N] ", genbuf, 4, LCECHO);
 	switch (*genbuf)
 	{
 	case 'y':
@@ -1018,13 +1009,6 @@ static void my_talk(userinfo_t * uin) {
 	case 'f':
 	    lockreturn(M_FIVE, LOCK_THIS);
 	    uin->sig = SIG_GOMO;
-	    break;
-	case 'c':
-	    lockreturn(CHC, LOCK_THIS);
-	    uin->sig = SIG_CHC;
-	    break;
-	case 'd':
-	    uin->sig = SIG_DARK;
 	    break;
 	case 'p':
 	    reload_chicken();
@@ -1104,7 +1088,7 @@ static void my_talk(userinfo_t * uin) {
 		}
 		else if (ch == EDITING || ch == TALK || ch == CHATING ||
 			 ch == PAGE || ch == MAILALL || ch == MONITOR ||
-			 ch == M_FIVE || ch == CHC ||
+			 ch == M_FIVE ||
 			 (!ch && (uin->chatid[0] == 1 ||
 				  uin->chatid[0] == 3)))
 		{
@@ -1173,17 +1157,11 @@ static void my_talk(userinfo_t * uin) {
 	    /* gomo */
 	    switch (uin->sig)
 	    {
-	    case SIG_DARK:
-		main_dark(msgsock, uin);
-		break;
 	    case SIG_PK:
 		chickenpk(msgsock);
 		break;
 	    case SIG_GOMO:
 		gomoku(msgsock);
-		break;
-	    case SIG_CHC:
-		chc(msgsock);
 		break;
 	    case SIG_TALK:
 	    default:
@@ -2357,17 +2335,11 @@ void talkreply() {
     if (buf[0] == 'y')
 	switch (sig)
 	{
-	case SIG_DARK:
-	    main_dark(a, uip);
-	    break;
 	case SIG_PK:
 	    chickenpk(a);
 	    break;
 	case SIG_GOMO:
 	    gomoku(a);
-	    break;
-	case SIG_CHC:
-	    chc(a);
 	    break;
 	case SIG_TALK:
 	default:

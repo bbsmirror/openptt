@@ -364,21 +364,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 		    x.five_tie = atoi(p);
 		    break;
 		}
-	    sprintf(genbuf, "%d/%d/%d", u->chc_win, u->chc_lose, u->chc_tie);
-	    if(getdata_str(i++, 0, "∂H¥—æ‘¡Z ≥”/±—/©M°G", buf, 16, DOECHO,
-			   genbuf))
-		while(1) {
-		    p = strtok(buf, "/\r\n");
-		    if(!p) break;
-		    x.chc_win = atoi(p);
-		    p = strtok(NULL, "/\r\n");
-		    if(!p) break;
-		    x.chc_lose = atoi(p);
-		    p = strtok(NULL, "/\r\n");
-		    if(!p) break;
-		    x.chc_tie = atoi(p);
-		    break;
-		}
 	    fail = 0;
 	}
 	break;

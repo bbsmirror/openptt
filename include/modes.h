@@ -90,10 +90,6 @@
 #define CARD_99         72
 #define RAIL_WAY        73
 #define SREG            74
-#define CHC             75      /* Chinese chess */
-#define DARK            76      /* 中國暗琪 */
-#define TMPJACK         77
-#define JCEE		78
 
 /* menu.c 中的模式 */
 #define QUIT    0x666           /* Return value to abort recursive functions */
@@ -140,7 +136,5 @@ enum {STRIP_ALL = 0, ONLY_COLOR, NO_RELOAD};
 #define SIG_TALK        1
 #define SIG_BROADCAST   2
 #define SIG_GOMO        3
-#define SIG_CHC         4
-#define SIG_DARK        5
 
 #endif

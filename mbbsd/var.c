@@ -259,9 +259,5 @@ char *ModeTypeTable[MAX_MODES] = {
     "10點半ing",                  /* TENHALF */ 
     "超級九十九",                 /* CARD_99 */
     "火車查詢",                   /* RAIL_WAY */
-    "搜尋選單",                    /* SREG */
-    "下象棋",                      /* CHC */
-    "下暗琪",			   /* DARK */
-    "NBA大猜測"                    /* TMPJACK */
-    "Ｐtt查榜系統",                 /* JCEE */
+    "搜尋選單"                    /* SREG */
 };

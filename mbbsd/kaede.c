@@ -39,15 +39,6 @@ char *Ptt_prints(char *str, int mode) {
                     case 'u':
                         sprintf(q,"%d",utmpshm->number);
                         break;
-                    case 'b':
-                        sprintf(q,"%d/%d",cuser.month,cuser.day);
-                        break;
-                    case 'l':
-                        sprintf(q,"%d",cuser.numlogins);
-                        break;
-                    case 'p':
-                        sprintf(q,"%d",cuser.numposts);
-                        break;
                     case 'n':
                         sprintf(q,"%s",cuser.username);
                         break;

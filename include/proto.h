@@ -250,7 +250,7 @@ void log_user(char *msg);
 void abort_bbs(int sig);
 void del_distinct(char *fname, char *line);
 void add_distinct(char *fname, char *line);
-void show_last_call_in();
+void show_last_call_in(int save);
 int dosearchuser(char *userid);
 void u_exit(char *mode);
 

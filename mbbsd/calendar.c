@@ -102,7 +102,7 @@ extern userec_t cuser;
 
 static event_t *ReadEvent(int today) {
     FILE *fp;
-    char *p, buf[256];
+    char buf[256];
     static event_t head;
     
     head.next = NULL;

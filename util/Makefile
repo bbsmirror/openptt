@@ -26,7 +26,7 @@ CPROGS=	bbsmail BM_money post account birth deluserfile expire mandex\
 	horoscope openvice parse_news openticket topusr yearsold uhash_loader\
 	poststat showboard inndBM antispam countalldice webgrep bbsrf\
 	initbbs outmail xchatd userlist tunepasswd buildir reaper shmsweep\
-	merge_passwd
+	merge_passwd merge_board
 PROGS=	$(CPROGS) BM_money.sh backpasswd.sh mailog.sh opendice.sh\
 	openticket.sh stock.sh topsong.sh weather.sh stock.perl weather.perl\
 	cvslog.sh
@@ -121,6 +121,9 @@ buildir: buildir.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 merge_passwd: merge_passwd.c
+	$(CC) $(CFLAGS) -o $@ $@.c
+
+merge_board : merge_board.c
 	$(CC) $(CFLAGS) -o $@ $@.c
 
 install: $(PROGS)

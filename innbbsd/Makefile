@@ -41,7 +41,7 @@ OBJS = inndchannel.o innbbsd.o connectsock.o rfc931.o \
        echobbslib.o
        # $(BBS_REC)
 SRCS = inndchannel.c innbbsd.c connectsock.c rfc931.c \
-       daemon.c file.c pmain.c parsdate.y his.c dbz.c \
+       daemon.c file.c pmain.c his.c dbz.c \
        closeonexec.c dbztool.c inntobbs.c bbslib.c receive_article.c \
        port.c
 
@@ -65,6 +65,9 @@ EXES     = $(TARGET)
 
 
 all: $(OSTYPE)
+
+depend:
+	mkdep $(CFLAGS) $(SRCS)
 
 sun: 
 	@$(MAKE) EXTRAFLAGS="-DMMAP -DGETRUSAGE -DMALLOCMAP" LDFLAGS="$(DEBUGOBJ)" target

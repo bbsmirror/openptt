@@ -27,11 +27,23 @@ OBJS=	admin.o announce.o args.o bbcall.o bbs.o board.o cache.o cal.o card.o\
 	tmpjack.o voteboard.o syspost.o var.o descrypt.o toolkit.o passwd.o\
 	calendar.o
 
+SRCS=	admin.c announce.c args.c bbcall.c bbs.c board.c cache.c cal.c card.c\
+	chat.c chc_draw.c chc_net.c chc_play.c chc_rule.c chicken.c dark.c\
+	dice.c edit.c friend.c gamble.c gomo.c gomo1.c guess.c indict.c io.c\
+	kaede.c lovepaper.c mail.c mbbsd.c menu.c more.c name.c osdep.c\
+	othello.c page.c read.c record.c register.c screen.c stuff.c\
+	talk.c term.c topsong.c user.c vice.c vote.c xyz.c\
+	tmpjack.c voteboard.c syspost.c var.c descrypt.c toolkit.c passwd.c\
+	calendar.c
+
 .SUFFIXES: .c .o
-.c.o:
+.c.o[A:
 	$(CC) $(CFLAGS) -c $*.c
 
 all: $(PROG)
+
+depend:
+	mkdep $(CFLAGS) $(SRCS)
 
 $(PROG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)

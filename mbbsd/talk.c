@@ -2220,12 +2220,13 @@ int t_idle() {
 	MPROTECT_UTMP_R;
     }
 
-    if(currutmp->destuid == 6)
+    if(currutmp->destuid == 6) {
 	MPROTECT_UTMP_RW;
 	if(!cuser.userlevel || !getdata(b_lines - 1, 0, "發呆的理由：", currutmp->chatid, 11, DOECHO)) {
 	    currutmp->destuid = 0;
 	}
 	MPROTECT_UTMP_R;
+    }
     do {
 	move(b_lines - 2, 0);
 	clrtoeol();

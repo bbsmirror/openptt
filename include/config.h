@@ -61,10 +61,6 @@
 #define HAVE_SEARCH_ALL    0
 #endif
 
-#ifndef HAVE_JCEE                           /* 大學聯考查榜系統 */
-#define HAVE_JCEE          0
-#endif
-
 #ifndef HAVE_FREECLOAK                      /* 使用者免費隱身 */
 #define HAVE_FREECLOAK     0
 #endif

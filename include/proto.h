@@ -114,11 +114,6 @@ int ordersong();
 int p_exmail();
 void mail_redenvelop(char* from, char* to, int money, char mode);
 
-/* card */
-int g_card_jack();
-int g_ten_helf();
-int card_99();
-
 /* chat */
 int t_chat();
 
@@ -154,11 +149,6 @@ int reload_chicken();
 /* dark */
 int main_dark(int fd,userinfo_t *uin);
 
-/* dice */
-int IsSNum(char *a);
-int dice_main();
-int IsNum(char *a, int n);
-
 /* edit */
 int vedit(char *fpath, int saveheader, int *islocal);
 void write_header(FILE *fp);
@@ -175,22 +165,12 @@ int t_reject();
 void friend_add(char *uident, int type);
 void friend_delete(char *uident, int type);
 
-/* gamble */
-int ticket_main();
-
 /* gomo */
 int gomoku(int fd);
 
 /* gomo1 */
 int getstyle(int x, int y, int color, int limit);
 int chkwin(int style, int limit);
-
-/* guess */
-int guess_main();
-
-/* indict */
-int x_dict();
-int use_dict();
 
 /* kaede */
 int Rename(char* src, char* dst);
@@ -258,9 +238,6 @@ void ToggleNameList(int *reciper, char *listfile, char *msg);
 /* osdep */
 int cpuload(char *str);
 double swapused(long *total, long *used);
-
-/* othello */
-int othello_main();
 
 /* page */
 int main_railway();
@@ -366,11 +343,6 @@ int t_talk();
 int t_display();
 int my_query(char *uident);
 
-/* tmpjack */
-int reg_barbq();
-int p_ticket_main();
-int j_ticket_main();
-
 /* term */
 void InitTerminal();
 int term_init();
@@ -441,9 +413,6 @@ int b_vote();
 int b_vote_maintain();
 int b_closepolls();
 
-/* vice */
-int vice_main();
-
 /* voteboard */
 int do_voteboard();
 void do_voteboardreply(fileheader_t *fhdr);
@@ -470,6 +439,7 @@ int Goodbye();
 
 /* toolkit */
 unsigned StringHash(unsigned char *s);
+int IsNum(char *a, int n);
 
 /* passwd */
 int passwd_mmap();

@@ -426,18 +426,12 @@ void purge_utmp(userinfo_t *uentp) {
 #define HISFRI    4
 
 int count_ulist() {
-    int isfri, isrej, rtv = 0, ch = 0;
+    int rtv = 0, ch = 0;
     register userinfo_t *uentp;
 
     while(ch < USHM_SIZE) {
 	uentp = &(utmpshm->uinfo[ch++]);
-	isfri = is_friend(uentp);
-	isrej = is_rejected(uentp);
-	if(!uentp->pid ||
-	   !isvisible(uentp, isfri, isrej) ||
-	   ((cuser.uflag & FRIEND_FLAG) &&
-	    (!isfri ||
-	     ((isrej & MYREJ) && !(isfri & MYFRI)))))
+	if(!uentp->pid)
 	    continue;
 	rtv++;
     }

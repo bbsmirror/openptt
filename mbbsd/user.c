@@ -32,11 +32,6 @@ extern char *msg_nobody;
 extern userec_t cuser;
 extern userec_t xuser;
 
-static char *sex[8] = {
-    MSG_BIG_BOY, MSG_BIG_GIRL, MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
-    MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME
-};
-
 int u_loginview() {
     int i;
     unsigned int pbits = cuser.loginview;
@@ -83,30 +78,21 @@ void user_display(userec_t *u, int real) {
 	   "  ╰╚╝    ╰╩═╯\033[m  \033[30;41m┴┬┴┬┴┬\033[m\n");
     prints("                代號暱稱: %s(%s)\n"
 	   "                真實姓名: %s\n"
-	   "                居住住址: %s\n"
-	   "                電子信箱: %s\n"
-	   "                性    別: %s\n",
-	   u->userid, u->username, u->realname, u->address, u->email,
-	   sex[u->sex % 8]);
+	   "                電子信箱: %s\n",
+	   u->userid, u->username, u->realname, u->email);
     
     sethomedir(genbuf, u->userid);
-    prints("                私人信箱: %d 封\n"
-	   "                生    日: %02i/%02i/%02i\n",
-	   get_num_records(genbuf, sizeof(fileheader_t)),
-	   u->month, u->day, u->year % 100);
+    prints("                私人信箱: %d 封\n",
+	   get_num_records(genbuf, sizeof(fileheader_t)));
     prints("                註冊日期: %s", ctime(&u->firstlogin));
     prints("                前次光臨: %s", ctime(&u->lastlogin));
-    prints("                上站文章: %d 次 / %d 篇\n",
-	   u->numlogins, u->numposts);
 
     if(real) {
 	strcpy(genbuf, "bTCPRp#@XWBA#VSM0123456789ABCDEF");
 	for(diff = 0; diff < 32; diff++)
 	    if(!(u->userlevel & (1 << diff)))
 		genbuf[diff] = '-';
-	prints("                認證資料: %s\n"
-	       "                user權限: %s\n",
-	       u->justify, genbuf);
+	prints("                user權限: %s\n", genbuf);
     } else {
 	diff = (time(0) - login_start_time) / 60;
 	prints("                停留期間: %d 小時 %2d 分\n",
@@ -253,7 +239,6 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	getdata_buf(i++, 0," 暱 稱  ：",x.username, 24, DOECHO);
 	if(real) {
 	    getdata_buf(i++, 0, "真實姓名：", x.realname, 20, DOECHO);
-	    getdata_buf(i++, 0, "居住地址：", x.address, 50, DOECHO);
 	}
 	getdata_str(i++, 0, "電子信箱[變動要重新認證]：", buf, 50, DOECHO,
 		    x.email);
@@ -262,57 +247,7 @@ void uinfo_query(userec_t *u, int real, int unum) {
 	    mail_changed = 1 - real;
 	}
 	
-	sprintf(genbuf, "%i", (u->sex + 1) % 8);
-	getdata_str(i++, 0, "性別 (1)葛格 (2)姐接 (3)底迪 (4)美眉 (5)薯叔 "
-		    "(6)阿姨 (7)植物 (8)礦物：",
-		    buf, 3, DOECHO,genbuf);
-	if(buf[0] >= '1' && buf[0] <= '8')
-	    x.sex = (buf[0] - '1') % 8;
-	else
-	    x.sex = u->sex % 8;
-	
-	while(1) {
-	    int len;
-	    
-	    sprintf(genbuf, "%02i/%02i/%02i",
-		    u->month, u->day, u->year % 100);
-	    len = getdata_str(i, 0, "生日 月月/日日/西元：", buf, 9,
-			      DOECHO,genbuf);
-	    if(len && len != 8)
-		continue;
-	    if(!len) {
-		x.month = u->month;
-		x.day = u->day;
-		x.year = u->year;
-	    } else if(len == 8) {
-		x.month = (buf[0] - '0') * 10 + (buf[1] - '0');
-		x.day   = (buf[3] - '0') * 10 + (buf[4] - '0');
-		x.year  = (buf[6] - '0') * 10 + (buf[7] - '0');
-	    } else
-		continue;
-	    if(!real && (x.month > 12 || x.month < 1 || x.day > 31 ||
-			 x.day < 1 || x.year > 90 || x.year < 40))
-		continue;
-	    i++;
-	    break;
-	}
-	if(real) {
-	    getdata_buf(i++, 0, "認證資料：", x.justify, 44, DOECHO);
-	    getdata_buf(i++, 0, "最近光臨機器：", x.lasthost, 16, DOECHO);
-	    
-	    sprintf(genbuf, "%d", x.numlogins);
-	    if(getdata_str(i++, 0,"上線次數：", buf, 10, DOECHO,genbuf))
-		if((fail = atoi(buf)) >= 0)
-		    x.numlogins = fail;
-	    
-	    sprintf(genbuf,"%d", u->numposts);
-	    if(getdata_str(i++, 0, "文章數目：", buf, 10, DOECHO,genbuf))
-		if((fail = atoi(buf)) >= 0)
-		    x.numposts = fail;
-	    fail = 0;
-	}
 	break;
-	
     case '2':
 	i = 19;
 	if(!real) {
@@ -461,37 +396,6 @@ int u_cloak() {
     return XEASY;
 }
 
-int u_switchproverb() {
-/*  char *state[4]={"用功\型","安逸型","自定型","SHUTUP"}; */
-    char buf[100];
-
-    cuser.proverb =(cuser.proverb +1) %4;
-    setuserfile(buf,fn_proverb);
-    if(cuser.proverb==2 && dashd(buf)) {
-	FILE *fp = fopen(buf,"a");
-	
-	fprintf(fp,"座右銘狀態為[自定型]要記得設座右銘的內容唷!!");
-	fclose(fp);
-    }
-    passwd_update(usernum, &cuser);
-    return 0;
-}
-
-int u_editproverb() {
-    char buf[100];
-  
-    setutmpmode(PROVERB);
-    setuserfile(buf,fn_proverb);
-    move(1,0);
-    clrtobot();
-    outs("\n\n 請一行一行依序鍵入想系統提醒你的內容,\n"
-	 " 儲存後記得把狀態設為 [自定型] 才有作用\n"
-	 " 座右銘最多100條");
-    pressanykey();
-    vedit(buf,NA, NULL);
-    return 0;
-}
-
 void showplans(char *uid) {
     char genbuf[200];
     
@@ -609,129 +513,6 @@ static int removespace(char* s){
     return index;
 }
 
-int u_register() {
-    char rname[20], addr[50];
-    char phone[20], career[40], email[50],birthday[9],sex_is[2],year,mon,day;
-    char ans[3], *ptr;
-    FILE *fn;
-    time_t now;
-    char genbuf[200];
-    
-    if(cuser.userlevel & PERM_LOGINOK) {
-	outs("您的身份確認已經完成，不需填寫申請表");
-	return XEASY;
-    }
-    if((fn = fopen(fn_register, "r"))) {
-	while(fgets(genbuf, STRLEN, fn)) {
-	    if((ptr = strchr(genbuf, '\n')))
-		*ptr = '\0';
-	    if(strncmp(genbuf, "uid: ", 5) == 0 &&
-	       strcmp(genbuf + 5, cuser.userid) == 0) {
-		fclose(fn);
-		outs("您的註冊申請單尚在處理中，請耐心等候");
-		return XEASY;
-	    }
-	}
-	fclose(fn);
-    }
-    
-    getdata(b_lines - 1, 0, "您確定要填寫註冊單嗎(Y/N)？[N] ", ans, 3, LCECHO);
-    if(ans[0] != 'y')
-	return FULLUPDATE;
-    
-    move(2, 0);
-    clrtobot();
-    strcpy(rname, cuser.realname);
-    strcpy(addr, cuser.address);
-    strcpy(email, cuser.email);
-    sprintf(birthday, "%02i/%02i/%02i",
-	    cuser.month, cuser.day, cuser.year % 100);
-    sex_is[0]=(cuser.sex % 8)+'1';sex_is[1]=0;
-    career[0] = phone[0] = '\0';
-    while(1) {
-	clear();
-	move(3, 0);
-	prints("%s(%s) 您好，請據實填寫以下的資料:",
-	       cuser.userid, cuser.username);
-        do{
-	    getfield(6, "請用中文", "真實姓名", rname, 20);
-        }while(!removespace(rname) || isalpha(rname[0]));
-        do{ 
-	    getfield(8, "學校系級或單位職稱", "服務單位", career, 40);
-        }while(!removespace(career));
-        do{
-	    getfield(10, "包括寢室或門牌號碼", "目前住址", addr, 50);
-        }while(!(addr[0]));
-        do{
-	    getfield(12, "包括長途撥號區域碼", "連絡電話", phone, 20);
-        }while(!removespace(phone));
-	while(1) {
-	    int len;
-	    
-	    getfield(14, "月月/日日/西元 如:09/27/76","生日",birthday,9);
-	    len = strlen(birthday);
-	    if(!len) {
-		sprintf(birthday, "%02i/%02i/%02i",
-			cuser.month, cuser.day, cuser.year % 100);
-		mon = cuser.month;
-		day = cuser.day;
-		year = cuser.year;
-	    } else if(len == 8) {
-		mon = (birthday[0] - '0') * 10 + (birthday[1] - '0');
-		day = (birthday[3] - '0') * 10 + (birthday[4] - '0');
-		year = (birthday[6] - '0') * 10 + (birthday[7] - '0');
-	    } else
-		continue;
-	    if(mon > 12 || mon < 1 || day > 31 || day < 1 || year > 90 ||
-	       year < 40)
-		continue;
-	    break;
-	}
-	getfield(16, "1.葛格 2.姐接 ", "性別", sex_is, 2);
-	getfield(18, "身分認證用", "E-Mail Address", email, 50);
-	
-	getdata(b_lines - 1, 0, "以上資料是否正確(Y/N)？(Q)取消註冊 [N] ",
-		ans, 3, LCECHO);
-	if(ans[0] == 'q')
-	    return 0;
-	if(ans[0] == 'y')
-	    break;
-    }
-    strcpy(cuser.realname, rname);
-    strcpy(cuser.address, addr);
-    strcpy(cuser.email, email);
-    cuser.sex= (sex_is[0] - '1') % 8;
-    cuser.month = mon;
-    cuser.day = day;
-    cuser.year = year;
-    if((fn = fopen(fn_register, "a"))) {
-	now = time(NULL);
-	trim(career);
-	trim(addr);
-	trim(phone);
-	fprintf(fn, "num: %d, %s", usernum, ctime(&now));
-	fprintf(fn, "uid: %s\n", cuser.userid);
-	fprintf(fn, "name: %s\n", rname);
-	fprintf(fn, "career: %s\n", career);
-	fprintf(fn, "addr: %s\n", addr);
-	fprintf(fn, "phone: %s\n", phone);
-	fprintf(fn, "email: %s\n", email);
-	fprintf(fn, "----\n");
-	fclose(fn);
-    }
-    clear();
-    move(9,3);
-    prints("最後Post一篇\033[32m自我介紹文章\033[m給大家吧，"
-	   "告訴所有老骨頭\033[31m我來啦^$。\\n\n\n\n");
-    pressanykey();
-    cuser.userlevel |= PERM_POST;
-    brc_initial("WhoAmI");
-    set_board();
-    do_post();
-    cuser.userlevel &= ~PERM_POST;
-    return 0;
-}
-
 /* 列出所有註冊使用者 */
 extern struct uhash_t *uhash;
 static int usercounter, totalusers, showrealname;
@@ -797,10 +578,9 @@ static int u_list_CB(userec_t *uentp) {
     
     ptr = (char *)Cdate(&uentp->lastlogin);
     ptr[18] = '\0';
-    prints("%-14s %-27.27s%5d %5d  %s  %s\n",
+    prints("%-14s %-27.27s  %s  %s\n",
 	   uentp->userid,
 	   showrealname ? uentp->realname : uentp->username,
-	   uentp->numlogins, uentp->numposts,
 	   HAS_PERM(PERM_SEEULEVELS) ? permstr : "", ptr);
     usercounter++;
     i++;

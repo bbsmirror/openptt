@@ -18,8 +18,8 @@ LIBS=	../libptt/libptt.a $(LIBS_$(OSTYPE))
 
 CC=	gcc
 PROG=	mbbsd
-OBJS=	admin.o bbs.o cal.o edit.o kaede.o mbbsd.o osdep.o read.o term.o\
-	toolkit.o ui.o xyz.o
+OBJS=	admin.o bbs.o cal.o edit.o mbbsd.o osdep.o read.o term.o toolkit.o\
+	ui.o xyz.o
 
 .SUFFIXES: .c .o
 .c.o:

@@ -84,7 +84,7 @@ int setforward() {
 int built_mail_index() {
     char genbuf[128];
     
-    sprintf(genbuf, "/home/bbs/bin/buildir /home/bbs/home/%c/%s",
+    sprintf(genbuf, BBSHOME "/bin/buildir " BBSHOME "/home/%c/%s",
 	    cuser.userid[0], cuser.userid);
     move(22,0);
     prints("\033[1;31m已經處理完畢!! 諸多不便 敬請原諒~\033[m");pressanykey();
@@ -113,14 +113,14 @@ int mail_muser(userec_t muser, char *title, char *filename) {
 int mail_id(char* id, char *title, char *filename, char *owner) {
     fileheader_t mhdr;
     char genbuf[200];
-    sprintf(genbuf, "/home/bbs/home/%c/%s", id[0], id);     
+    sprintf(genbuf, BBSHOME "/home/%c/%s", id[0], id);     
     stampfile(genbuf, &mhdr);
     strcpy(mhdr.owner, owner);
     strncpy(mhdr.title, title, TTLEN);
     mhdr.savemode = 0;
     mhdr.filemode = 0;
     Link(filename, genbuf);
-    sprintf(genbuf, "/home/bbs/home/%c/%s/.DIR", id[0], id);     
+    sprintf(genbuf, BBSHOME "/home/%c/%s/.DIR", id[0], id);     
     append_record(genbuf, &mhdr, sizeof(mhdr));
     return 0;
 }    

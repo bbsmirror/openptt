@@ -406,7 +406,7 @@ static int x_archie() {
     exec_cmd(ARCHIE, YEA, "bin/archie.sh", ARCHIE);
     log_usies("ARCHIE", "");
     strcpy(genbuf1, buf);
-    sprintf(buf, "/home/bbs/tmp/archie.%s", cuser.userid);
+    sprintf(buf, BBSHOME "/tmp/archie.%s", cuser.userid);
     if(dashf(buf)) {
 	getdata(0, 0, "要將結果寄回信箱嗎(Y/N)？[N]", ans, 3, DOECHO,0);
 	if(*ans == 'y') {

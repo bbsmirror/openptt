@@ -75,7 +75,7 @@ int Rename(char* src, char* dst) {
 int Link(char* src, char* dst) {
     char cmd[200];
     
-    if(strcmp(src, "/home/bbs/home") == 0)
+    if(strcmp(src, BBSHOME "/home") == 0)
     	return 1;
     if(link(src, dst) == 0)
 	return 0;

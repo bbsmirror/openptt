@@ -5,9 +5,10 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include "config.h"
 
-#define BOARD_REC "/home/bbs/etc/BOARD.rec"
-#define INND_BD   "/home/bbs/innd/newsfeeds.bbs"
+#define BOARD_REC BBSHOME "/etc/BOARD.rec"
+#define INND_BD   BBSHOME "/innd/newsfeeds.bbs"
 #define fn_board  ".BOARDS"
 
 /*-------------------------------------------------------*/

@@ -9,10 +9,10 @@
 #include "modes.h"
 #include "proto.h"
 
-#define DICE_TXT   "/home/bbs/etc/dice.txt"
-#define DICE_DATA  "/home/bbs/etc/dice.data"
-#define DICE_WIN   "/home/bbs/etc/windice.log"
-#define DICE_LOST  "/home/bbs/etc/lostdice.log"
+#define DICE_TXT   BBSHOME "/etc/dice.txt"
+#define DICE_DATA  BBSHOME "/etc/dice.data"
+#define DICE_WIN   BBSHOME "/etc/windice.log"
+#define DICE_LOST  BBSHOME "/etc/lostdice.log"
 
 #define B_MAX    500
 #define B_MIN    10

@@ -1323,7 +1323,7 @@ MailQueue *mqueue;
 
 /* check if the userid is in our bbs now */
     strcpy(userid, mqueue->sender);
-    sprintf(buf, "/home/bbs/home/%c/%s/.DIR", userid[0], userid);
+    sprintf(buf, BBSHOME "/home/%c/%s/.DIR", userid[0], userid);
     fx = open(buf, O_WRONLY | O_CREAT | O_APPEND, 0600);
     if (fx < 0)
     {

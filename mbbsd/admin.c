@@ -239,7 +239,7 @@ int m_mod_board(char *bname) {
 	if(HAS_PERM(PERM_SYSOP)) {
 	    char actionbuf[512];
 	    
-	    sprintf(actionbuf, "/home/bbs/bin/buildir boards/%s &",
+	    sprintf(actionbuf, BBSHOME "/bin/buildir boards/%s &",
 		    bh.brdname);
 	    system(actionbuf);
 	}

@@ -77,7 +77,7 @@ static void gettime(int flag, int *Year, int *Month, int *Day, int *Hour,
 #define hpressanykey(a) {move(22, 0); prints(a); pressanykey();}
 
 static int Connect(char *s, char *server) {
-    FILE *fp = fopen("/home/bbs/log/bbcall.log", "a");
+    FILE *fp = fopen(BBSHOME "/log/bbcall.log", "a");
     int sockfd;
     char result[2048];
     struct sockaddr_in serv_addr;

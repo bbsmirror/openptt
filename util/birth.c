@@ -11,7 +11,7 @@
 #include "util.h"
 #include "common.h"
 
-#define OUTFILE    "/home/bbs/etc/birth.today"
+#define OUTFILE    BBSHOME "/etc/birth.today"
 
 struct userec_t cuser;
 

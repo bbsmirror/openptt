@@ -12,18 +12,18 @@
 
 extern char *BBSName;
 
-#define VICE_PLAY   "/home/bbs/etc/vice/vice.play"
-#define VICE_JAKPOT "/home/bbs/etc/vice/vice.jakpot"
+#define VICE_PLAY   BBSHOME "/etc/vice/vice.play"
+#define VICE_JAKPOT BBSHOME "/etc/vice/vice.jakpot"
 #define VICE_DATA   "vice.data"
-#define VICE_BINGO  "/home/bbs/etc/vice.bingo"
-#define VICE_SHOW   "/home/bbs/etc/vice.show"
+#define VICE_BINGO  BBSHOME "/etc/vice.bingo"
+#define VICE_SHOW   BBSHOME "/etc/vice.show"
 /*
 #define VICE_TOSEE  "vice.tosee"
 */
-#define VICE_LOST   "/home/bbs/etc/vice/vice.lost"
-#define VICE_WIN    "/home/bbs/etc/vice/vice.win"
-#define VICE_END    "/home/bbs/etc/vice/vice.end"
-#define VICE_NO     "/home/bbs/etc/vice/vice.no"
+#define VICE_LOST   BBSHOME "/etc/vice/vice.lost"
+#define VICE_WIN    BBSHOME "/etc/vice/vice.win"
+#define VICE_END    BBSHOME "/etc/vice/vice.end"
+#define VICE_NO     BBSHOME "/etc/vice/vice.no"
 #define MAX_NO_PICTURE   2
 #define MAX_WIN_PICTURE  2
 #define MAX_LOST_PICTURE 3

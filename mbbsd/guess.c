@@ -10,7 +10,7 @@
 
 extern char *BBSName;
 
-#define LOGPASS "/home/bbs/etc/winguess.log"
+#define LOGPASS BBSHOME "/etc/winguess.log"
 
 static void show_table(char TABLE[], char ifcomputer) {
     int i;
@@ -355,7 +355,7 @@ int guess_main() {
     prints("嘿嘿 標準答案是 %s ", answer);
     move(18,35);
     prints("下次再來吧");
-    if((file = fopen("/home/bbs/etc/loseguess.log","a"))) {
+    if((file = fopen(BBSHOME "/etc/loseguess.log","a"))) {
 	fprintf(file,"id: %s 賭了 %ld Ptt$\n",cuser.userid,money);
 	fclose(file);
     }

@@ -337,14 +337,14 @@ static int game_log(int type, int money) {
 
     switch(type) {
     case JACK:
-        fp = fopen("/home/bbs/etc/card/jack.log", "a");
+        fp = fopen(BBSHOME "/etc/card/jack.log", "a");
         if(!fp)
             return 0;
         fprintf(fp, "%s win:%d\n", cuser.userid, money);
         fclose(fp);
         break;
     case TEN_HALF:
-        fp = fopen("/home/bbs/etc/card/tenhalf.log",  "a");
+        fp = fopen(BBSHOME "/etc/card/tenhalf.log",  "a");
         if(!fp)
             return 0;
         fprintf(fp, "%s win:%d\n", cuser.userid, money);

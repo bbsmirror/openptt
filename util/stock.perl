@@ -4,9 +4,7 @@
 # 中央氣象局的 WWW 及 URL 是否正確。
 # 理論上適用所有 Eagle BBS 系列。
 #                                       -- Beagle Apr 13 1997
-#open(BBSPOST, "| /home/bbs/bin/post Record 今日天氣預報 [餅乾小站]");
 open(BBSPOST, "| bin/webgrep >etc/stock.tmp");
-#open(BBSPOST, ">/home/bbs/tmp/weather.tmp");
 # 日期
 open(DATE, "date +'%a %b %d %T %Y' |");
 $date = <DATE>;

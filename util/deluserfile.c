@@ -93,7 +93,7 @@ void mv_user_home(char *ptr)
     char buf[200];
 
     printf("move user %s to tmp\n", ptr);
-    sprintf(buf, "cp -R " BBSHOME "/home/%c/%s /home/bbs/tmp", ptr[0], ptr);
+    sprintf(buf, "cp -R " BBSHOME "/home/%c/%s " BBSHOME "/tmp", ptr[0], ptr);
 //      sprintf(buf,"rm -rf " BBSHOME "/home/%c/%s",ptr[0],ptr);
     if (!system(buf))
     {				//Copy success

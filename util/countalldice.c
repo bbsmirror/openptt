@@ -8,9 +8,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include "config.h"
 
-#define DICE_WIN  "/home/bbs/etc/windice.log"
-#define DICE_LOST "/home/bbs/etc/lostdice.log"
+#define DICE_WIN  BBSHOME "/etc/windice.log"
+#define DICE_LOST BBSHOME "/etc/lostdice.log"
 
 int total = 0;
 

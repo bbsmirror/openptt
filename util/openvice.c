@@ -9,10 +9,10 @@
 #include "struct.h"
 #include "util.h"
 
-#define VICE_COUNT "/home/bbs/etc/vice.count"
-#define VICE_SHOW  "/home/bbs/etc/vice.show"
-#define VICE_BINGO "/home/bbs/etc/vice.bingo"
-#define VICE_BASE  "/home/bbs/etc/vice.base"
+#define VICE_COUNT BBSHOME "/etc/vice.count"
+#define VICE_SHOW  BBSHOME "/etc/vice.show"
+#define VICE_BINGO BBSHOME "/etc/vice.bingo"
+#define VICE_BASE  BBSHOME "/etc/vice.base"
 #define VICE_NEW   "vice.new"
 #define VICE_DATA  "vice.data"
 #define MAX_BINGO  99999999

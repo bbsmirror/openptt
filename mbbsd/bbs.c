@@ -52,7 +52,7 @@ void anticrosspost() {
     cuser.userlevel |= PERM_VIOLATELAW;
     cuser.vl_count ++;
     mail_by_link("PttÄµ¹î³¡¶¤", "Cross-Post»@³æ",
-		 "/home/bbs/etc/crosspost.txt");
+		 BBSHOME "/etc/crosspost.txt");
     reload_money();
     passwd_update(usernum, &cuser);
     exit(0);

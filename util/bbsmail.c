@@ -131,9 +131,9 @@ int mail2bbs(char *userid) {
 	fprintf(fout, "作者: %s\n", sender);
     if(title[0])
 	fprintf(fout, "標題: %s\n", title);
+    fprintf(fout, "時間: %s\n", ctime(&tmp_time));
     if(msgid[0])
 	fprintf(fout, "\33[32m識別: %s\33[m\n", msgid);
-    fprintf(fout, "時間: %s\n", ctime(&tmp_time));
     
     while(fgets(genbuf, 255, stdin))
 	fputs(genbuf, fout);

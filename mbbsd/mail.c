@@ -1504,7 +1504,7 @@ int doforward(char *direct, fileheader_t *fh, int mode) {
     }
     
     if(mode == 'Z') {
-	sprintf(fname, "/bin/tar cfz - home/%c/%s | "
+	sprintf(fname, "/usr/bin/tar cfz - home/%c/%s | "
 		"/usr/bin/uuencode %s.tgz > %s",
 		cuser.userid[0], cuser.userid, cuser.userid, direct);
 	system(fname);

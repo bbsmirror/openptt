@@ -65,12 +65,18 @@
 #define HAVE_JCEE          0
 #endif
 
-#ifndef HAVE_FREECLOAK
-#define HAVE_FREECLOAK    0
+#ifndef HAVE_FREECLOAK                      /* 使用者免費隱身 */
+#define HAVE_FREECLOAK     0
 #endif
 
-#ifndef TITLE_COLOR
+#ifndef TITLE_COLOR                         /* 站上標題顏色 */
 #define TITLE_COLOR       "\033[0;1;37;46m"
+#endif
+
+/* --------- */
+
+#ifndef USE_MPROTECT
+#define USE_MPROTECT       0
 #endif
 
 #ifndef SYSLOG_FACILITY

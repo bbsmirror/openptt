@@ -292,6 +292,7 @@ void resolve_utmp() {
 	utmpshm = attach_shm(UTMPSHM_KEY, sizeof(*utmpshm));
 	if(utmpshm->uptime == 0)
 	    utmpshm->uptime = utmpshm->number = 1;
+	MPROTECT_UTMP_R;
     }
 }
 
@@ -302,8 +303,11 @@ extern unsigned int currstat;
 extern userec_t cuser;
 
 void setutmpmode(int mode) {
-    if(currstat != mode)
+    if(currstat != mode) {
+	MPROTECT_UTMP_RW;
 	currutmp->mode = currstat = mode;
+	MPROTECT_UTMP_R;
+    }
     
     /* °lÂÜ¨Ï¥ÎªÌ */
     if(HAS_PERM(PERM_LOGUSER)) {
@@ -320,15 +324,19 @@ void getnewutmpent(userinfo_t *up) {
     extern int errno;
     register int i;
     register userinfo_t *uentp;
-
+    
     resolve_utmp();
     
     for(i = 0; i < USHM_SIZE; i++) {
 	uentp = &(utmpshm->uinfo[i]);
-	if(!(uentp->pid)) {
+	if(uentp->pid == 0) {
+	    MPROTECT_UTMP_RW;
+	    
 	    memcpy(uentp, up, sizeof(userinfo_t));
 	    currutmp = uentp;
 	    utmpshm->number++;
+	    
+	    MPROTECT_UTMP_R;
 	    return;
 	}
     }
@@ -414,9 +422,11 @@ int count_logins(int (*fptr)(int, userinfo_t *), int farg, int show) {
 }
 
 void purge_utmp(userinfo_t *uentp) {
+    MPROTECT_UTMP_RW;
     memset(uentp, 0, sizeof(userinfo_t));
     if(utmpshm->number)
 	utmpshm->number--;
+    MPROTECT_UTMP_R;
 }
 
 #define MYREJ     1

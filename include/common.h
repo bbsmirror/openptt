@@ -181,4 +181,14 @@
 
 #define STR_CURSOR      "¡´"
 #define STR_UNCUR       "  "
+
+#if USE_MPROTECT
+#define MPROTECT_UTMP_R  mprotect(utmpshm, sizeof(*utmpshm), PROT_READ)
+#define MPROTECT_UTMP_RW mprotect(utmpshm, sizeof(*utmpshm), PROT_READ | PROT_WRITE)
+#else
+#define MPROTECT_UTMP_R
+#define MPROTECT_UTMP_RW
 #endif
+
+#endif
+

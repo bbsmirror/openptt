@@ -239,9 +239,6 @@ void ToggleNameList(int *reciper, char *listfile, char *msg);
 int cpuload(char *str);
 double swapused(long *total, long *used);
 
-/* page */
-int main_railway();
-
 /* read */
 void z_download(char *fpath);
 void i_read(int cmdmode, char *direct, void (*dotitle)(), void (*doentry)(), onekey_t *rcmdlist, int *num_record);

@@ -438,52 +438,17 @@ static int p_money() {
     return 0;
 }
 
-static int forsearch();
-
 /* Ptt Play menu */
 static commands_t playlist[] = {
     {note, PERM_LOGINOK,     "NNote        【 刻刻流言版 】"},
     {x_history, 0,           "HHistory     【 我們的成長 】"},
     {x_weather,0 ,           "WWeather     【 氣象預報 】"},
     {x_stock,0 ,             "SStock       【 股市行情 】"},
-#ifdef HAVE_BIG2
-    {x_big2, 0,              "BBig2        【 網路大老二 】"},
-#endif
-#ifdef HAVE_MJ
-    {x_mj, PERM_LOGINOK,     "QQkmj        【 網路打麻將 】"},
-#endif
-#ifdef  HAVE_BRIDGE
-    {x_bridge, PERM_LOGINOK, "OOkBridge    【 橋牌競技 】"},
-#endif
-#ifdef HAVE_GOPHER
-    {x_gopher, PERM_LOGINOK, "GGopher      【 地鼠資料庫 】"},
-#endif
-#ifdef HAVE_TIN
-    {x_tin, PERM_LOGINOK,    "NNEWS        【 網際新聞 】"},
-#endif
-#ifdef BBSDOORS
-    {x_bbsnet, PERM_LOGINOK, "BBBSNet      【 其他 BBS站 】"},
-#endif
-#ifdef HAVE_WWW
-    {x_www, PERM_LOGINOK,    "WWWW Browser 【 汪汪汪 】"},
-#endif
-    {forsearch,PERM_LOGINOK, "SSearchEngine【\033[1;35m Ｐtt搜尋器 \033[m】"},
     {topsong,PERM_LOGINOK,   "TTop Songs   【\033[1;32m歐桑點歌排行榜\033[m】"},
     {p_money,PERM_LOGINOK,   "PPay         【\033[1;31m Ｐtt量販店 \033[m】"},
     {chicken_main,PERM_LOGINOK, "CChicken     【\033[1;34m Ｐtt養雞場 \033[m】"},
     {NULL, 0, NULL}
 };
-
-static commands_t slist[] = {
-    {main_railway, PERM_LOGINOK,  "33Railway     "
-     "【\033[1;32m 火車表查詢 \033[m】"},
-    {NULL, 0, NULL}
-};
-
-static int forsearch() {
-    domenu(SREG, "Ｐtt搜尋器", '1', slist);
-    return 0;
-}
 
 /* main menu */
 

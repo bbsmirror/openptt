@@ -178,11 +178,6 @@ void domenu(int cmdmode, char *cmdtitle, int cmd, commands_t cmdtable[]) {
     do {
         i = -1;
         switch(cmd) {
-        case Ctrl('C'):
-            cal();
-            i = lastcmdptr;
-            refscreen = YEA;
-            break;
         case Ctrl('I'):
             t_idle();
             refscreen = YEA;

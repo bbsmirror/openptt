@@ -858,12 +858,6 @@ static int read_post(int ent, fileheader_t *fhdr, char *direct) {
     case ',':
     case '<':
 	return THREAD_PREV;
-
-    case Ctrl('C'):
-	cal();
-	return FULLUPDATE;
-	break;
-
     case Ctrl('I'):
 	t_idle();
 	return FULLUPDATE;

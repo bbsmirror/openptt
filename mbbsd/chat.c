@@ -347,7 +347,8 @@ int t_chat() {
     char genbuf[200];
     char roomtype; 
 
-    strcpy(inbuf,select_address());
+    /* strcpy(inbuf,select_address()); */
+    strcpy(inbuf, "localhost");
     if(inbuf[0] == 0)
 	return -1;
 
@@ -357,6 +358,7 @@ int t_chat() {
 	return -1;
     }
     memset(&sin, 0, sizeof sin);
+    sin.sin_len = sizeof(sin);
     sin.sin_family = PF_INET;
     memcpy(&sin.sin_addr, h->h_addr, h->h_length);
     sin.sin_port = htons(NEW_CHATPORT);

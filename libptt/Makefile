@@ -14,26 +14,25 @@ LIBS_linux=	-lcrypt
 
 CFLAGS=	$(CFLAGS_$(OSTYPE))
 LDFLAGS=$(LDFLAGS_$(OSTYPE))
-LIBS=	../libptt/libptt.a $(LIBS_$(OSTYPE))
+LIBS=	$(LIBS_$(OSTYPE))
 
 CC=	gcc
-PROG=	mbbsd
-OBJS=	admin.o args.o bbs.o cal.o calendar.o chat.o chicken.o edit.o\
-	kaede.o mbbsd.o osdep.o read.o term.o toolkit.o topsong.o ui.o\
-	vote.o voteboard.o xyz.o
+LIB=	libptt
+OBJS=	announce.o board.o cache.o descrypt.o friend.o mail.o name.o\
+	passwd.o record.o register.o stuff.o syspost.o talk.o user.o\
+	var.o
 
 .SUFFIXES: .c .o
 .c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
-all: $(PROG)
+all: $(LIB)
 
-$(PROG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
+$(LIB): $(OBJS)
+	ar cr $(LIB).a $(OBJS)
+	ranlib $(LIB).a
 
-install: $(PROG)
-	install -d $(BBSHOME)/bin/
-	install -c -m 755 $(PROG) $(BBSHOME)/bin/
+install: $(LIB)
 
 clean:
-	rm -f $(OBJS) $(PROG)
+	rm -f $(OBJS) $(LIB)

@@ -1,11 +1,3 @@
-# ------------------------------------------------------- #
-#  innbbsd/Makefile	( NTHU CS MapleBBS Ver 2.36 )     #
-# ------------------------------------------------------- #
-#  target : Makefile for 轉信程式 innbbsd by skhuang      #
-#  create : 95/03/29                                      #
-#  update : 95/12/15                                      #
-# ------------------------------------------------------- #
-
 ####################################################
 # this is a bbs <--> news gateway
 #####################################################
@@ -13,7 +5,6 @@ VERSION=0.50beta-4
 LASTVERSION=0.50beta-3
 ADMINUSER= root@your.domain.name
 BBSHOME?=$(HOME)
-BBS_SRC = ..
 TARGET  = $(INNBBSD) $(BBSNNRP) $(BBSLINK)
 ####################################################
 CC=gcc
@@ -22,13 +13,12 @@ INSTALL=cp
 OPT= -O3 -s -pipe -fomit-frame-pointer
 
 BBS_DEP = MapleBBS 
-BBS_REC = $(BBS_SRC)/mbbsd/record.o r_port.o
 
 #########################
 #
 ###############
 DEBUGOBJ = /usr/lib/debug/mallocmap.o
-CFLAGS= -c -I. -I$(BBS_SRC)/include -I$(BBS_SRC)/mbbsd -D$(BBS_DEP) \
+CFLAGS= -c -I. -I../include -D$(BBS_DEP) \
 $(EXTRAFLAGS) -DDBZDEBUG -DBBSHOME='"$(BBSHOME)"' \
 -D_PATH_BBSHOME=\"$(BBSHOME)\" \
 -DVERSION=\"$(VERSION)\" -DADMINUSER=\"$(ADMINUSER)\" 
@@ -39,7 +29,6 @@ OBJS = inndchannel.o innbbsd.o connectsock.o rfc931.o \
        daemon.o file.o pmain.o his.o dbz.o \
        closeonexec.o dbztool.o inntobbs.o receive_article.o \
        echobbslib.o
-       # $(BBS_REC)
 SRCS = inndchannel.c innbbsd.c connectsock.c rfc931.c \
        daemon.c file.c pmain.c parsdate.y his.c dbz.c \
        closeonexec.c dbztool.c inntobbs.c bbslib.c receive_article.c \
@@ -160,16 +149,16 @@ ftp: distribution patch
 	rcp /tmp/innbbsd-patch.$(LASTVERSION)-$(VERSION) ccsun42:/home8/ftp/pub/bbs/misc/innbbsd
 
 innbbspost.o: innbbspost.c
-	$(CC) $(CFLAGS) -I$(BBS_SRC) -c innbbspost.c 
+	$(CC) $(CFLAGS) -c innbbspost.c 
 
 makedbz: $(MOBJS)
 	$(CC) $(OPT) -o makedbz $(MOBJS) $(LDFLAGS)
 
 dbzserver.o: dbzserver.c
-	$(CC) $(CFLAGS) -DDBZSERVER -I$(BBS_SRC) -c dbzserver.c   
+	$(CC) $(CFLAGS) -DDBZSERVER -c dbzserver.c   
 
 dbzinnbbsd.o: dbzinnbbsd.c
-	$(CC) $(CFLAGS) -DDBZSERVER -I$(BBS_SRC) -c dbzinnbbsd.c   
+	$(CC) $(CFLAGS) -DDBZSERVER -c dbzinnbbsd.c   
 
 dbzserver: $(DBZOBJS)
 	$(CC) $(OPT) -o dbzserver $(DBZOBJS) $(LDFLAGS)

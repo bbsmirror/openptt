@@ -195,21 +195,6 @@ int guess_main();
 int x_dict();
 int use_dict();
 
-/* io */
-int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
-int igetch();
-int getdata_str(int line, int col, char *prompt, char *buf, int len, int echo, char *defaultstr);
-int getdata_buf(int line, int col, char *prompt, char *buf, int len, int echo);
-int i_get_key();
-void add_io(int fd, int timeout);
-int igetkey();
-void oflush();
-int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo);
-void output(char *s, int len);
-void init_alarm();
-int num_in_buf();
-int ochar(int c);
-
 /* kaede */
 int Rename(char* src, char* dst);
 int Link(char* src, char* dst);
@@ -420,6 +405,19 @@ void restore_cursor();
 void do_move(int destcol, int destline);
 void scroll_forward();
 void change_scroll_range(int top, int bottom);
+int getdata(int line, int col, char *prompt, char *buf, int len, int echo);
+int igetch();
+int getdata_str(int line, int col, char *prompt, char *buf, int len, int echo, char *defaultstr);
+int getdata_buf(int line, int col, char *prompt, char *buf, int len, int echo);
+int i_get_key();
+void add_io(int fd, int timeout);
+int igetkey();
+void oflush();
+int oldgetdata(int line, int col, char *prompt, char *buf, int len, int echo);
+void output(char *s, int len);
+void init_alarm();
+int num_in_buf();
+int ochar(int c);
 
 /* topsong */
 void sortsong();

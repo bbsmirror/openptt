@@ -107,27 +107,10 @@ static char save_page_requestor[40];
 static char page_requestor[40];
 static FILE *flog;
 
-static int is_hidden(char *user) {
-    int tuid;
-    userinfo_t *uentp;
-
-    if ((!(tuid = getuser(user)))
-	|| (!(uentp = search_ulist(cmpuids, tuid)))
-	|| ((!uentp->invisible || HAS_PERM(PERM_SYSOP) || HAS_PERM(PERM_SEECLOAK))
-	    && (((!PERM_HIDE(uentp) && !PERM_HIDE(currutmp)) ||
-		 PERM_HIDE(currutmp))
-		&& !(is_rejected(uentp) & HRM && !(is_friend(uentp) & HFM)))))
-	return 0;		/* 交談 xxx */
-    else
-	return 1;		/* 自言自語 */
-}
-
 char *modestring(userinfo_t * uentp, int simple) {
     static char modestr[40];
-    static char *notonline = "不在站上";
     register int mode = uentp->mode;
     register char *word;
-    int isrej, isfri;
 
 /* for debugging */
     if (mode >= MAX_MODES)
@@ -137,16 +120,8 @@ char *modestring(userinfo_t * uentp, int simple) {
     }
     else
 	word = ModeTypeTable[mode];
-    isrej = is_rejected(uentp);
-    isfri = is_friend(uentp);
-    if (!(HAS_PERM(PERM_SYSOP) || HAS_PERM(PERM_SEECLOAK)) &&
-	(
-	    (uentp->invisible || (isrej & HRM)) &&
-	    !((isfri & HFM) && (isrej & HRM))
-	    )
-	)
-	return notonline;
-    else if (mode == EDITING)
+
+    if (mode == EDITING)
     {
 	sprintf(modestr, "E:%s",
 		ModeTypeTable[uentp->destuid < EDITING ? uentp->destuid :
@@ -182,10 +157,7 @@ char *modestring(userinfo_t * uentp, int simple) {
 	sprintf(modestr, "%s (%s)", word, uentp->chatid);
     else if (mode == TALK)
     {
-	if (is_hidden(getuserid(uentp->destuid)))	/* Leeym 對方(紫色)隱形 */
-	    sprintf(modestr, "%s", "交談 空氣");	/* Leeym 大家自己發揮吧！ */
-	else
-	    sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
+	sprintf(modestr, "%s %s", word, getuserid(uentp->destuid));
     }
     else if (mode != PAGE && mode != TQUERY)
 	return word;
@@ -210,89 +182,6 @@ static int can_override(char *userid, char *whoasks) {
 
     sethomefile(buf, userid, fn_overrides);
     return belong(buf, whoasks);
-}
-
-int is_friend(userinfo_t * ui) {
-    register int unum, hit, *myfriends;
-
-/* 判斷對方是否為我的朋友 ? */
-    unum = ui->uid;
-    myfriends = currutmp->friend;
-    while ((hit = *myfriends++))
-    {
-	if (unum == hit)
-	{
-	    hit = IFH;
-	    break;
-	}
-    }
-
-/* 看板好友 */
-    if (currutmp->brc_id && ui->brc_id == currutmp->brc_id)
-    {
-	hit |= 1;
-    }
-
-/* 判斷我是否為對方的朋友 ? */
-    myfriends = ui->friend;
-    while ((unum = *myfriends++))
-    {
-	if (unum == usernum)
-	{
-	    hit |= HFM;
-	    break;
-	}
-    }
-    return hit;
-}
-
-/* 被拒絕 */
-int is_rejected(userinfo_t * ui) {
-    register int unum, hit, *myrejects;
-
-    if (PERM_HIDE(ui))
-	return 0;
-/* 判斷對方是否為我的仇人 ? */
-
-    unum = ui->uid;
-    myrejects = currutmp->reject;
-    while ((hit = *myrejects++))
-    {
-	if (unum == hit)
-	{
-	    hit = 1;
-	    break;
-	}
-    }
-
-/* 判斷我是否為對方的仇人 ? */
-    myrejects = ui->reject;
-    while ((unum = *myrejects++))
-    {
-	if (unum == usernum)
-	{
-	    hit |= 2;
-	    break;
-	}
-    }
-    return hit;
-}
-
-int isvisible(userinfo_t * uentp, int isfri, int isrej) {
-    if (uentp->userid[0] == 0)
-	return 0;
-
-    if (PERM_HIDE(uentp) && !(PERM_HIDE(currutmp)))	/* 對方紫色隱形而你沒有 */
-	return 0;
-    else if (HAS_PERM(PERM_SYSOP))	/* 站長看的見任何人 */
-	return 1;
-
-    if (uentp->invisible &&
-	!HAS_PERM(PERM_SEECLOAK) &&	/* 沒有看見忍者的權限 */
-	!((isrej & HISREJ) && (isfri & HISFRI)))	/* 沒同時設好友壞人 */
-	return 0;
-
-    return ((isrej & HISREJ) && !(isfri & HISFRI)) ? 0 : 1;
 }
 
 /* 真實動作 */
@@ -331,34 +220,18 @@ int my_query(char *uident) {
 
 	prints("《ＩＤ暱稱》%s(%s)\n",
 	       muser.userid, muser.username);
-	prints("《上站次數》%d次", muser.numlogins);
-	move(2, 40);
-	prints("《文章篇數》%d篇\n", muser.numposts);
 
 	uentp = (userinfo_t *) search_ulist(cmpuids, tuid);
 	prints("\033[1;33m《目前動態》%-28.28s\033[m",
-	       (uentp && isvisible(uentp, is_friend(uentp), is_rejected(uentp))) ?
-	       modestring(uentp, 0) : "不在站上");
+	       modestring(uentp, 0));
 
 	sethomedir(currmaildir, muser.userid);
 	outs(chkmail(1) ? "《私人信箱》有新進信件還沒看\n" :
 	     "《私人信箱》所有信件都看過了\n");
 	sethomedir(currmaildir, cuser.userid);
 	chkmail(1);
-	prints("《上次上站》%-28.28s《上次故鄉》%s\n",
-	       Cdate(&muser.lastlogin),
-	       (muser.lasthost[0] ? muser.lasthost : "(不詳)"));
+	prints("《上次上站》%-28.28s\n", Cdate(&muser.lastlogin));
 
-	if (can_override(muser.userid, cuser.userid) || HAS_PERM(PERM_SYSOP) ||
-	    !strcmp(muser.userid, cuser.userid))
-	{
-	    char *sex[8] =
-	    {MSG_BIG_BOY, MSG_BIG_GIRL,
-	     MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
-	     MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME};
-
-	    prints("《 性  別 》%-28.28s\n", sex[muser.sex % 8]);
-	}
 	showplans(uident);
 	pressanykey();
 	return FULLUPDATE;
@@ -481,8 +354,7 @@ int my_write(pid_t pid, char *prompt, char *id, int flag) {
 	      !HAS_PERM(PERM_SYSOP) &&
 	      (uin->pager == 3 || 
 	       uin->pager == 2 || 
-	       (uin->pager == 4 &&
-		!(is_friend(uin) & 4))))
+	       uin->pager == 4))
 	outmsg("\033[1;33;41m糟糕! 對方防水了! \033[37m~>_<~\033[m");
     else {
 	if(uin->msgcount < MAX_MSGS) {
@@ -918,26 +790,14 @@ static void my_talk(userinfo_t * uin) {
     {
 	outs("人家在忙啦");
     }
-    else if (!HAS_PERM(PERM_SYSOP) &&
-	     (
-		 ((is_rejected(uin) & HRM) && (!(is_friend(uin) & HFM))) ||
-		 (!uin->pager && !is_friend(uin) & HFM)
-		 )
-	)
-    {
+    else if(!HAS_PERM(PERM_SYSOP) && !uin->pager) {
 	outs("對方關掉呼叫器了");
     }
-    else if (!HAS_PERM(PERM_SYSOP) &&
-	     (
-		 ((is_rejected(uin) & HRM) && !(is_friend(uin) & HFM)) ||
-		 uin->pager == 2
-		 )
-	)
+    else if (!HAS_PERM(PERM_SYSOP) && uin->pager == 2)
     {
 	outs("對方拔掉呼叫器了");
     }
-    else if (!HAS_PERM(PERM_SYSOP) &&
-	     !(is_friend(uin) & HFM) && uin->pager == 4)
+    else if (!HAS_PERM(PERM_SYSOP) && uin->pager == 4)
     {
 	outs("對方只接受好友的呼叫");
     }
@@ -1225,58 +1085,8 @@ static int pickup_cmp(pickup_t * i, pickup_t * j) {
     return 0;
 }
 
-/* Kaede show friend description */
-static char *friend_descript(char *uident) {
-    static char *space_buf = "                    ";
-    static char desc_buf[80];
-    char fpath[80], name[IDLEN + 2], *desc, *ptr;
-    int len, flag;
-    FILE *fp;
-    char genbuf[200];
-
-    setuserfile(fpath, friend_file[0]);
-
-    if ((fp = fopen(fpath, "r")))
-    {
-	sprintf(name, "%s ", uident);
-	len = strlen(name);
-	desc = genbuf + 13;
-
-	while ((flag = (int) fgets(genbuf, STRLEN, fp)))
-	{
-	    if (!memcmp(genbuf, name, len))
-	    {
-		if ((ptr = strchr(desc, '\n')))
-		    ptr[0] = '\0';
-		if (desc)
-		    break;
-	    }
-	}
-	fclose(fp);
-	if (desc && flag)
-	    strcpy(desc_buf, desc);
-	else
-	    return space_buf;
-
-	return desc_buf;
-    }
-    else
-	return space_buf;
-}
-
 static char *descript(int show_mode, userinfo_t * uentp, time_t diff) {
-    switch (show_mode)
-    {
-    case 1:
-	return friend_descript(uentp->userid);
-    case 0:
-	return (((uentp->pager != 2 && uentp->pager != 3 && diff) ||
-		 HAS_PERM(PERM_SYSOP)) ?
-		uentp->from
-		: "*");
-    default:
-	return "";
-    }
+    return uentp->from;
 }
 
 static void pickup_user() {
@@ -1296,7 +1106,6 @@ static void pickup_user() {
     register int id0 = 0;	/* US_PICKUP時的游標用 */
     register int state = US_PICKUP, hate, ch;
     register int actor = 0, head, foot, bmind = -1;
-    int isfri, isrej;
     int badman = 0;
     int savemode = currstat;
     time_t diff, freshtime;
@@ -1304,20 +1113,6 @@ static void pickup_user() {
 /* num : 現在的游標位 */
 /* foot: 此頁的腳腳 */
     char buf[20];		/* actor:共有多少user */
-    char pagerchar[5] = "* -Wf";
-    char *msg_pickup_way[PICKUP_WAYS] =
-    {
-	"嗨！朋友",
-	"網友代號",
-	"網友動態",
-	"發呆時間",
-	"來自何方"
-    };
-    char *MODE_STRING[MAX_SHOW_MODE] =
-    {
-	"故鄉",
-	"好友描述"
-    };
 
     while (1)
     {
@@ -1332,32 +1127,7 @@ static void pickup_user() {
 		uentp = &(utmpshm->uinfo[ch++]);
 		if (uentp->pid)
 		{
-		    isrej = head = is_rejected(uentp);
-		    isfri = is_friend(uentp);
-
-		    if (!isvisible(uentp, isfri, isrej) ||
-			((cuser.uflag & FRIEND_FLAG) &&
-			 (!isfri ||
-			  ((isrej & MYREJ) && !(isfri & MYFRI)))))
-			continue;
-
-		    /* Heat990613:心情排序 */
-		    if (bmind != -1 && bmind != uentp->mind)
-			continue;
-
-
-		    if ((isrej & MYREJ) && !(isfri & MYFRI))
-			rejected_number++;
-
-		    head = isfri;
-
-		    if (isfri & MYFRI)
-			friends_number++;
-		    if (isfri & HISFRI)
-			override_number++;
-		    if (isfri & BOARDFRI)
-			bfriends_number++;
-
+		    head = 0;
 #ifdef SHOW_IDLE_TIME
 		    diff = freshtime - uentp->lastact;
 #ifdef DOTIMEOUT
@@ -1402,20 +1172,9 @@ static void pickup_user() {
 	{
 	    showtitle((cuser.uflag & FRIEND_FLAG) ? "好友列表" : "休閒聊天",
 		      BBSName);
-	    prints("  排序：[%s] 上站人數：%-4d\033[1;32m我的朋友：%-3d"
-		   "\033[33m與我為友：%-3d\033[36m板友：%-4d\033[31m壞人："
-		   "%-2d\033[m\n"
-		   "\033[7m  %s P%c代號         %-17s%-17s%-13s%-10s\033[m\n",
-		   msg_pickup_way[pickup_way], actor, friends_number,
-		   override_number, bfriends_number,
-		   badman,
-		   show_uid ? "UID" : "No.", 
-		   (HAS_PERM(PERM_SEECLOAK) || HAS_PERM(PERM_SYSOP)) ? 'C' : ' ',
-		   real_name ? "姓名" : "暱稱",
-		   MODE_STRING[show_mode],
-		   show_board ? "Board" : "動態",
-		   show_pid ? "       PID" : (show_mind ? "心情  發呆" : "備註  發呆")
-		);
+	    prints("  上站人數：%-4d\n"
+		   "\033[7m  No.   代號         %-17s%-17s%-13s%-10s\033[m\n",
+		   actor, "暱稱", "故鄉", "動態", "備註  發呆");
 	}
 	else
 	{
@@ -1461,50 +1220,19 @@ static void pickup_user() {
 	    buf[0] = '\0';
 #endif
 
-#ifdef SHOWPID
-	    if (show_pid)
-		sprintf(buf, "%6d", uentp->pid);
-#endif
 	    state = (currutmp == uentp) ? 10 : pklist[ch].friend;
 
 	    if (PERM_HIDE(uentp))
 		state = 9;
 
-	    hate = is_rejected(uentp);
+	    hate = 0;
 	    diff = uentp->pager & !(hate & HRM);
-	    prints("%5d %c%c%s%-13s%-17.16s\033[m%-17.16s%-13.13s%s%s\n",
-#ifdef SHOWUID
-		   show_uid ? uentp->uid :
-#endif
+	    prints("%5d  %-13s%-17.16s%-17.16s%-13.13s    %s\n",
 		   (ch + 1),
-		   (hate & HRM) ? 'X' :
-		   pagerchar[uentp->pager % 5],
-		   (uentp->invisible ? ')' : ' '),
-		   (
-		       (hate & IRH) && !is_friend(uentp)
-		       )? fcolor[8] : fcolor[state],
-		   /* %s */
 		   uentp->userid,
-
-		   /* %-13s 暱稱 */
-#ifdef REALINFO
-		   real_name ? uentp->realname :
-#endif
 		   uentp->username,
-		   /* %-17.16s 故鄉 */
 		   descript(show_mode, uentp, diff),
-
-		   /* %-17.16s 看板 */
-#ifdef SHOWBOARD
-		   show_board ? (uentp->brc_id == 0 ? "" :
-				 bcache[uentp->brc_id - 1].brdname) :
-#endif
-		   /* %-13.13s */
 		   modestring(uentp, 0),
-		   /* %4s 備註 */
-		   ((uentp->userlevel & PERM_VIOLATELAW) ? "通緝" : (uentp->birth ? "壽星"
-								     : "    ")),
-		   /* %s 發呆 */
 		   buf);
 	}
 	if (state == US_PICKUP)
@@ -1722,19 +1450,11 @@ static void pickup_user() {
 		    while (actor_pos)
 		    {
 			uentp = pklist[--actor_pos].ui;
-			if (uentp->pid &&
-			    currpid != uentp->pid &&
-			    uentp->pid > 0 && kill(uentp->pid, 0) != -1 &&
-			    (HAS_PERM(PERM_SYSOP) ||
-			     (uentp->pager != 3 &&
-			      (uentp->pager != 4 || is_friend(uentp) & HFM))))
+			if(uentp->pid && currpid != uentp->pid &&
+			   uentp->pid > 0 && kill(uentp->pid, 0) != -1)
 			    my_write(uentp->pid, genbuf, uentp->userid, HAS_PERM(PERM_SYSOP) ? 3 : 1);
 		    }
 		}
-		break;
-	    case 's':		/* 顯示好友描述 */
-		show_mode = (++show_mode) % MAX_SHOW_MODE;
-		state = US_PICKUP;
 		break;
 	    case 'u':		/* 線上修改資料 */
 	    case 'K':		/* 把壞蛋踢出去 */
@@ -1803,10 +1523,7 @@ static void pickup_user() {
 
 	if (ch == 'w')
 	{
-	    if ((uentp->pid != currpid) &&
-		(HAS_PERM(PERM_SYSOP) ||
-		 (uentp->pager != 3 &&
-		  (is_friend(uentp) & HFM || uentp->pager != 4))))
+	    if(uentp->pid != currpid)
 	    {
 		cursor_show(num + 3 - head, 0);
 		sprintf(genbuf, "Call-In %s ：", uentp->userid);
@@ -1823,20 +1540,6 @@ static void pickup_user() {
 	    {
 	    case 'r':
 		m_read();
-		break;
-	    case 'a':
-		friend_add(uentp->userid, FRIEND_OVERRIDE);
-		friend_load();
-		state = US_PICKUP;
-		break;
-	    case 'd':
-		friend_delete(uentp->userid, FRIEND_OVERRIDE);
-		friend_load();
-		state = US_PICKUP;
-		break;
-	    case 'o':
-		t_override();
-		state = US_PICKUP;
 		break;
 	    case 'K':
 		if (uentp->pid > 0 && kill(uentp->pid, 0) != -1)
@@ -2053,8 +1756,7 @@ void talkreply() {
     currutmp->msgs[0].last_pid = uip->pid;
     strcpy(currutmp->msgs[0].last_userid, uip->userid);
     strcpy(currutmp->msgs[0].last_call_in, "呼叫、呼叫，聽到請回答 (Ctrl-R)");
-    prints("對方來自 [%s]，共上站 %d 次，文章 %d 篇\n",
-	   uip->from, xuser.numlogins, xuser.numposts);
+    prints("對方來自 [%s]\n", uip->from);
     showplans(uip->userid);
     show_last_call_in(0);
 
@@ -2138,20 +1840,7 @@ static int shortulist(userinfo_t * uentp) {
 	lineno = fullactive = 0;
 	return finaltally;
     }
-    if ((!HAS_PERM(PERM_SYSOP) &&
-	 !HAS_PERM(PERM_SEECLOAK) &&
-	 uentp->invisible) ||
-	((is_rejected(uentp) & HRM) &&
-	 !HAS_PERM(PERM_SYSOP)))
-    {
-	if (lineno >= b_lines)
-	    return 0;
-	if (num++ < page)
-	    return 0;
-	memset(uentry, ' ', 25);
-	uentry[25] = '\0';
-    }
-    else
+
     {
 	fullactive++;
 	if (lineno >= b_lines)
@@ -2162,7 +1851,7 @@ static int shortulist(userinfo_t * uentp) {
 	if (num++ < page)
 	    return 0;
 
-	state = (currutmp == uentp) ? 10 : is_friend(uentp);
+	state = (currutmp == uentp) ? 10 : 0;
 
 	if (PERM_HIDE(uentp))
 	    state = 9;

@@ -179,7 +179,6 @@ void u_exit(char *mode) {
 	xuser.numposts = cuser.numposts;
 	if(!diff && cuser.numlogins)
 	    xuser.numlogins = --cuser.numlogins; /* Leeym 上站停留時間限制式 */
-	reload_money();
 	passwd_update(usernum, &xuser);
     }
     log_usies(mode, NULL);
@@ -752,7 +751,6 @@ static void user_login() {
     if(!PERM_HIDE(currutmp))
 	cuser.lastlogin = login_start_time;
     
-    reload_money();
     passwd_update(usernum, &cuser);
     
     for(i = 0; i < NUMVIEWFILE; i++)

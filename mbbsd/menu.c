@@ -99,7 +99,6 @@ void movie(int i) {
        !ptt->busystate && ptt->max_film > 0) {
         if(currstat == PSALE) {
             i = PSALE;
-            reload_money();
         } else {
             do {
                 if(!i)
@@ -299,7 +298,6 @@ static commands_t adminlist[] = {
     {cat_register, PERM_SYSOP,        "CCatregister   無法審核時用的"},
     {p_touch_boards, PERM_SYSOP,      "TTouch Boards  更新BCACHE"},
     {x_file, PERM_SYSOP|PERM_VIEWSYSOP,     "XXfile         編輯系統檔案"},
-    {give_money, PERM_SYSOP|PERM_VIEWSYSOP, "GGivemoney     紅包雞"},
 #ifdef  HAVE_MAILCLEAN
     {m_mclean, PERM_SYSOP,            "MMail Clean    清理使用者個人信箱"},
 #endif

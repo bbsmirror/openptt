@@ -18,7 +18,7 @@ typedef struct userec_t {
     time_t firstlogin;
     time_t lastlogin;
     char lasthost[16];
-    signed long money;
+    char pad3[4];
     char remoteuser[3];           /* 保留 目前沒用到的 */
     char proverb;
     char email[50];
@@ -86,7 +86,7 @@ typedef struct fileheader_t {
     char owner[IDLEN + 2];        /* uid[.] */
     char date[6];                 /* [02/02] or space(5) */
     char title[TTLEN + 1];
-    unsigned int  money;
+    char pad[4];
     unsigned char filemode;       /* must be last field @ boards.c */
 } fileheader_t;
 

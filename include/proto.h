@@ -95,24 +95,12 @@ void remove_from_uhash(int n);
 void add_to_uhash(int n, char *id);
 
 /* cal */
-int inumoney(char *tuser, int money);
-int cal();
-int reload_money();
-int demoney(int money);
-int inmoney(int money);
-int deumoney(char *tuser, int money);
 int lockutmpmode(int unmode, int state);
 int unlockutmpmode();
 int p_touch_boards();
 int x_file();
-int give_money();
 int p_sysinfo();
 int p_give();
-int p_cloak();
-int p_from();
-int ordersong();
-int p_exmail();
-void mail_redenvelop(char* from, char* to, int money, char mode);
 
 /* chat */
 int t_chat();

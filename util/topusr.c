@@ -18,8 +18,6 @@ struct manrec
     char username[23];
     ushort numlogins;
     ushort numposts;
-    unsigned long int
-     money;
 };
 typedef struct manrec manrec;
 struct manrec allman[MAX_USERS];
@@ -30,7 +28,6 @@ FILE *fp;
 
 #define TYPE_POST       0
 #define TYPE_LOGIN      1
-#define TYPE_MONEY      2
 
 int
  login_cmp(b, a)
@@ -46,14 +43,6 @@ struct manrec *a, *b;
 {
     return (a->numposts - b->numposts);
 }
-
-int
- money_cmp(b, a)
-struct manrec *a, *b;
-{
-    return (a->money - b->money);
-}
-
 
 void
  top(type)
@@ -72,21 +61,13 @@ void
 ", type + 44, str_type[type]);
     for (i = 0; i < rows; i++)
     {
-	sprintf(buf1, "[%2d] %-11.11s%-16.16s%5d%c",
+	sprintf(buf1, "[%2d] %-11.11s%-16.16s%5d ",
 		i + 1, allman[i].userid, allman[i].username,
-		(int)(type == 1 ? allman[i].numlogins :
-		 type == 0 ? allman[i].numposts :
-		 allman[i].money >= 100000
-		 ? allman[i].money / 1000 : allman[i].money),
-		(type == 2 && allman[i].money >= 100000) ? 'K' : ' ');
+		(int)(type == 1 ? allman[i].numlogins : allman[i].numposts));
 	j = i + rows;
-	sprintf(buf2, "[%2d] %-11.11s%-16.16s%4d%c",
+	sprintf(buf2, "[%2d] %-11.11s%-16.16s%4d ",
 		j + 1, allman[j].userid, allman[j].username,
-		(int)(type == 1 ? allman[j].numlogins :
-		 type == 0 ? allman[j].numposts :
-		 allman[j].money >= 100000
-		 ? allman[j].money / 1000 : allman[j].money)
-		,(type == 2 && allman[j].money >= 100000) ? 'K' : ' ');
+		(int)(type == 1 ? allman[j].numlogins : allman[j].numposts));
 	if (i < 3)
 	    fprintf(fp, "\n [1;%dm%-40s[0;37m%s", 31 + i, buf1, buf2);
 	else
@@ -180,7 +161,6 @@ char **argv;
 	    strncpy(allman[i].username, aman.username, 23);
 	    allman[i].numlogins = aman.numlogins;
 	    allman[i].numposts = aman.numposts;
-	    allman[i].money = aman.money;
 	    i++;
 	}
     }
@@ -190,9 +170,6 @@ char **argv;
 	printf("cann't open topusr\n");
 	return 0;
     }
-
-    qsort(allman, i, sizeof(manrec), money_cmp);
-    top(TYPE_MONEY);
 
     qsort(allman, i, sizeof(manrec), post_cmp);
     top(TYPE_POST);

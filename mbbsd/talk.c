@@ -317,13 +317,9 @@ static void my_kick(userinfo_t * uentp) {
 int my_query(char *uident) {
     extern char currmaildir[];
     userec_t muser;
-    int tuid, i;
-    unsigned long int j;
+    int tuid;
     userinfo_t *uentp;
-    char *money[10] =
-    {"債台高築", "赤貧", "清寒", "普通", "小康",
-     "小富", "中富", "大富翁", "富可敵國", "比爾蓋\天"};
-
+    
     if ((tuid = getuser(uident)))
     {
 	memcpy(&muser, &xuser, sizeof(muser));
@@ -333,14 +329,7 @@ int my_query(char *uident) {
 	setutmpmode(TQUERY);
 	currutmp->destuid = tuid;
 
-	j = muser.money;
-	for (i = 0; i < 10 && j > 10; i++)
-	    j /= 10;
-	prints("《ＩＤ暱稱》%s(%s)%*s《經濟狀況》%s\n",
-	       muser.userid,
-	       muser.username,
-	       26 - strlen(muser.userid) - strlen(muser.username), "",
-	       money[i]);
+	prints("《ＩＤ暱稱》%s(%s)\n", muser.userid, muser.username);
 	prints("《上站次數》%d次", muser.numlogins);
 	move(2, 40);
 	prints("《文章篇數》%d篇\n", muser.numposts);
@@ -367,9 +356,7 @@ int my_query(char *uident) {
 	     MSG_LITTLE_BOY, MSG_LITTLE_GIRL,
 	     MSG_MAN, MSG_WOMAN, MSG_PLANT, MSG_MIME};
 
-	    prints("《 性  別 》%-28.28s《私有財產》%ld 銀兩\n",
-		   sex[muser.sex % 8],
-		   muser.money);
+	    prints("《 性  別 》%-28.28s\n", sex[muser.sex % 8]);
 	}
 	showplans(uident);
 	pressanykey();
@@ -1841,45 +1828,6 @@ static void pickup_user() {
 	    {
 	    case 'r':
 		m_read();
-		break;
-	    case 'g':		/* give money */
-		move(b_lines - 2, 0);
-		if (strcmp(uentp->userid, cuser.userid))
-		{
-		    sprintf(genbuf, "要給 %s 多少錢呢?  ", uentp->userid);
-		    outs(genbuf);
-		    if (getdata(b_lines - 1, 0, "[銀行轉帳]:", genbuf, 7,
-				LCECHO))
-		    {
-			clrtoeol();
-			if ((ch = atoi(genbuf)) <= 0)
-			    break;
-			reload_money();
-			if (ch > cuser.money)
-			    outs("\033[41m 現金不足~~\033[m");
-			else
-			{
-			    inumoney(uentp->userid, ch);
-			    sprintf(genbuf, "\033[44m 嗯..還剩下 %d 錢.."
-				    "\033[m", demoney(ch));
-			    outs(genbuf);
-			    sprintf(genbuf, "%s\t給%s\t%d\t%s", cuser.userid,
-				    uentp->userid, ch,
-				    ctime(&currutmp->lastact));
-			    log_file(FN_MONEY, genbuf);
-			    mail_redenvelop(cuser.userid, uentp->userid, ch, 'Y');
-			}
-		    }
-		    else
-		    {
-			clrtoeol();
-			outs("\033[41m 交易取消! \033[m");
-		    }
-		}
-		else
-		    outs("\033[33m 自己給自己? 耍笨..\033[m");
-		refresh();
-		sleep(1);
 		break;
 	    case 'a':
 		friend_add(uentp->userid, FRIEND_OVERRIDE);

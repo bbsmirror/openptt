@@ -22,26 +22,27 @@ int board_cmp(const void *va, const void *vb)
 void usage(char *cmdname)
 {
   printf("This will print all board information.\n");
-  printf("Usage: %s [-bc] _.BOARDS_file ", cmdname);
+  printf("Usage: %s [-bc] [-f filename]\n", cmdname);
+  printf("  -b      print bad board also\n");
+  printf("  -c      print more information\n");
+  printf("  -f      specifies filename or .BOARDS as default\n");
 }
 
 int main(int argc, char *argv[])
 {
     int inf, i, count;
     int optch, f_complete=0, f_bad_board_also=0;
+    char boardname[200] = ".BOARDS";
 
-    if (argc < 2)
-    {
-      usage(argv[0]);
-      exit(1);
-    }
-
-    while( (optch=getopt(argc, argv, "")) != -1) {
+    while( (optch=getopt(argc, argv, "bcf:")) != -1) {
       switch(optch) {
         case 'b':
           f_bad_board_also = 1;
         case 'c':
           f_complete = 1;
+          break;
+        case 'f':
+          strcpy(boardname, optarg);
           break;
         default:
          usage(argv[0]);
@@ -49,10 +50,11 @@ int main(int argc, char *argv[])
     }
     
 
-    inf = open(argv[1], O_RDONLY);
+    inf = open(boardname, O_RDONLY);
     if (inf == -1)
     {
-	printf("Error open file %s\n", argv[1]);
+	printf("Error open file %s\n", boardname);
+	usage(argv[0]);
 	exit(1);
     }
 

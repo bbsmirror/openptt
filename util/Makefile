@@ -21,15 +21,15 @@ LIBMAIL=$(LIBMAIL_$(OSTYPE))
 
 OBJS=	util_cache.o util_record.o util_passwd.o
 
-CPROGS=	bbsmail post account birth deluserfile expire mandex\
-	topusr yearsold uhash_loader\
+CPROGS=	bbsmail post account deluserfile expire mandex\
+	uhash_loader\
 	poststat showboard inndBM antispam bbsrf\
 	createbbs outmail userlist tunepasswd buildir reaper shmsweep\
 	merge_passwd merge_board
 
-SRCS=	bbsmail.c post.c account.c birth.c deluserfile.c expire.c\
-	mandex.c horoscope.c topusr.c\
-	yearsold.c uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
+SRCS=	bbsmail.c post.c account.c deluserfile.c expire.c\
+	mandex.c horoscope.c\
+	uhash_loader.c poststat.c showboard.c inndBM.c antispam.c\
 	bbsrf.c createbbs.c outmail.c\
 	userlist.c tunepasswd.c buildir.c reaper.c shmsweep.c merge_passwd.c\
 	merge_board.c

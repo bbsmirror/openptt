@@ -21,6 +21,10 @@
 #define MAX_ACTIVE        (1024)         /* 程计 */
 #endif
 
+#ifndef MAX_CPULOAD
+#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
+#endif
+
 #ifndef MAX_POST_MONEY                      /* 祇ゅ彻絑禣 */
 #define MAX_POST_MONEY     100
 #endif
@@ -84,7 +88,6 @@
 #define MAX_CROSSNUM      (9) 	         /* 程crosspostΩ计 */
 #define MAX_REVIEW        (7)		 /* 程瞴臮 */
 #define NUMVIEWFILE       (14)           /* 秈礶程计 */
-#define MAX_CPULOAD       (70)           /* CPU 程蔼load */
 #define MAX_SWAPUSED      (0.7)          /* SWAP程蔼ㄏノ瞯 */
 #define LOGINATTEMPTS     (3)            /* 程秈ア粇Ω计 */
 #define WHERE                            /* 琌Τ珿秏 */

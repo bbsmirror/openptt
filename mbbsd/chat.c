@@ -358,7 +358,9 @@ int t_chat() {
 	return -1;
     }
     memset(&sin, 0, sizeof sin);
+#ifdef FreeBSD
     sin.sin_len = sizeof(sin);
+#endif
     sin.sin_family = PF_INET;
     memcpy(&sin.sin_addr, h->h_addr, h->h_length);
     sin.sin_port = htons(NEW_CHATPORT);

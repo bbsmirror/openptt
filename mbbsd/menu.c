@@ -498,7 +498,6 @@ static commands_t plist[] = {
     {guess_main, PERM_LOGINOK,   "22Guess number【 猜數字   】"},
     {othello_main, PERM_LOGINOK, "33Othello     【 黑白棋   】"},
 //    {dice_main, PERM_LOGINOK,    "44Dice        【 玩骰子   】"},
-    {vice_main, PERM_LOGINOK,    "44Vice        【 發票對獎 】"},
     {g_card_jack, PERM_LOGINOK,  "55Jack        【 黑傑克 】"},
     {g_ten_helf, PERM_LOGINOK,   "66Tenhalf     【 十點半 】"},
     {card_99, PERM_LOGINOK,      "77Nine        【 九十九 】"},

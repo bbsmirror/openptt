@@ -76,53 +76,6 @@ int reload_money() {
     return 0;
 }
 
-#define VICE_NEW   "vice.new"
-#define VICE_BASE  "etc/vice.base"
-#define VICE_COUNT "etc/vice.count"
-
-/* Heat:發票 */
-static int vice(int money, char* item) {
-    char genbuf[200], buf[128];
-    fileheader_t mymail;
-    int viceserial, base = 0;
-    /* bfp就是要用shm來取代的檔案唷 */
-    FILE *bfp = fopen(VICE_BASE, "r+"),*cfp=fopen(VICE_COUNT,"a"),
-        *nfp;
-    
-    sprintf(buf, BBSHOME"/home/%c/%s/%s",
-	    cuser.userid[0], cuser.userid, VICE_NEW);
-    nfp = fopen(buf, "a");
-    if(!bfp || !nfp || !cfp)
-	return 0;
-   
-    if(fgets(buf, 9, bfp))
-	base = atoi(buf);
-    else
-	perror("can't open bingo file of vice file");
-    viceserial = ++base;
-    
-    fprintf(cfp,"%s\n",cuser.userid);
-    fprintf(nfp, "%08d\n", viceserial);
-    rewind(bfp);
-    fprintf(bfp, "%08d", base);
-    fclose(bfp);
-    fclose(nfp);
-    fclose(cfp);
-   
-    sprintf(genbuf, BBSHOME "/home/%c/%s", cuser.userid[0], cuser.userid);
-    stampfile(genbuf, &mymail);
-    strcpy(mymail.owner, BBSNAME "經濟部");
-    sprintf(mymail.title, "%s 花了%d$ \033[1;37m編號[\033[1;33m%08d\033[m]",
-	    item, money, viceserial);
-    mymail.savemode = 0;
-    unlink(genbuf);
-    Link(BBSHOME "/etc/vice.txt", genbuf);   
-    sprintf(genbuf,BBSHOME"/home/%c/%s/.DIR", cuser.userid[0], cuser.userid);
-    
-    append_record(genbuf, &mymail, sizeof(mymail));
-    return 0;
-}
-
 #define lockreturn(unmode, state) if(lockutmpmode(unmode, state)) return 
 #define lockreturn0(unmode, state) if(lockutmpmode(unmode, state)) return 0
 #define lockbreak(unmode, state) if(lockutmpmode(unmode, state)) break
@@ -284,7 +237,6 @@ static int osong(char *defaultid) {
 	"  有任何保貴的意見也歡迎到Note板留話\n"
 	"  讓親切的板主為您服務\n");
     pressanykey();
-    vice(200, "點歌");
     sortsong();
     topsong();
 
@@ -359,7 +311,6 @@ int p_cloak() {
 	return 0;
     if(cuser.money >= 19) {
 	demoney(19);
-	vice(19, "cloak");
 	currutmp->invisible %= 2;
 	outs((currutmp->invisible ^= 1) ? MSG_CLOAKED : MSG_UNCLOAK);
 	refresh();
@@ -381,7 +332,6 @@ int p_from() {
     if(getdata_buf(b_lines-1, 0, "請輸入新故鄉:",
 		   currutmp->from, 17, DOECHO)) {
 	demoney(49);
-	vice(49,"home");
 	currutmp->from_alias=0;
     }
     return 0;
@@ -411,7 +361,6 @@ int p_exmail() {
     if(cuser.money < n * 1000)
 	return 0;
     demoney(n * 1000);
-    vice(n * 1000, "mail");
     inmailbox(n);
     return 0;
 }

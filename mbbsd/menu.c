@@ -385,7 +385,11 @@ static commands_t userlist[] = {
 #endif
     {u_editplan, PERM_LOGINOK,      "QQueryEdit     編輯名片檔"},
     {u_editsig, PERM_LOGINOK,       "SSignature     編輯簽名檔"},
+#if HAVE_FREECLOAK
+    {u_cloak, PERM_LOGINOK,           "CCloak         隱身術"},
+#else
     {u_cloak, PERM_CLOAK,           "CCloak         隱身術"},
+#endif
     {u_register, PERM_BASIC,        "RRegister      填寫《註冊申請單》"},
     {u_list, PERM_BASIC,            "UUsers         列出註冊名單"},
     {NULL, 0, NULL}
@@ -417,7 +421,9 @@ static commands_t xyzlist[] = {
 static commands_t moneylist[] = {
     {p_give, 0,         "00Give        給其他人錢"},
     {save_violatelaw, 0,"11ViolateLaw  繳罰單"},
+#if !HAVE_FREECLOAK
     {p_cloak, 0,        "22Cloak       切換 隱身/現身   $19  /次"},
+#endif
     {p_from, 0,         "33From        暫時修改故鄉     $49  /次"},
     {ordersong,0,       "44OSong       歐桑動態點歌機   $200 /次"},
     {p_exmail, 0,       "55Exmail      購買信箱         $1000/封"},

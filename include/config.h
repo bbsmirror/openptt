@@ -28,6 +28,10 @@
 #define HAVE_JCEE         0
 #endif
 
+#ifndef HAVE_FREECLOAK
+#define HAVE_FREECLOCK    0
+#endif
+
 #ifndef TITLE_COLOR
 #define TITLE_COLOR       "\033[0;1;37;46m"
 #endif

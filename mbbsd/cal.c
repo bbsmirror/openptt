@@ -348,6 +348,7 @@ int demoney(int money) {
 
 extern int b_lines;
 
+#if !HAVE_FREECLOAK
 /* 花錢選單 */
 int p_cloak() {
     char buf[4];
@@ -366,6 +367,7 @@ int p_cloak() {
     }
     return 0;
 }
+#endif
 
 int p_from() {
     char ans[4];

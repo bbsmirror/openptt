@@ -169,7 +169,6 @@ void addsignature(FILE *fp, int ifuseanony);
 void auto_backup();
 void restore_backup();
 char *ask_tmpbuf(int y);
-char *strcasestr(const char* big, const char* little);
 
 /* friend */
 void friend_edit(int type);
